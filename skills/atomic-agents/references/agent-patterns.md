@@ -8,7 +8,9 @@ or nest them for complex systems.
 
 Every atom is, at minimum, an LLM augmented with some of: **retrieval**, **tools**, and **memory**.
 Before reaching for a multi-step pattern, make sure each atom's augmentations are well defined: a clear
-tool contract (typed input/output + a model-facing description) and only the context it needs.
+tool contract (typed input/output + a model-facing description) and only the context it needs. In
+Atomic Agents this is an `AtomicAgent[InputSchema, OutputSchema]` with schemas subclassing
+`BaseIOSchema`; runtime data is injected via a context provider rather than baked into the prompt.
 
 ## Workflow patterns
 
@@ -30,18 +32,19 @@ A classifier (LLM or code) inspects the input and directs it to **one of several
 ### 3. Parallelization
 Run multiple LLM calls **simultaneously**, then aggregate. Two forms:
 - **Sectioning** — split the task into independent subtasks that run at once.
-- **Voting** — run the same task several times to get diverse outputs, then aggregate (consensus/best-of).
+- **Voting** — run the same task several times for diverse outputs, then aggregate (consensus/best-of).
 
-- Use when: subtasks are independent (speed) or you want confidence via multiple attempts.
+- Use when: subtasks are independent (for speed) or you want confidence via multiple attempts.
 - With subagents, independent branches finish in the time of the slowest one, not the sum.
 
 ### 4. Orchestrator-workers
 A central **orchestrator** LLM **dynamically** breaks the task into subtasks, delegates each to a
 **worker**, and synthesizes the results.
 
-- Use when: you cannot predict the subtasks in advance (they depend on the input).
+- Use when: you cannot predict the subtasks in advance (e.g. which files a code change touches depends
+  on the task).
 - Key difference from parallelization: subtasks are **determined at runtime**, not pre-defined.
-- Atomic view: orchestrator owns global planning/state; each worker is a single-responsibility atom
+- Atomic view: the orchestrator owns global planning/state; each worker is a single-responsibility atom
   with clear inputs/outputs. Pass workers everything they need explicitly — a fresh worker has none of
   the orchestrator's context.
 
@@ -49,7 +52,7 @@ A central **orchestrator** LLM **dynamically** breaks the task into subtasks, de
 One LLM **generates** a response; another **evaluates** it and returns feedback; loop until it passes.
 
 - Use when: you have clear evaluation criteria and iterative refinement measurably helps (like a human
-  editing draft after feedback).
+  editing a draft after feedback).
 - Always bound the loop with a max-iteration / budget stop condition.
 
 ## Autonomous agents
@@ -65,13 +68,28 @@ environment's feedback, until a stop condition is met.
 
 ## Subagents as atoms (Claude Agent SDK)
 
-Subagents are a concrete way to build atoms with **isolated context**:
+Subagents are a concrete way to build atoms with **isolated context**. Define one with an
+`AgentDefinition` (the `agents` parameter of `query()`, or a markdown file in `.claude/agents/`):
+
+| Field | Role |
+|---|---|
+| `description` | Natural-language "when to use this" — how the model decides to delegate. |
+| `prompt` | The subagent's system prompt: its single job and expertise. |
+| `tools` | Allowed tool names; omit to inherit all. Narrow for least-privilege atoms. |
+| `model` | Model override (e.g. `opus` for high-stakes, `sonnet`/`haiku` otherwise). |
+| `maxTurns` | Max agentic turns before it stops — a built-in stop condition. |
+
+Properties to exploit:
 - A subagent starts with a **fresh context window**; the only channel in is the prompt string — include
   all needed file paths, errors, and decisions explicitly.
 - Intermediate tool calls stay inside the subagent; only its **final message** returns to the parent,
   keeping the main context clean (e.g. a research atom reads many files, returns one summary).
 - Give each subagent **one job** and a tailored system prompt; let an orchestrator coordinate global
   planning and state. Independent subagents can run **concurrently**.
+- Restrict `tools` so an atom is safe by construction (e.g. `Read`, `Grep`, `Glob` = read-only).
+
+For coordinating dozens-to-hundreds of agents, the SDK's `Workflow` tool moves orchestration into a
+script the runtime runs outside the conversation context — beyond a few turn-by-turn subagents.
 
 ## Choosing a pattern (quick heuristic)
 
@@ -83,5 +101,6 @@ Subagents are a concrete way to build atoms with **isolated context**:
 | Subtasks unknown until runtime | Orchestrator-workers |
 | Clear criteria + iterate to improve | Evaluator-optimizer |
 | Path truly unpredictable, open-ended | Autonomous agent |
+| Isolate noisy/long work or run branches concurrently | Subagents (as any atom above) |
 
-When in doubt, start with the simplest row that fits and only escalate if it fails.
+When in doubt, start with the simplest row that fits and only escalate if it demonstrably fails.
