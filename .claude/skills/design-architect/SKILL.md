@@ -34,8 +34,21 @@ description: 世界最高峰のWebデザイン・アーキテクトとしてUI/U
 
 1. **[Analyze]** 指定URL/サイト/ガイドラインからルールを抽出する。手順は `references/style-extraction.md` を参照。
 2. **[Sync]** 抽出結果を既存の `/design-system/` と比較し、差分をトークン・ルールに反映する(変更は changelog に記録)。
-3. **[Implement]** デザインシステムのトークン・ルールのみに基づいてコードを生成する。
+3. **[Implement]** デザインシステムのトークン・ルールのみに基づいてコードを生成する。CSSは `dist/tokens.css` の変数(`--color-semantic-*` 等)経由で参照する。
 4. **[Review]** `references/review-checklist.md` に基づき自己批判的レビューを行い、改善案を提示する。
+
+## 検証コマンド(トークン変更時は必須実行)
+
+```bash
+npm run build:tokens    # DTCG JSON → dist/tokens.css / tokens.dark.css
+npm run check:contrast  # WCAG 2.2 コントラスト自動検証(不合格で exit 1)
+npm run test:visual     # ギャラリーのビジュアルリグレッション(両テーマ)
+npm run verify          # 上記3つを一括実行
+```
+
+- コントラスト不合格が出たら、トークンを修正して changelog に記録する(検証を緩めることで解決しない)。
+- 見た目の変更が**意図的**な場合のみ `npm run test:visual:update` で基準画像を更新し、差分を目視確認してコミットする。
+- 新コンポーネント追加時は `gallery/index.html` に必ず追加する(ギャラリーが視覚テストの監視対象のため、載せないと回帰検出から漏れる)。
 
 ## デザインシステムの構造
 
@@ -47,10 +60,13 @@ design-system/
 │   ├── typography.json
 │   ├── spacing.json
 │   └── effects.json   # radius / shadow / motion
+├── themes/dark.json   # ダークテーマ(semantic層の参照先差し替え)
 ├── components/        # コンポーネント別の設計ルール
 ├── guidelines/        # 原則・トンマナ・ライティング規約
 ├── changelog.md       # 変更履歴(意図を必須記載)
 └── archive/           # 廃止スタイルの保管庫
 ```
+
+関連: `dist/`(生成CSS、手編集禁止) / `gallery/index.html`(全コンポーネントのショーケース) / `scripts/`(ビルド・検証) / `tests/`(ビジュアルリグレッション)
 
 チャート・グラフ・ダッシュボードを作る場合は、このスキルに加えて `dataviz` スキルを必ず併読する。

@@ -11,11 +11,21 @@ design-system/
 │   ├── typography.json  # フォント・型スケール・行間
 │   ├── spacing.json     # 余白スケール・コンテナ・ブレークポイント
 │   └── effects.json     # radius / shadow / motion
+├── themes/        # テーマ別オーバーライド(dark.json 等)
 ├── components/    # コンポーネント別の設計ルール(1コンポーネント=1ファイル)
 ├── guidelines/    # デザイン原則・トンマナ
 ├── changelog.md   # 全変更の履歴(意図の記載必須)
 └── archive/       # 廃止スタイルの保管庫(削除ではなく移動)
 ```
+
+## ツールチェーン
+
+| コマンド | 役割 |
+|---|---|
+| `npm run build:tokens` | トークンJSON → `dist/tokens.css`(:root) / `dist/tokens.dark.css`([data-theme="dark"]) を生成。**dist/ は手編集禁止** |
+| `npm run check:contrast` | semantic色ペアの WCAG 2.2 コントラスト検証(ライト・ダーク両テーマ、不合格で exit 1) |
+| `npm run test:visual` | `gallery/index.html` のスクリーンショット比較(両テーマ)。基準画像は環境依存のため、環境が変わったら `npm run test:visual:update` で再生成し目視確認の上コミット |
+| `npm run verify` | 上記すべてを一括実行 |
 
 ## 運用ルール
 

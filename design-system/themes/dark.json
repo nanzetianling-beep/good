@@ -1,0 +1,58 @@
+{
+  "$description": "ダークテーマのオーバーライド。semantic層の参照先を差し替える方式(実装コードは無変更でテーマが切り替わる)。ダークでは彩度の高い brand.600 が背景に沈むため、明度の高い brand.300 系をアクションに用いる(WCAG 4.5:1 確保のため)。",
+  "color": {
+    "primitive": {
+      "brand": {
+        "200": { "$value": "#91A7FF", "$type": "color" },
+        "300": { "$value": "#748FFC", "$type": "color" }
+      },
+      "gray": {
+        "800": { "$value": "#343A40", "$type": "color" },
+        "850": { "$value": "#1E2128", "$type": "color" },
+        "950": { "$value": "#16181D", "$type": "color" }
+      },
+      "green": { "400": { "$value": "#51CF66", "$type": "color" } },
+      "amber": { "400": { "$value": "#FCC419", "$type": "color" } },
+      "red":   { "400": { "$value": "#FF6B6B", "$type": "color" } }
+    },
+    "semantic": {
+      "text": {
+        "primary":   { "$value": "{color.primitive.gray.50}", "$type": "color" },
+        "secondary": { "$value": "{color.primitive.gray.200}", "$type": "color" },
+        "muted":     { "$value": "{color.primitive.gray.500}", "$type": "color" },
+        "inverse":   { "$value": "{color.primitive.gray.900}", "$type": "color", "$description": "ダークではボタンが明色になるため、ラベルは暗色" }
+      },
+      "background": {
+        "default": { "$value": "{color.primitive.gray.950}", "$type": "color" },
+        "subtle":  { "$value": "{color.primitive.gray.850}", "$type": "color" }
+      },
+      "border": {
+        "default": { "$value": "{color.primitive.gray.800}", "$type": "color" }
+      },
+      "action": {
+        "primary":       { "$value": "{color.primitive.brand.300}", "$type": "color" },
+        "primary-hover": { "$value": "{color.primitive.brand.200}", "$type": "color" }
+      },
+      "feedback": {
+        "success": { "$value": "{color.primitive.green.400}", "$type": "color" },
+        "warning": { "$value": "{color.primitive.amber.400}", "$type": "color" },
+        "danger":  { "$value": "{color.primitive.red.400}", "$type": "color" }
+      }
+    }
+  },
+  "shadow": {
+    "sm": {
+      "$value": { "offsetX": "0", "offsetY": "1px", "blur": "2px", "spread": "0", "color": "rgba(0, 0, 0, 0.35)" },
+      "$type": "shadow",
+      "$description": "ダークでは影が見えにくいため不透明度を上げる"
+    },
+    "md": {
+      "$value": { "offsetX": "0", "offsetY": "4px", "blur": "12px", "spread": "0", "color": "rgba(0, 0, 0, 0.45)" },
+      "$type": "shadow"
+    },
+    "lg": {
+      "$value": { "offsetX": "0", "offsetY": "12px", "blur": "32px", "spread": "0", "color": "rgba(0, 0, 0, 0.55)" },
+      "$type": "shadow"
+    }
+  }
+}

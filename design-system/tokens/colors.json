@@ -16,7 +16,10 @@
         "900": { "$value": "#212529", "$type": "color" }
       },
       "green": { "600": { "$value": "#2F9E44", "$type": "color" } },
-      "amber": { "600": { "$value": "#E8930C", "$type": "color" } },
+      "amber": {
+        "600": { "$value": "#E8930C", "$type": "color", "$description": "白背景ではコントラスト不足(2.44:1)。テキスト・アイコンには amber.700 を使い、これは塗り(バッジ背景等)限定" },
+        "700": { "$value": "#B36F00", "$type": "color" }
+      },
       "red":   { "600": { "$value": "#E03131", "$type": "color" } }
     },
     "semantic": {
@@ -39,7 +42,7 @@
       },
       "feedback": {
         "success": { "$value": "{color.primitive.green.600}", "$type": "color" },
-        "warning": { "$value": "{color.primitive.amber.600}", "$type": "color" },
+        "warning": { "$value": "{color.primitive.amber.700}", "$type": "color" },
         "danger":  { "$value": "{color.primitive.red.600}", "$type": "color" }
       }
     }

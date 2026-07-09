@@ -1,0 +1,72 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-primitive-brand-500: #3b5bdb; /** 初期プレースホルダ。ブランド解析後に置換 */
+  --color-primitive-brand-600: #3450c4;
+  --color-primitive-brand-700: #2c45ab;
+  --color-primitive-gray-0: #ffffff;
+  --color-primitive-gray-50: #f8f9fa;
+  --color-primitive-gray-200: #e9ecef;
+  --color-primitive-gray-500: #868e96;
+  --color-primitive-gray-700: #495057;
+  --color-primitive-gray-900: #212529;
+  --color-primitive-green-600: #2f9e44;
+  --color-primitive-amber-600: #e8930c; /** 白背景ではコントラスト不足(2.44:1)。テキスト・アイコンには amber.700 を使い、これは塗り(バッジ背景等)限定 */
+  --color-primitive-amber-700: #b36f00;
+  --color-primitive-red-600: #e03131;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px 0 rgba(33, 37, 41, 0.06); /** カード等の静的な浮き */
+  --shadow-md: 0 4px 12px 0 rgba(33, 37, 41, 0.10); /** ドロップダウン・ポップオーバー */
+  --shadow-lg: 0 12px 32px 0 rgba(33, 37, 41, 0.16); /** モーダルのみ */
+  --motion-duration-fast: 120ms; /** hover等の即時フィードバック */
+  --motion-duration-normal: 200ms; /** 展開・フェード */
+  --motion-duration-slow: 320ms; /** モーダル・ページ遷移 */
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --layout-container-max: 72rem; /** 1152px */
+  --layout-breakpoint-sm: 640px;
+  --layout-breakpoint-md: 768px;
+  --layout-breakpoint-lg: 1024px;
+  --layout-breakpoint-xl: 1280px;
+  --font-family-sans: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5625rem;
+  --font-size-2xl: 1.953rem;
+  --font-size-3xl: 2.441rem;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-line-height-tight: 1.25; /** 見出し用 */
+  --font-line-height-normal: 1.5; /** 英文本文用 */
+  --font-line-height-relaxed: 1.7; /** 日本語本文用 */
+  --color-semantic-text-primary: var(--color-primitive-gray-900);
+  --color-semantic-text-secondary: var(--color-primitive-gray-700);
+  --color-semantic-text-muted: var(--color-primitive-gray-500); /** 小さい文字への使用禁止(コントラスト4.5:1未満になるため)。18px以上限定 */
+  --color-semantic-text-inverse: var(--color-primitive-gray-0);
+  --color-semantic-background-default: var(--color-primitive-gray-0);
+  --color-semantic-background-subtle: var(--color-primitive-gray-50);
+  --color-semantic-border-default: var(--color-primitive-gray-200);
+  --color-semantic-action-primary: var(--color-primitive-brand-600);
+  --color-semantic-action-primary-hover: var(--color-primitive-brand-700);
+  --color-semantic-feedback-success: var(--color-primitive-green-600);
+  --color-semantic-feedback-warning: var(--color-primitive-amber-700);
+  --color-semantic-feedback-danger: var(--color-primitive-red-600);
+}
