@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "my-plugin",
+  "displayName": "My Plugin",
+  "version": "1.0.0",
+  "description": "Brief description shown in the plugin manager",
+  "author": {
+    "name": "Your Name",
+    "email": "you@example.com",
+    "url": "https://github.com/you"
+  },
+  "homepage": "https://docs.example.com/my-plugin",
+  "repository": "https://github.com/you/my-plugin",
+  "license": "MIT",
+  "keywords": ["automation", "internal"],
+
+  "//": "Component paths below are OPTIONAL. Delete them if skills/, agents/, commands/, hooks/hooks.json, and .mcp.json are in their default root locations — they are auto-discovered.",
+  "skills": "./skills/",
+  "agents": ["./agents/reviewer.md"],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+
+  "//userConfig": "Values Claude Code prompts for when the plugin is enabled. Reference as ${user_config.KEY} in .mcp.json/hooks. Mark secrets sensitive:true (stored in the keychain).",
+  "userConfig": {
+    "api_endpoint": {
+      "type": "string",
+      "title": "API endpoint",
+      "description": "Base URL of the internal system to connect to",
+      "required": true
+    },
+    "api_token": {
+      "type": "string",
+      "title": "API token",
+      "description": "Authentication token",
+      "sensitive": true
+    }
+  }
+}

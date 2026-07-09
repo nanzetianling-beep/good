@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "acme-tools",
+  "owner": {
+    "name": "DevTools Team",
+    "email": "devtools@acme.example"
+  },
+  "metadata": {
+    "description": "ACME internal Claude Code plugins",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "code-formatter",
+      "source": "./plugins/formatter",
+      "description": "Automatic code formatting on save",
+      "version": "2.1.0",
+      "author": { "name": "DevTools Team" }
+    },
+    {
+      "name": "deployment-tools",
+      "source": { "source": "github", "repo": "acme/deploy-plugin" },
+      "description": "Deployment automation with an internal-API MCP bridge",
+      "category": "ci-cd",
+      "tags": ["deploy", "internal"]
+    }
+  ]
+}
