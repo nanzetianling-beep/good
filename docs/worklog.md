@@ -103,6 +103,15 @@ SKILL.md は全て500行以内を維持し、詳細は references/ に展開（p
 - GitHub Push Protection が claude-md-management の教材例内の架空Stripeキー（実パターン一致）を検知し
   プッシュをブロック → `sk_live_[REDACTED_EXAMPLE]` に無害化してamend後、プッシュ成功。
 
+## 2026-07-09 — `/skill名` 明示呼び出し化（自動発動オフ）
+ユーザー指示: 「/skill名 で呼ぶようにしたい。それ以外は一旦自動化しなくていい。」
+- 全10スキルのフロントマターに `disable-model-invocation: true` を追加。
+  → モデルによる自動発動が無効化され、`/skill名` の手動スラッシュコマンドとしてのみ起動する。
+- 併せて潜在バグを修正: 3スキル（claude-md-management, natural-japanese, superpowers）の
+  `description` 内に `: `（コロン+空白）が含まれ、厳密なYAMLパーサでフロントマターが壊れる状態だった。
+  該当箇所（`Triggers: ` / `work: `）を ` — ` に置換し、全10スキルが厳密YAMLとしてパースOKであることを検証。
+- 挙動として自動化しているのはこの「スキル定義」のみ。フック等の他の自動化は追加していない。
+
 #### エージェント報告のUNCERTAINTIES（誠実性のための記録）
 - 判断閾値の一部（CLAUDE.md 350行must-fix、skill-creatorのD1=60字/E3=0件基準）は文書化された規定ではなく
   本スキル独自の基準であり、その旨を各ファイル内に明記済み。

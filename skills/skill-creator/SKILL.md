@@ -1,5 +1,6 @@
 ---
 name: skill-creator
+disable-model-invocation: true
 description: Guides an interview-driven workflow to create, scaffold, and refine Claude Code Agent Skills from a user's requirements — picks a valid name, writes a trigger-rich third-person description, structures the SKILL.md body with progressive disclosure, adds reference files, and runs a quality-evaluation-and-revision loop. Use when the user wants to create a skill, author a skill, write a new SKILL.md, or package a workflow into a reusable skill.
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: security-guidance
+disable-model-invocation: true
 description: Defensive guardrail that screens code and prompts for danger before they run or install. Use it for a security review, to audit an external repo, skill, MCP server, or dependency before install, to answer "is this skill safe", to detect dangerous code or shell commands and secret exfiltration, to screen for prompt injection in untrusted or web content, and to operate safely around secrets. Allows authorized defensive, CTF, and pentest work; refuses clearly malicious requests.
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: frontend-design
+disable-model-invocation: true
 description: Guidance for designing distinctive, polished web UI/UX in HTML/CSS/JS that avoids the generic "AI-generated" look. Use when building or reworking a landing page, marketing or corporate site, web design mockup, hero section, pricing table, dashboard, or any UI prototype from scratch, and when you must learn an existing design system or brand and produce original components that follow its tokens and rules. Covers typography, color, spacing, layout, component states, depth, motion, and accessibility.
 ---
 

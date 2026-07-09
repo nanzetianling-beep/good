@@ -1,5 +1,6 @@
 ---
 name: plugin-dev
+disable-model-invocation: true
 description: Builds advanced Claude Code plugins that bundle commands, skills, agents, hooks, and MCP servers (API / internal-system integrations) behind a .claude-plugin/plugin.json manifest, then distributes them via a marketplace.json catalog or a ZIP archive. Use when the user wants to build a plugin, scaffold or fix plugin.json, wire an MCP server into a plugin, create a plugin marketplace, or bundle in-house tooling into one shareable, versioned package.
 ---
 

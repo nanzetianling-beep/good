@@ -1,6 +1,7 @@
 ---
 name: natural-japanese
-description: 不自然でAIっぽい日本語を、人間が書いたような自然で読みやすい日本語にリライトする。翻訳調・冗長表現・単調なリズム・記号の乱用を取り除き、指定のトーン&マナー（トンマナ）に沿って整える。Reference Folder（お手本の文体サンプル）を読み込めばその文体を踏襲できる。SNS・ブログ・メルマガの執筆や推敲に使う。Triggers: 自然な日本語, リライト, AIっぽい文章, 翻訳調, トーン&マナー, トンマナ, 文体, 表記ゆれ, humanize, natural Japanese, rewrite, tone and manner.
+disable-model-invocation: true
+description: 不自然でAIっぽい日本語を、人間が書いたような自然で読みやすい日本語にリライトする。翻訳調・冗長表現・単調なリズム・記号の乱用を取り除き、指定のトーン&マナー（トンマナ）に沿って整える。Reference Folder（お手本の文体サンプル）を読み込めばその文体を踏襲できる。SNS・ブログ・メルマガの執筆や推敲に使う。Triggers — 自然な日本語, リライト, AIっぽい文章, 翻訳調, トーン&マナー, トンマナ, 文体, 表記ゆれ, humanize, natural Japanese, rewrite, tone and manner.
 ---
 
 # 自然な日本語 (Natural Japanese)

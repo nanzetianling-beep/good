@@ -1,6 +1,7 @@
 ---
 name: superpowers
-description: Structures Claude's thinking to raise the logic and quality of its output by attacking a problem from several independent angles before committing. Use for hard, ambiguous, or high-stakes work: complex strategy, gnarly technical debugging, architecture decisions costly to reverse, or thinking-partner / rubber-duck sessions. Triggers on "think deeply", "hard problem", "figure out a strategy", "brainstorm", "debug this gnarly issue", "multiple perspectives", "poke holes in my plan".
+disable-model-invocation: true
+description: Structures Claude's thinking to raise the logic and quality of its output by attacking a problem from several independent angles before committing. Use for hard, ambiguous, or high-stakes work — complex strategy, gnarly technical debugging, architecture decisions costly to reverse, or thinking-partner / rubber-duck sessions. Triggers on "think deeply", "hard problem", "figure out a strategy", "brainstorm", "debug this gnarly issue", "multiple perspectives", "poke holes in my plan".
 ---
 
 # Superpowers

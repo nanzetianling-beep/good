@@ -1,5 +1,6 @@
 ---
 name: atomic-agents
+disable-model-invocation: true
 description: Guides building complex, multi-tool AI agents from well-typed, composable parts via a phased Design → Plan → Implement method. Grounds it in the atomic-component principle (typed input/output schemas), Anthropic's workflow patterns (chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer), and Claude Agent SDK subagents. Use when the user wants to build an agent, a multi-tool agent, orchestrate subagents, design an autonomous workflow, or needs agent architecture help.
 ---
 

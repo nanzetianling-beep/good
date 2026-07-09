@@ -1,5 +1,6 @@
 ---
 name: playwright
+disable-model-invocation: true
 description: Natural-language-driven browser-automation engine built on Playwright. Use it to scrape data from websites, log into sites needing an ID/password, fill and submit forms, auto-post on membership sites, monitor competitor prices on a schedule, run end-to-end (e2e) flows, and capture screenshots or PDFs. Trigger whenever a task means "control a real browser", "scrape a page", "log in and do X", "fill this form", "watch a site for price/stock changes", "run an e2e check", or "screenshot a URL".
 ---
 

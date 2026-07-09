@@ -1,6 +1,7 @@
 ---
 name: claude-md-management
-description: Creates, audits, and optimizes CLAUDE.md memory files that give Claude persistent project, user, and org instructions every session. Use when a user wants to run /init, write or update project memory, apply project-wide coding rules, organize instructions with @imports or .claude/rules/, reason about memory hierarchy and precedence, reconcile stale or contradictory rules, or cut CLAUDE.md bloat. Triggers: CLAUDE.md, project memory, ~/.claude/CLAUDE.md, @imports, coding rules, audit/optimize memory.
+disable-model-invocation: true
+description: Creates, audits, and optimizes CLAUDE.md memory files that give Claude persistent project, user, and org instructions every session. Use when a user wants to run /init, write or update project memory, apply project-wide coding rules, organize instructions with @imports or .claude/rules/, reason about memory hierarchy and precedence, reconcile stale or contradictory rules, or cut CLAUDE.md bloat. Triggers — CLAUDE.md, project memory, ~/.claude/CLAUDE.md, @imports, coding rules, audit/optimize memory.
 ---
 
 # CLAUDE.md Management
