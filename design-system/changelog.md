@@ -14,7 +14,16 @@
 
 ---
 
-## 2026-07-09 — ブランド『凪 -nagi- カウンセリングルーム』への刷新 + LP制作
+## 2026-07-09 — 予約フォーム・写真スロット・コンポーネント登録(すべて仮)
+- **対象**: site/index.html, site/assets/counselor-portrait.svg(新規), design-system/components/{button,card,form-field}.md(新規)
+- **変更内容**:
+  - `mailto:` のみだったCTAを、実構造の**予約フォーム(仮)**に置換。お名前/メール/電話/希望日/相談方法(ラジオ)/相談内容/同意チェックの各フィールド、`role="status"` の結果表示、JSは送信せずデモ応答を返す。`section[id]` に scroll-margin-top を付与し、固定ヘッダーでの見出し隠れを解消。
+  - カウンセラーのモノグラムを**差し替え可能な仮画像**(`assets/counselor-portrait.svg`)に置換。3:4比率・on-brandな抽象シルエット+「写真（仮）」ラベル。実写真は同ファイルを置換するだけ。
+  - 実装で使用中のコンポーネント(button / card / form-field)をルールファイルとして登録。
+  - 変更に伴い site の視覚回帰基準画像を再生成。全ペア WCAG 合格・`npm run verify` 全緑。
+- **意図(Why)**: 「実物を作りながら詰める」段階のため、未確定要素(送信先・実写真)を*構造は本物・中身は仮*の状態で用意し、後から差し替えるだけで本番化できるようにした。フォームを仮でも用意したのは、予約導線というLP最重要動線の情報設計(必須項目の絞り込み・守秘の明示)を今の段階で確定させるため。仮画像をグレー枠でなくブランド配色の抽象で作ったのは、レビュー時に完成イメージを損なわないため。
+- **種別**: 新規 / 仮実装
+
 - **対象**: tokens/colors.json, tokens/typography.json, tokens/effects.json, themes/dark.json, scripts/check-contrast.mjs, site/index.html(新規), gallery, tests
 - **変更内容**:
   - カラーをプレースホルダの青系から、深い常磐グリーン(pine)×温かなアイボリー(sand)×真鍮ゴールド(brass)の3系統へ全面刷新。semantic層に `accent`(差し色)、`background.inverse`(深緑フルブリード地)、`text.on-inverse` を追加。

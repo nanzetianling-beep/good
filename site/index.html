@@ -42,6 +42,9 @@
 
   .wrap { width: 100%; max-width: var(--layout-container-max); margin-inline: auto; padding-inline: var(--space-6); }
 
+  /* アンカー遷移時、固定ヘッダー(約76px)に見出しが隠れないよう余白を確保 */
+  section[id] { scroll-margin-top: 96px; }
+
   /* ── 共通パーツ ───────────────────────────────────── */
   .eyebrow {
     display: inline-flex; align-items: center; gap: var(--space-3);
@@ -164,8 +167,8 @@
   .counselor .wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: var(--space-16); align-items: center; }
   .portrait { aspect-ratio: 3 / 4; border-radius: var(--radius-xl); position: relative; overflow: hidden;
     background: linear-gradient(160deg, color-mix(in srgb, var(--color-semantic-accent-default) 35%, var(--color-semantic-background-inverse)), var(--color-semantic-background-inverse));
-    box-shadow: var(--shadow-md); display: grid; place-items: center; }
-  .portrait .monogram { font-family: var(--font-family-serif); font-size: var(--font-size-5xl); color: color-mix(in srgb, var(--color-semantic-text-on-inverse) 85%, transparent); }
+    box-shadow: var(--shadow-md); }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; }
   .counselor h2 { font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-3xl)); margin-block: var(--space-4) var(--space-2); }
   .counselor .role { color: var(--color-semantic-accent-text); font-size: var(--font-size-sm); letter-spacing: var(--font-letter-spacing-wide); }
   .counselor .bio { margin-top: var(--space-6); color: var(--color-semantic-text-secondary); }
@@ -228,6 +231,35 @@
   .cta-band h2 { font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-4xl)); line-height: var(--font-line-height-snug); letter-spacing: var(--font-letter-spacing-tight); }
   .cta-band p { margin-block: var(--space-4) var(--space-8); color: color-mix(in srgb, var(--color-semantic-text-on-inverse) 82%, transparent); }
   .cta-band .btn-primary { background: var(--color-semantic-action-primary); color: var(--color-semantic-text-inverse); }
+
+  /* ── 予約フォーム(仮)─────────────────────────────── */
+  .form-card { max-width: 44rem; margin-inline: auto; margin-top: var(--space-12); background: var(--color-semantic-background-default); border: 1px solid var(--color-semantic-border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: clamp(var(--space-8), 5vw, var(--space-12)); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .form-grid .full { grid-column: 1 / -1; }
+  .field label, .field legend { display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); margin-bottom: var(--space-2); padding: 0; }
+  .req { color: var(--color-semantic-accent-text); }
+  .field input, .field select, .field textarea {
+    width: 100%; min-height: 52px; padding: var(--space-3) var(--space-4);
+    font: inherit; color: var(--color-semantic-text-primary);
+    background: var(--color-semantic-background-subtle);
+    border: 1px solid var(--color-semantic-border-default); border-radius: var(--radius-md);
+    transition: border-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+  .field textarea { min-height: 8rem; resize: vertical; line-height: var(--font-line-height-relaxed); }
+  .field input:hover, .field select:hover, .field textarea:hover { border-color: var(--color-semantic-border-accent); }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  .radio-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .radio { flex: 1; min-width: 11rem; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-semantic-border-default); border-radius: var(--radius-md); cursor: pointer; font-size: var(--font-size-sm); }
+  .radio:has(input:checked) { border-color: var(--color-semantic-accent-default); background: var(--color-semantic-background-subtle); }
+  .radio input, .consent input { width: auto; min-height: auto; accent-color: var(--color-semantic-action-primary); }
+  .consent { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--font-size-sm); color: var(--color-semantic-text-secondary); cursor: pointer; }
+  .consent input { margin-top: 5px; }
+  .consent a { color: var(--color-semantic-accent-text); text-decoration: underline; text-underline-offset: 3px; }
+  .booking .btn-primary { width: 100%; margin-top: var(--space-8); }
+  .form-status { margin-top: var(--space-6); padding: var(--space-4); border: 1px solid var(--color-semantic-border-accent); border-radius: var(--radius-md); background: var(--color-semantic-background-subtle); font-size: var(--font-size-sm); text-align: center; }
+  .form-status[hidden] { display: none; }
+  .form-note { margin-top: var(--space-4); font-size: var(--font-size-xs); color: var(--color-semantic-text-muted); text-align: center; }
+  @media (max-width: 620px) { .form-grid { grid-template-columns: 1fr; } }
 
   /* ── フッター ─────────────────────────────────────── */
   footer.site { background: var(--color-semantic-background-subtle); border-top: 1px solid var(--color-semantic-border-default); padding-block: var(--space-16) var(--space-8); }
@@ -380,9 +412,11 @@
   <!-- カウンセラー -->
   <section class="counselor section" id="counselor">
     <div class="wrap">
-      <div class="portrait reveal" role="img" aria-label="カウンセラーのポートレート（イメージ）">
-        <span class="monogram">静</span>
-      </div>
+      <figure class="portrait reveal">
+        <!-- 仮画像。実写真に差し替える場合は assets/counselor-portrait.svg を同比率(3:4)の画像に置換 -->
+        <img src="assets/counselor-portrait.svg" width="600" height="800"
+             alt="カウンセラー 山之内静香のポートレート（仮の画像）">
+      </figure>
       <div class="reveal">
         <span class="eyebrow">カウンセラー紹介</span>
         <h2>山之内 静香</h2>
@@ -514,7 +548,7 @@
   </section>
 
   <!-- CTA -->
-  <section class="cta-band section" id="contact">
+  <section class="cta-band section" id="cta">
     <div class="wrap">
       <div class="panel">
         <svg class="deco" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -525,12 +559,62 @@
           </g>
         </svg>
         <div class="inner">
-          <span class="eyebrow center">ご予約・お問い合わせ</span>
+          <span class="eyebrow center">お一人で、抱えないで</span>
           <h2 style="margin-top:var(--space-4)">まずは、話してみませんか。</h2>
-          <p>お一人で抱え込まず、静かな時間を持つことから。<br>初回のご相談を承っています。</p>
-          <a class="btn btn-primary" href="mailto:hello@nagi-counseling.example">初回カウンセリングを予約する</a>
+          <p>静かな時間を持つことから。<br>初回のご相談を承っています。</p>
+          <a class="btn btn-primary" href="#contact">予約フォームへ進む</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- 予約フォーム(仮) -->
+  <section class="booking section" id="contact" style="background:var(--color-semantic-background-subtle)">
+    <div class="wrap">
+      <div class="section-head center">
+        <span class="eyebrow center">ご予約・お問い合わせ</span>
+        <h2>ご予約フォーム</h2>
+        <p>下記よりお申し込みください。担当より2営業日以内にご連絡いたします。<br><strong>※ こちらはデモ用の仮フォームです。実際には送信されません。</strong></p>
+      </div>
+      <form class="form-card" id="booking-form" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-name">お名前 <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-email">メールアドレス <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="f-tel">電話番号（任意）</label>
+            <input id="f-tel" name="tel" type="tel" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="f-date">ご希望日（第1希望）</label>
+            <input id="f-date" name="date" type="date">
+          </div>
+          <div class="field full">
+            <fieldset>
+              <legend>ご相談方法 <span class="req" aria-hidden="true">*</span></legend>
+              <div class="radio-row">
+                <label class="radio"><input type="radio" name="method" value="対面" checked> 対面（完全個室）</label>
+                <label class="radio"><input type="radio" name="method" value="オンライン"> オンライン</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="field full">
+            <label for="f-message">ご相談内容（任意）</label>
+            <textarea id="f-message" name="message" placeholder="差し支えのない範囲で、今のお気持ちやご相談したいことをお書きください。"></textarea>
+          </div>
+          <div class="field full">
+            <label class="consent"><input type="checkbox" name="consent" required> <span><a href="#">プライバシーポリシー</a>に同意します <span class="req" aria-hidden="true">*</span></span></label>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">予約を申し込む（仮）</button>
+        <p class="form-status" id="form-status" role="status" tabindex="-1" hidden></p>
+        <p class="form-note">お預かりした情報は予約対応のみに使用し、守秘義務のもとで厳重に管理します。</p>
+      </form>
     </div>
   </section>
 
@@ -584,6 +668,18 @@
   };
   setTheme(prefersDark.matches);
   toggle.addEventListener('click', () => setTheme(root.dataset.theme !== 'dark'));
+
+  // 予約フォーム（仮）：送信は行わず、その場でデモ用の応答を返す
+  const bookingForm = document.getElementById('booking-form');
+  const formStatus = document.getElementById('form-status');
+  bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!bookingForm.checkValidity()) { bookingForm.reportValidity(); return; }
+    formStatus.hidden = false;
+    formStatus.textContent = '（デモ）お申し込みありがとうございます。こちらは仮フォームのため、実際の送信・予約は行われません。';
+    formStatus.focus();
+    bookingForm.querySelector('button[type="submit"]').textContent = '送信済み（仮）';
+  });
 
   // スクロール表示（reduced-motion時はIO自体を張らず即表示済み）
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
