@@ -20,25 +20,79 @@ Invoke when the problem is **hard, ambiguous, or high-stakes**, or when the user
 
 Signals to reach for it: no obvious right answer with real tradeoffs; a bug that survived the obvious fixes; an expensive-to-reverse decision; the user says "rubber duck / talk this through / poke holes"; or you catch yourself about to give a fast, confident answer to a question that deserves more.
 
+### Choosing your depth
+
+| Time available | Low stakes | Medium stakes | High stakes / one-way door |
+|---|---|---|---|
+| **Minutes** | Skip the skill; just answer | Quick pass, artifacts compressed into one paragraph | Quick pass **written down**, plus an explicit flag: "depth was time-capped; a full pass would also stress-test X and Y" |
+| **An hour** | Skip the skill; just answer | Quick pass with the Frame and Register artifacts written out | Full pass — all seven artifacts written |
+| **A day or more** | Quick pass only if genuinely ambiguous | Full pass | Full pass; revisit the Register as new evidence lands |
+
+"Artifacts" are the per-step outputs specified in the core loop below. The rule of thumb: the more it costs to be wrong, the more of the loop gets written down where the user can audit it.
+
 ## The core loop
+
+Each step produces a small written **artifact**. On a full pass, all seven appear in your output (or working notes) so every link in the chain is inspectable; on a quick pass, write artifacts 1, 2, and 6 and compress the rest. Two complete runs with every artifact filled in — a build-vs-buy strategy decision and a race-condition debugging session — are in `references/worked-examples.md`.
 
 1. **Frame the problem & success criteria.** State the real question in one sentence. What does a good answer concretely look like? What are the hard constraints (time, budget, reversibility, must-not-break)? Resist solving until this is sharp. If the ask is ambiguous, surface the ambiguity — ask, or state your interpretation explicitly and proceed.
 
+   ```
+   QUESTION: <the real ask, one sentence>
+   SUCCESS:  <what a good answer observably looks like>
+   CONSTRAINTS: <hard limits>   INTERPRETATION: <stated, if the ask was ambiguous>
+   ```
+
 2. **Diverge: generate independent approaches.** Produce at least 2–3 *genuinely different* solutions or hypotheses — different mechanism/scope/actor, not one idea with trim variations. Generate them **before** judging any of them; early evaluation kills the good weird ideas. Diversity of framing is the point.
+
+   ```
+   A) <name> — <mechanism, one line>
+   B) <name> — <different mechanism/scope/actor>
+   C) <name> — <...>            differ by: <the axis that makes them independent>
+   ```
 
 3. **Steelman, then red-team each.** First make the strongest honest case *for* each option (charity + accuracy — don't secretly weaken it). Then attack it: how does it fail concretely? What would have to be true for it to be wrong? Where does it break at the edges (0, 1, a million), under adversarial input, under concurrency, at scale?
 
+   ```
+   <option>:  FOR — <strongest honest case, one line>
+              BREAKS — <concrete failure mode(s), not vague "risks">
+              WRONG-IF — <condition that would kill it; is it checkable?>
+   ```
+   (one block per option still standing)
+
 4. **First-principles decomposition.** Strip the leading option down to what you actually *know* to be true vs. what you're assuming by convention, analogy, or habit. Tag each claim **observed vs. inferred**. Rebuild from ground truth. This is where hidden bad assumptions surface.
+
+   ```
+   KNOW (observed/measured/sourced): <facts>
+   ASSUME (inferred/convention/habit): <claim> [load-bearing? how to check?] — one per line
+   ```
 
 5. **Decide & plan.** Choose on an explicit criterion (impact, reversibility, cost, confidence, speed). Say *why this one and why not the runner-up* — if you can't say why the runner-up loses, you haven't compared them. Name the tradeoff you're accepting. Break the choice into concrete, verifiable steps.
 
+   ```
+   PICK: <option>   ON: <criterion>   RUNNER-UP: <option> loses because <specific reason>
+   TRADEOFF ACCEPTED: <the cost you're knowingly paying>
+   STEPS: 1) <verifiable step>  2) <...>  3) <...>
+   ```
+
 6. **Verify against evidence.** Evidence over claims. Before declaring success, actually check: run the test, trace the path, work the numbers, find the source, construct the counterexample. Distinguish "the number improved" from "the number improved *for the reason I claim*." If you cannot verify, say so and mark it unverified.
+
+   ```
+   CHECK: <what you actually ran / traced / computed> → SAW: <observed result>
+   CAUSAL: improved *because* <claimed mechanism>, shown by <evidence>
+   UNVERIFIED: <anything you could not check, and why>
+   ```
 
 7. **Register assumptions & unknowns.** Close with: key assumptions the answer rests on; the 1–3 **cruxes** that would flip the conclusion if false; known unknowns; and honest confidence. This is what makes the reasoning auditable — and tells the user exactly where to push.
 
+   ```
+   ASSUMPTIONS: <what the answer rests on>
+   CRUXES (flip the conclusion if false): <1–3, flag which are untested>
+   UNKNOWNS: <known gaps>   CONFIDENCE: <low/med/high> — most raised by <one thing>
+   ```
+
 ## Power moves
 
-Concrete techniques. Pick the 3–5 that bite hardest; full checklists in `references/thinking-techniques.md`.
+Concrete techniques. Pick the 3–5 that bite hardest; full checklists — plus the "smell" that tells you to reach for each move — in `references/thinking-techniques.md`.
 
 - **Verify-first.** Before generating your own answer, take a candidate answer — even a rough or deliberately wrong strawman — and *critique* it. Checking an answer runs "backwards" from producing one and recruits critical thinking that forward generation skips; it cheaply catches logical errors before you commit. (Backed by the "verify first" research in `## Sources`.)
 - **Invert.** Instead of "how do I succeed?", ask "how would this definitely *fail*?" then design the failure paths out.
@@ -80,6 +134,8 @@ When the user wants to reason *with* you rather than receive an answer, switch m
 7. **Register.** Assumed: this is *our* latency, not the client's network. Crux: **was there a deploy at the spike time?** — if no deploy, the whole ranking reorders toward (b)/(c). Unknown until measured: p50, and whether the spike is ongoing or already self-resolved. Confidence: medium until step 1's timeline lands.
 
 Note the payload: no fix asserted before evidence, hypotheses plural and independent, and the *single* cheap measurement that discriminates them (p50 + deploy timeline) named as the first move.
+
+Two more complete runs, with every step's artifact written out in full: **a build-vs-buy strategy decision** (full pipeline) and **a race-condition debugging session** (systematic-debugging checklist, hypothesis table, discriminating tests, closing register) — see `references/worked-examples.md`. Imitate their shape, not their content.
 
 ## Sources
 

@@ -2,6 +2,21 @@
 
 Reach for the checklist that matches the situation. These expand the "Power moves" in SKILL.md. Don't run them all — pick the 3–5 that bite hardest for *this* problem.
 
+## Trigger smells — which move, and when
+
+Each power move has a smell that should make your hand reach for it:
+
+- **Verify-first.** Smell: you're about to deliver a fluent, confident answer and nothing has pushed back on it yet — or a plausible answer already exists (yours or the user's) and everyone is nodding.
+- **Invert.** Smell: the plan is all happy path; you can list five benefits but not one concrete way it fails.
+- **Find the crux.** Smell: a long list of assumptions all treated as equally important — or you notice you're testing the claims you're already sure of, because they're the easy ones.
+- **Rotate perspectives.** Smell: consensus arrived fast, everyone in the (real or simulated) room shares one background, and the design has no named adversary or skeptic.
+- **Pre-mortem.** Smell: commitment is imminent and every sentence so far has been about how this succeeds; "what could go wrong" got one hand-wave.
+- **Second-order thinking.** Smell: the justification stops at the immediate effect ("this makes X faster") with nothing about what the people or systems downstream of X do *next*.
+- **Name the tradeoff.** Smell: one option looks strictly dominant — a comparison row with no cons. Free options mean an unpriced cost.
+- **Cheapest disconfirming test.** Smell: you're about to spend hours building on a belief you could check in minutes, or the plan's very first step is its most expensive one.
+- **Reason from the error, not the guess.** Smell: you caught yourself pattern-matching a bug to a familiar cause before finishing reading the failure output — or wanting to try a fix "just to see if it helps."
+- **Consider the null option.** Smell: "do nothing" never appeared on the ballot, and the status quo has only been described by its flaws, never its costs-avoided.
+
 ## Framing a hard problem
 
 - [ ] State the real question in one sentence. If you can't, you don't understand it yet.

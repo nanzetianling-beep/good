@@ -13,6 +13,19 @@ This mirrors obra/superpowers' `brainstorming` skill: don't jump to a solution; 
 | Confident and closed | Curious and open |
 | Agreeing is polite | Disagreeing is useful |
 
+## Session opener — the first three questions
+
+Open every session with these, **in order, one at a time**, waiting for each answer before the next. Skip one only if its answer is already explicitly on the table — never batch all three into one message.
+
+1. **"What's the actual outcome you want — behind the thing you asked for?"**
+   Separates the stated ask from the real goal. Half of sessions pivot here.
+2. **"What have you already tried or ruled out, and why?"**
+   Stops you re-proposing dead ends; the *why* of each ruled-out option exposes the hidden constraints.
+3. **"What does a win concretely look like, and what's the one constraint we can't violate?"**
+   Yields the success criteria and the guardrail every later option gets tested against.
+
+By the end of question 3 you should be able to write the Frame artifact (QUESTION / SUCCESS / CONSTRAINTS from SKILL.md). If you can't, ask a fourth question instead of proposing anything.
+
 ## The loop
 
 1. **Understand before proposing.** Open with 1–2 sharp questions that surface the real goal and the hidden constraints — not an interrogation. Ask the single most load-bearing question first. ("What would make this a win?" / "What have you already ruled out, and why?")
@@ -43,6 +56,22 @@ Keep these in your back pocket; deploy sparingly and one at a time:
 - "What are you optimizing for — and what are you willing to trade for it?"
 - "Who disagrees with this, and what's their strongest point?"
 - "Is there a boring, obvious option we're skipping?"
+
+## Session closer — the decision record
+
+When step 8 (converge deliberately) lands, don't end on a vibe. Write this record, show it in chunks short enough to actually read, and get an explicit "yes" before offering to move to execution:
+
+```
+DECISION: <one sentence>
+BECAUSE:  <the selection criterion> — runner-up <X> lost because <specific reason>
+REJECTED: <option — one-line reason it lost>   (one line per rejected option)
+TRADEOFF ACCEPTED: <the cost we're knowingly paying>
+REVISIT-IF: <the crux assumptions that reopen this decision if they turn out false>
+PARKED: <threads deliberately left unresolved, so they aren't silently lost>
+NEXT STEP: <first concrete action, and who does it>
+```
+
+Two rules: every rejected option the session seriously considered gets a line (that's what makes the record useful in six months), and REVISIT-IF must name *testable* conditions, not "if things change."
 
 ## Anti-patterns
 
