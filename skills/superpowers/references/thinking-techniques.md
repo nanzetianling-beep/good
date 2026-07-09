@@ -1,6 +1,6 @@
 # Thinking Techniques — Power Move Checklists
 
-Reach for the checklist that matches the situation. These expand the "Power moves" in SKILL.md. Don't run all of them; pick the 3–5 that bite hardest for this problem.
+Reach for the checklist that matches the situation. These expand the "Power moves" in SKILL.md. Don't run them all — pick the 3–5 that bite hardest for *this* problem.
 
 ## Framing a hard problem
 
@@ -8,17 +8,35 @@ Reach for the checklist that matches the situation. These expand the "Power move
 - [ ] What does a *good* answer look like concretely? Write the success criteria down.
 - [ ] What are the hard constraints (time, budget, reversibility, must-not-break)?
 - [ ] Who is the answer for, and what will they *do* with it? Fit depth to that.
-- [ ] What is the actual question behind the stated question? (Often the ask is a symptom.)
-- [ ] What's the null option — do nothing / the boring existing solution? Put it on the ballot.
+- [ ] What is the actual question behind the stated question? (The ask is often a symptom.)
+- [ ] Put the null option on the ballot — do nothing / the boring existing solution.
 
 ## Divergence — generating options (do this BEFORE judging)
 
-- [ ] Force at least 3 genuinely different approaches, not one idea with trim variations.
-- [ ] Vary the *framing*, not just the parameters: different mechanism, different scope, different actor.
+- [ ] Force at least 3 *genuinely different* approaches, not one idea with trim variations.
+- [ ] Vary the *framing*, not just parameters: different mechanism, scope, actor, timescale.
 - [ ] Ask "what would an expert in a *different* field do here?"
 - [ ] Ask "what's the version that's 10× cheaper? 10× more ambitious?"
 - [ ] Include at least one option you don't currently like — steelman it anyway.
 - [ ] Keep evaluation OFF during this phase. Judging early kills the good weird ideas.
+
+## Rotate perspectives (multiple independent angles)
+
+Re-run the problem through distinct lenses; each is blind to what the others catch.
+- [ ] **The maintainer** who inherits this in a year with no context. What confuses them?
+- [ ] **The adversary** actively trying to break, abuse, or exploit it. Where do they get in?
+- [ ] **The skeptic** who thinks the whole premise is wrong. What's their strongest point?
+- [ ] **The domain expert from a different field** (a physicist, an accountant, a lawyer).
+- [ ] **The user** who doesn't care how it works, only whether it solves their real problem.
+- [ ] Where do two lenses disagree? That tension usually marks the real risk or tradeoff.
+
+## Verify-first (critique before you generate)
+
+Checking an answer runs backwards from producing one and recruits critical thinking that forward generation skips. Cheap, and catches logical errors early.
+- [ ] Write down a candidate answer — even a rough or deliberately-wrong strawman.
+- [ ] Argue *against* it: where does it not hold up? What does it fail to explain?
+- [ ] Let that critique reshape the answer you actually give, rather than defending the first draft.
+- [ ] For a claimed result, verify it as if a rival produced it and you're paid to falsify it.
 
 ## Steelman + red-team (per option)
 
@@ -32,7 +50,7 @@ Then red-team:
 - [ ] What must be true for this to be *wrong*? Are those things actually true?
 - [ ] Edges & scale: what breaks at 0, at 1, at a million, under adversarial input, under concurrency?
 - [ ] Second-order: "and then what?" — trace consequences 2–3 steps out.
-- [ ] Who is harmed / who pays the cost that isn't in the happy path?
+- [ ] Who is harmed / who pays a cost that isn't in the happy path?
 - [ ] Groupthink check: am I liking this because it's good, or because it's familiar / mine?
 
 ## First-principles decomposition
@@ -41,12 +59,13 @@ Then red-team:
 - [ ] List what you're *assuming* by convention, analogy, or habit.
 - [ ] For each assumption: is it load-bearing? Could it be false? How would I check?
 - [ ] Rebuild the solution from the known facts only. Does it still look the same?
-- [ ] Separate observed from inferred on every claim — tag each.
+- [ ] Tag every claim **observed vs. inferred**. Debugging especially lives or dies here.
 
 ## Deciding
 
 - [ ] Name the explicit selection criterion (impact, reversibility, cost, confidence, speed).
-- [ ] For a one-way door (hard to reverse): raise the bar, gather more evidence. For a two-way door: bias to action.
+- [ ] One-way door (hard to reverse): raise the bar, gather more evidence before committing.
+- [ ] Two-way door (cheap to reverse): bias to action; the experiment *is* the analysis.
 - [ ] Name the tradeoff you're accepting. If it looks free, you haven't found the price.
 - [ ] Say why the runner-up loses. If you can't, you haven't really compared them.
 - [ ] Pre-mortem: it's 6 months later and this failed. Write why. Fix those causes now.
@@ -62,9 +81,8 @@ Then red-team:
 ## Systematic debugging (for gnarly bugs)
 
 Adapted from the "read the error, form a real hypothesis, don't shotgun" discipline.
-
 - [ ] Read the *actual* error / failure output fully. Don't pattern-match to a guess.
-- [ ] Reproduce it reliably first. An intermittent repro is a clue, not a nuisance — what makes it fire?
+- [ ] Reproduce it reliably first. An intermittent repro is a clue — what makes it fire?
 - [ ] State a hypothesis that explains *all* the symptoms, not just the convenient one.
 - [ ] Predict: "if this hypothesis is right, I will also see X." Then go look for X.
 - [ ] Change ONE thing at a time. Shotgun fixes destroy the evidence trail.
@@ -75,6 +93,6 @@ Adapted from the "read the error, form a real hypothesis, don't shotgun" discipl
 ## Closing register (make reasoning auditable)
 
 - [ ] Key assumptions the answer rests on.
-- [ ] Cruxes: the 1–3 assumptions that, if false, flip the conclusion.
+- [ ] Cruxes: the 1–3 assumptions that, if false, flip the conclusion. Flag which are untested.
 - [ ] Known unknowns: what you don't know and how it could change things.
-- [ ] Confidence level, honestly stated, and what would raise it.
+- [ ] Confidence level, honestly stated, and the single thing that would most raise it.

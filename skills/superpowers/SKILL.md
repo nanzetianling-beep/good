@@ -1,94 +1,90 @@
 ---
 name: superpowers
-description: Structures Claude's thinking to raise the logic and quality of its output by exploring a problem from multiple independent angles before committing. Use for hard, ambiguous, or high-stakes work — complex strategy, gnarly technical debugging, architecture decisions, or rubber-ducking / thinking-partner sessions. Triggers on "think deeply", "hard problem", "figure out a strategy", "brainstorm", "debug this gnarly issue", "multiple perspectives", "help me reason through".
+description: Structures Claude's thinking to raise the logic and quality of its output by attacking a problem from several independent angles before committing. Use for hard, ambiguous, or high-stakes work: complex strategy, gnarly technical debugging, architecture decisions costly to reverse, or thinking-partner / rubber-duck sessions. Triggers on "think deeply", "hard problem", "figure out a strategy", "brainstorm", "debug this gnarly issue", "multiple perspectives", "poke holes in my plan".
 ---
 
 # Superpowers
 
 ## What this is
 
-A reasoning harness. It slows Claude down at exactly the moments where speed produces confident-but-wrong answers, and replaces "generate the first plausible response" with a disciplined loop: frame → diverge → stress-test → decompose → decide → verify. The goal is not more words — it is fewer wrong conclusions and a visible chain of reasoning the user can audit and challenge.
+A reasoning harness. It slows Claude down at exactly the moments where speed produces confident-but-wrong answers, and replaces "emit the first plausible response" with a disciplined loop: **frame → diverge → stress-test → decompose → decide → verify → register**. The output is not more words — it is fewer wrong conclusions and a chain of reasoning the user can audit and challenge.
 
-The core insight from the tools this draws on (obra/superpowers, red-teaming, spec-first TDD): the highest-leverage move is to **not jump to code or conclusions**. Step back, tease out what is actually being asked, and only then commit — with evidence.
+The load-bearing insight from the sources this draws on (obra/superpowers, red-teaming practice, verification-first prompting): the single highest-leverage move is to **not jump to code or a conclusion**. Step back, tease out what is actually being asked, attack it from angles that could each be right, and only then commit — with evidence.
 
-## When to use it
+## When to use it — and how deep to go
 
-Invoke this skill when the problem is **hard, ambiguous, or high-stakes**, or when the user explicitly asks to think:
+Invoke when the problem is **hard, ambiguous, or high-stakes**, or when the user explicitly asks to think. Do **not** use it for simple, well-specified, low-stakes tasks — the overhead outweighs the payoff. Match depth to stakes with a **depth dial**:
 
-- Complex strategy formulation with tradeoffs and no obvious right answer.
-- A gnarly bug that has resisted the obvious fixes.
-- Architecture / design decisions that are expensive to reverse.
-- The user wants a thinking partner ("rubber duck", "talk this through", "poke holes in my plan").
-- You notice yourself about to give a fast, confident answer to a question that deserves more.
+- **Quick pass** (medium stakes, some ambiguity): run Frame, Diverge, Verify explicitly; compress the rest in your head. A few sentences.
+- **Full pass** (high stakes, gnarly, or one-way-door decisions): run all seven steps explicitly and **show your work** so the user can challenge each link.
 
-Do **not** use it for simple, low-stakes, or well-specified tasks — the overhead is not worth it. Match the depth of the loop to the stakes.
+Signals to reach for it: no obvious right answer with real tradeoffs; a bug that survived the obvious fixes; an expensive-to-reverse decision; the user says "rubber duck / talk this through / poke holes"; or you catch yourself about to give a fast, confident answer to a question that deserves more.
 
 ## The core loop
 
-Run these seven steps. For genuinely hard problems, do all of them explicitly and show your work. For medium problems, compress — but never skip **Frame**, **Diverge**, and **Verify**.
+1. **Frame the problem & success criteria.** State the real question in one sentence. What does a good answer concretely look like? What are the hard constraints (time, budget, reversibility, must-not-break)? Resist solving until this is sharp. If the ask is ambiguous, surface the ambiguity — ask, or state your interpretation explicitly and proceed.
 
-1. **Frame the problem & success criteria.** State the real question in one sentence. What does a good answer look like? What are the constraints, the deadline, the definition of done? Resist solving until this is sharp. If the ask is ambiguous, surface the ambiguity and ask (or state your interpretation explicitly).
+2. **Diverge: generate independent approaches.** Produce at least 2–3 *genuinely different* solutions or hypotheses — different mechanism/scope/actor, not one idea with trim variations. Generate them **before** judging any of them; early evaluation kills the good weird ideas. Diversity of framing is the point.
 
-2. **Generate multiple independent approaches.** Produce at least 2–3 genuinely different solutions/hypotheses — not one idea with variations. Generate them *before* judging any of them (separate divergence from evaluation). Diversity of framing is the point.
+3. **Steelman, then red-team each.** First make the strongest honest case *for* each option (charity + accuracy — don't secretly weaken it). Then attack it: how does it fail concretely? What would have to be true for it to be wrong? Where does it break at the edges (0, 1, a million), under adversarial input, under concurrency, at scale?
 
-3. **Steelman, then red-team each.** For each approach, first make the strongest honest case *for* it (charity + accuracy). Then attack it: how does it fail? What would have to be true for it to be wrong? Where does it break at scale, at the edges, under adversarial input?
+4. **First-principles decomposition.** Strip the leading option down to what you actually *know* to be true vs. what you're assuming by convention, analogy, or habit. Tag each claim **observed vs. inferred**. Rebuild from ground truth. This is where hidden bad assumptions surface.
 
-4. **First-principles decomposition.** Strip the leading option(s) down to what you actually *know* to be true vs. what you're assuming by convention or analogy. Rebuild from the ground truth. This is where hidden bad assumptions get caught.
+5. **Decide & plan.** Choose on an explicit criterion (impact, reversibility, cost, confidence, speed). Say *why this one and why not the runner-up* — if you can't say why the runner-up loses, you haven't compared them. Name the tradeoff you're accepting. Break the choice into concrete, verifiable steps.
 
-5. **Pick & plan.** Choose using an explicit criterion (impact, reversibility, cost, confidence). Say *why* this one and why not the others. Break the choice into concrete, verifiable steps with a definition of done for each.
+6. **Verify against evidence.** Evidence over claims. Before declaring success, actually check: run the test, trace the path, work the numbers, find the source, construct the counterexample. Distinguish "the number improved" from "the number improved *for the reason I claim*." If you cannot verify, say so and mark it unverified.
 
-6. **Verify against evidence.** Evidence over claims. Before declaring success, actually check: run the test, trace the code path, work the numbers, find the source, construct the counterexample. Do not assert something works because it "should." If you cannot verify, say so.
-
-7. **State assumptions & unknowns.** End with an explicit register: key assumptions the answer rests on, what would flip the conclusion (the "cruxes"), and what you don't know. This is what makes the reasoning auditable.
+7. **Register assumptions & unknowns.** Close with: key assumptions the answer rests on; the 1–3 **cruxes** that would flip the conclusion if false; known unknowns; and honest confidence. This is what makes the reasoning auditable — and tells the user exactly where to push.
 
 ## Power moves
 
-Concrete techniques to reach for. Pick the ones that fit; full checklists are in `references/thinking-techniques.md`.
+Concrete techniques. Pick the 3–5 that bite hardest; full checklists in `references/thinking-techniques.md`.
 
-- **Invert.** Instead of "how do I succeed?", ask "how would this definitely fail?" then avoid those paths.
-- **Find the crux.** Identify the 1–3 assumptions that, if false, flip your conclusion. Test those first, not the safe ones.
-- **Pre-mortem.** Imagine it's six months later and this failed badly. Write the story of why. Then fix those causes now.
+- **Verify-first.** Before generating your own answer, take a candidate answer — even a rough or deliberately wrong strawman — and *critique* it. Checking an answer runs "backwards" from producing one and recruits critical thinking that forward generation skips; it cheaply catches logical errors before you commit. (Backed by the "verify first" research in `## Sources`.)
+- **Invert.** Instead of "how do I succeed?", ask "how would this definitely *fail*?" then design the failure paths out.
+- **Find the crux.** Identify the 1–3 assumptions that, if false, flip your conclusion. Test *those* first — not the safe ones you're already sure of.
+- **Rotate perspectives.** Re-examine the problem through distinct lenses — an expert in a different field, the person who'll maintain this in a year, an adversary trying to break it, the skeptic on the team. Each lens surfaces failure modes the others are blind to. This is the "multiple independent angles" of the whole skill made concrete.
+- **Pre-mortem.** It's six months later and this failed badly. Write the story of *why*. Then fix those causes now.
 - **Second-order thinking.** "And then what?" Trace consequences two or three steps out, not just the immediate effect.
 - **Name the tradeoff.** Every real decision costs something. If an option looks free, you haven't found its price yet — keep looking.
-- **Cheapest disconfirming test.** What's the fastest observation that could prove you wrong? Do that before investing.
-- **Separate observed from inferred.** Tag each claim: did you *see* it, or are you assuming it? Debugging especially lives or dies here.
-- **Reason from the error, not the guess.** For bugs: read the actual failure, form a hypothesis that explains *all* the symptoms, predict what you'd see if it's right, then check. Don't shotgun fixes. (See `references/thinking-techniques.md` → systematic debugging.)
-- **Consider the null option.** "Do nothing" and "the boring existing solution" are always on the ballot. Beat them on merits.
+- **Cheapest disconfirming test.** What is the single fastest observation that could prove you wrong? Do that before investing.
+- **Reason from the error, not the guess.** For bugs: read the *actual* failure fully, form a hypothesis that explains *all* symptoms, predict what else you'd see if it's right, then look. Change one thing at a time. Don't shotgun fixes. (See `references/thinking-techniques.md` → systematic debugging.)
+- **Consider the null option.** "Do nothing" and "the boring existing solution" are always on the ballot. Beat them on merits or take them.
 
 ## Running a thinking-partner / brainstorm loop
 
-When the user wants to reason *with* you rather than receive an answer, switch modes: your job is to sharpen their thinking, not to perform yours. See `references/brainstorming-loop.md` for the full protocol. In short:
+When the user wants to reason *with* you rather than receive an answer, switch modes: your job is to sharpen *their* thinking, not to perform yours in a monologue. Full protocol in `references/brainstorming-loop.md`. In short:
 
-- **Ask before answering.** Draw out the real goal with Socratic questions before proposing anything. One or two sharp questions beat a wall of them.
-- **One thread at a time.** Don't dump ten considerations. Advance the single most load-bearing question, resolve it, move on.
-- **Reflect back.** Restate their idea in your words and show them — this catches misunderstandings and often makes them refine it themselves.
-- **Offer, don't impose.** Present options and the reasoning; let them decide. Flag where you disagree and why, then defer.
-- **Push back honestly.** A useful partner disagrees. If you see a flaw, say so plainly — sycophancy wastes their time.
-- **Converge deliberately.** When the space is explored, summarize the spec/decision in chunks short enough to actually read, and confirm before moving to execution.
+- **Ask before answering.** Draw out the real goal with one or two sharp Socratic questions before proposing anything. One load-bearing question beats a wall of them.
+- **One thread at a time.** Don't dump ten considerations. Advance the single question that unlocks the most, resolve it, then open the next.
+- **Reflect back.** Restate their idea in your own words — this catches misunderstandings and often makes them refine it themselves.
+- **Push back honestly.** A useful partner disagrees. Steelman their view first, then name the flaw plainly. Sycophancy wastes their time.
+- **Converge in digestible chunks.** When the space is explored, summarize the emerging spec/decision in pieces short enough to actually read, and get explicit sign-off before moving to execution.
 
 ## Worked example
 
 **Ask:** "Our checkout API p99 latency spiked from 200ms to 3s last night. Fix it."
 
-1. **Frame.** Real question: what changed to cause a 15× p99 regression, and how do we restore it — without breaking checkout? Success = p99 back under 300ms, root cause understood so it can't silently recur. Constraint: production, revenue-critical, can't casually experiment.
+1. **Frame.** Real question: *what changed* to cause a 15× p99 regression, and how do we restore it without breaking checkout? Success = p99 back under 300ms **and** root cause understood so it can't silently recur. Constraint: production, revenue-critical — can't casually experiment.
 
-2. **Diverge (independent hypotheses).** (a) A deploy last night introduced a slow path / N+1 query. (b) A downstream dependency (payments, inventory) degraded. (c) Data/traffic shift — a hot key, cache stampede, or lock contention under load. (d) Infra — DB connection pool exhaustion, noisy neighbor, GC pauses.
+2. **Diverge (independent hypotheses).** (a) A deploy last night introduced a slow path / N+1 query. (b) A downstream dependency (payments, inventory) degraded. (c) Data/traffic shift — a hot key, cache stampede, or lock contention under load. (d) Infra — DB connection-pool exhaustion, noisy neighbor, or GC pauses.
 
-3. **Steelman + red-team.** (a) is strongest: p99 (not p50) spiking overnight points to a tail-latency path hit by *some* requests — classic N+1 or missing index on a code path a deploy touched. Red-team (a): was there even a deploy? If not, (a) is dead. Red-team (b): if downstream degraded, their dashboards would show it and other services would hurt too — check blast radius. Red-team (c): a hot key would likely show p50 movement too.
+3. **Steelman + red-team.** (a) is strongest: p99 (not p50) spiking overnight points to a *tail-latency* path hit by some requests — classic N+1 or a missing index on a code path a deploy touched. Red-team (a): was there even a deploy at that time? If not, (a) is dead. Red-team (b): if a downstream degraded, *its* dashboards would show it and other services would hurt too — check the blast radius. Red-team (c): a hot key would likely move p50 as well, not just the tail.
 
-4. **First principles.** What do we *know*? p99 up, p50 unknown — **get p50 first**, it discriminates hypotheses (tail-only vs. broad). We know it started "last night" — correlate the exact timestamp against the deploy log and dependency dashboards. Everything else is assumption.
+4. **First principles.** What do we actually *know*? p99 up; p50 **unknown** — so get p50 first, it discriminates tail-only (points to a/c) from broad (points to b/d). We know it started "last night" — correlate the *exact* timestamp against the deploy log and dependency dashboards. Everything else is inference.
 
-5. **Pick & plan.** Cheapest disconfirming tests first, ordered by likelihood × speed: (1) check deploy timeline vs. spike timestamp; (2) pull p50 alongside p99; (3) check downstream dashboards. Whichever the evidence points at, then trace that code path / query plan. Don't roll back blindly — a rollback that doesn't address root cause just hides it.
+5. **Decide & plan.** Cheapest disconfirming tests first, ordered by likelihood × speed: (1) deploy timeline vs. spike timestamp; (2) pull p50 alongside p99; (3) scan downstream dashboards. Then trace whichever the evidence points at (query plan / span waterfall). Do **not** roll back blindly — a rollback that doesn't address root cause just hides it and burns the evidence.
 
-6. **Verify.** After the fix, reproduce the load pattern in staging or watch the live p99 recover; confirm the specific query/path is now fast with a trace or query plan — not just "the number looks better," which could be traffic dropping.
+6. **Verify.** After the fix, watch live p99 recover *and* confirm the specific query/path is now fast via a trace or query plan — not just "the number looks better," which could be traffic dropping off. Distinguish recovery from coincidence.
 
-7. **Assumptions & unknowns.** Assumed: this is our latency, not the client's network. Crux: *was there a deploy at the spike time?* If no deploy, the whole ranking reorders toward (b)/(c). Unknown until measured: p50, and whether the spike is ongoing or self-resolved.
+7. **Register.** Assumed: this is *our* latency, not the client's network. Crux: **was there a deploy at the spike time?** — if no deploy, the whole ranking reorders toward (b)/(c). Unknown until measured: p50, and whether the spike is ongoing or already self-resolved. Confidence: medium until step 1's timeline lands.
 
-Notice the payload: no fix was asserted before evidence, hypotheses were plural and independent, and the single measurement that discriminates them (p50 + deploy timeline) was identified as the first move.
+Note the payload: no fix asserted before evidence, hypotheses plural and independent, and the *single* cheap measurement that discriminates them (p50 + deploy timeline) named as the first move.
 
 ## Sources
 
-- [obra/superpowers — agentic skills framework & methodology (Jesse Vincent)](https://github.com/obra/superpowers) — brainstorm→plan→implement→verify pipeline, Socratic brainstorming, TDD, subagent-driven development, `verification-before-completion` and `systematic-debugging` skills; "evidence over claims" and "don't jump to code."
-- [Jesse Vincent, "Superpowers: How I'm using coding agents in October 2025"](https://blog.fsck.com/2025/10/09/superpowers/) and [Simon Willison's writeup](https://simonwillison.net/2025/Oct/10/superpowers/) — the "step back and ask what you're really trying to do, then show the spec in digestible chunks" philosophy.
-- [Steelmanning as an organizational capability — Assumption Register, Crux Map, Evidence Ledger, Red-Team Appendix](https://tommywennerstierna.wordpress.com/2026/03/03/steelmanning-steelmanning-from-rhetoric-to-an-organizational-capability/) and [Red teaming for decision-making (CISS/Bundeswehr)](https://www.unibw.de/ciss-en/news/wargaming-and-information-systems/enhancing-decision-making-with-red-teaming) — challenge assumptions, expose bias, mitigate groupthink; charity/accuracy/strengthening in steelmanning.
-- [SIRAJ: Diverse and Efficient Red-Teaming via Distilled Structured Reasoning (arXiv 2510.26037)](https://arxiv.org/pdf/2510.26037) and ["Asking LLMs to Verify First is Almost Free Lunch" (arXiv 2511.21734)](https://arxiv.org/pdf/2511.21734) — structured reasoning improves red-teaming diversity; a verification-first pass cheaply improves LLM reasoning by constraining the search space.
+- [obra/superpowers — agentic skills framework & methodology (Jesse Vincent / Prime Radiant)](https://github.com/obra/superpowers) — real skills incl. `brainstorming` (Socratic design refinement), `writing-plans`, `systematic-debugging` (root-cause phases), `verification-before-completion`, `subagent-driven-development`; core principles "evidence over claims," "systematic over ad-hoc," and "don't jump to code — clarify first."
+- [Jesse Vincent, "Superpowers: How I'm using coding agents in October 2025"](https://blog.fsck.com/2025/10/09/superpowers/) and [Simon Willison's writeup (Oct 10, 2025)](https://simonwillison.net/2025/Oct/10/superpowers/) — the brainstorming skill "presents the emerging design in digestible sections for your explicit approval": step back, extract the spec through dialogue, show it in chunks short enough to actually read.
+- ["Asking LLMs to Verify First is Almost Free Lunch" — Wu & Yao, arXiv 2511.21734](https://arxiv.org/abs/2511.21734) — prompting a model to verify a candidate answer (even a random one) *before* solving triggers a complementary "reverse reasoning" pass that recruits critical thinking and reduces logical errors at minimal cost. Basis for the **verify-first** power move.
+- [SIRAJ: Diverse and Efficient Red-Teaming for LLM Agents via Distilled Structured Reasoning — arXiv 2510.26037](https://arxiv.org/abs/2510.26037) — a structured reasoning format materially improves the *diversity* and efficiency of adversarial probing; support for enforcing multiple independent angles rather than one line of attack.
+- [Enhancing Decision-Making with Red Teaming — CISS, Universität der Bundeswehr München](https://www.unibw.de/ciss-en/news/wargaming-and-information-systems/enhancing-decision-making-with-red-teaming) — red teaming as a proven method to challenge assumptions, expose bias, and mitigate groupthink; core principles include applied critical thinking and groupthink mitigation. Basis for the steelman → red-team and rotate-perspectives moves.
