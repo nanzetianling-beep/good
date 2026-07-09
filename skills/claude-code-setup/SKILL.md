@@ -31,20 +31,77 @@ Also keep **CLAUDE.md** (`./CLAUDE.md`, `.claude/CLAUDE.md`, or nested/`~/.claud
 
 ## Intake and analysis workflow
 
-Run this before recommending anything. Prefer reading real files over asking.
+Run this before recommending anything. Prefer reading real files over asking; ask only what the repo cannot tell you.
 
-1. **Detect the stack.** Look for `package.json`, `pyproject.toml` / `requirements.txt`, `go.mod`, `Cargo.toml`, `pom.xml`, `Gemfile`, etc. Note languages, frameworks, and monorepo layout (multiple package roots or nested `.claude/`).
+### Step 1 - Fingerprint the repo (auto-injected at invocation)
 
-   ```!
-   ls -la
-   ls -la .claude 2>/dev/null || echo "no .claude dir yet"
-   ```
+```!
+ls -a
+ls -R .claude 2>/dev/null || echo "no .claude dir yet"
+ls .mcp.json CLAUDE.md 2>/dev/null || true
+```
 
-2. **Find the build/test/lint commands.** Read `scripts` in `package.json`, `Makefile`, `tox.ini`, CI files under `.github/workflows/`. These reveal what a hook could enforce and what CLAUDE.md should document.
-3. **Inventory existing Claude Code config.** Check `.claude/skills/`, `.claude/agents/`, `.claude/commands/`, `.mcp.json`, `.claude/settings.json`, `.claude/rules/`, and `CLAUDE.md`. Don't duplicate what exists.
-4. **Identify external systems.** Databases, issue trackers, cloud providers, design tools, chat, monitoring - candidates for MCP.
-5. **Elicit pain points.** Ask (or infer): What do you repeat every session? What gets forgotten (conventions)? What must never happen? What floods your context? What do you copy-paste from another tool?
-6. **Map each pain point to a category** using the decision framework below, then write the consultation report.
+### Step 2 - Run the detection probes
+
+Run these (skip probes that Step 1 already answered), then read what they surface:
+
+```bash
+# Language manifests + lockfiles (the lockfile decides the package manager)
+ls package.json pnpm-lock.yaml yarn.lock bun.lockb package-lock.json \
+   pyproject.toml uv.lock poetry.lock Pipfile requirements.txt \
+   go.mod go.work Cargo.toml pom.xml build.gradle build.gradle.kts \
+   Gemfile mix.exs composer.json 2>/dev/null
+
+# Monorepo signals
+ls pnpm-workspace.yaml lerna.json turbo.json nx.json 2>/dev/null
+
+# Formatters / linters (format-on-edit hook candidates)
+ls .prettierrc* prettier.config.* biome.json* eslint.config.* .eslintrc* \
+   ruff.toml .ruff.toml .flake8 rustfmt.toml .golangci.yml .editorconfig 2>/dev/null
+
+# Task runners + CI (CI files are the ground truth for build/test commands - read them)
+ls Makefile justfile Taskfile.yml .gitlab-ci.yml .circleci Jenkinsfile 2>/dev/null
+ls .github/workflows/ 2>/dev/null
+
+# External-system candidates for MCP
+ls .env.example docker-compose.yml compose.yaml 2>/dev/null
+```
+
+Then follow up per stack: `jq -r '.scripts' package.json` (JS - canonical commands and the test runner name); read `pyproject.toml` for `[tool.pytest.ini_options]`/`[tool.ruff]`; `go test ./...` and `cargo test` are built in. Interpret:
+
+| Evidence | Conclusion |
+| :--- | :--- |
+| `pnpm-lock.yaml` / `yarn.lock` / `bun.lockb` / `package-lock.json` | Package manager pnpm / yarn / bun / npm - a CLAUDE.md "use X, not Y" line |
+| `vitest`/`jest`/`playwright` in devDependencies; `pytest` config | Test runner - the command for a test hook and CLAUDE.md |
+| Formatter config present | Format-on-edit hook is a near-automatic recommendation |
+| CI workflow steps | What must pass - candidates for hooks and `permissions.allow` |
+| `docker-compose` services (postgres, redis...), `.env.example` keys (`DATABASE_URL`, `SENTRY_DSN`, `SLACK_*`) | External systems - MCP candidates |
+| Existing `.claude/` contents | Don't duplicate; audit for the anti-patterns list in [references/decision-matrix.md](references/decision-matrix.md) |
+
+### Step 3 - Ask the user (verbatim, minus anything already answered)
+
+1. "What do you find yourself re-typing or re-explaining to Claude every session?" (repetition -> skill or CLAUDE.md)
+2. "What has Claude gotten wrong here more than once - commands, conventions, style?" (drift -> CLAUDE.md / rules / format hook)
+3. "What must never happen in this repo - pushing to main, touching prod data, editing generated files?" (red lines -> PreToolUse hook + permissions deny)
+4. "Which other tools do you copy-paste to or from - issue tracker, database, logs, designs, chat?" (external -> MCP)
+5. "Which tasks flood the conversation or feel like they should run on the side - big reviews, codebase research, audits?" (context -> subagent)
+6. "Solo or team - should this config be committed and shared?" (scope -> project `.claude/` vs `~/.claude/` / `settings.local.json`)
+
+### Step 4 - Score and prioritize candidates
+
+For each candidate recommendation, score **Priority = Frequency + Severity - Effort**:
+
+| Score | Frequency (pain occurs) | Severity (if unaddressed) | Effort (to set up) |
+| :--- | :--- | :--- | :--- |
+| 3 | Every session / every edit | Irreversible: prod, data loss, secrets | High: external creds, new server, plugin |
+| 2 | Weekly | Real rework or context churn | Medium: script/config to write and test |
+| 1 | Occasionally | Minor annoyance | Low: one file, <15 min (CLAUDE.md line, permissions entry) |
+
+Tiers: **>= 4 - "Do now"** (cap at 3-5 items); **2-3 - "Next steps"** (name the trigger that promotes them); **<= 1 - skip**, note why. Tie-breakers: safety guardrails beat convenience at equal score; prefer the item that unblocks others (CLAUDE.md is almost always first - Frequency 3, Effort 1).
+
+### Step 5 - Write the report
+
+Use the consultation report template below; pull starter configs from [references/recipes.md](references/recipes.md).
 
 ## Decision framework: which category for which need
 
@@ -73,6 +130,8 @@ Common pairings to suggest together:
 Guardrail: don't put nuanced judgment in a hook. Hooks are for deterministic checks (block a command pattern, validate a path); judgment-heavy review belongs in a skill or subagent.
 
 ## Concrete recommendations and file locations
+
+Copy-paste starter configs for everything below (hooks, skills, subagents, MCP, permissions, CLAUDE.md, headless CI) live in [references/recipes.md](references/recipes.md).
 
 **Scopes.** Project config (committed, shared): `.claude/` in the repo. Personal (all your projects): `~/.claude/`. Enterprise/managed overrides both. When the same feature exists at multiple levels, precedence differs by type: CLAUDE.md is additive (all levels contribute); skills override by name (managed > user > project); subagents (managed > `--agents` CLI flag > project > user); MCP servers (local > project > user); hooks merge (all fire).
 
@@ -144,23 +203,35 @@ The body is the subagent's system prompt. Only `name` and `description` are requ
 
 **Command** - same as a Skill but with `disable-model-invocation: true` so only you trigger it. Legacy `.claude/commands/<name>.md` still works and creates `/name` too.
 
-## Example consultation output
+## Consultation report template
 
-> **Project:** TypeScript + pnpm monorepo, Vitest tests, ESLint, Postgres, deploys via a shell script. No `.claude/` yet.
->
-> **Recommendations**
->
-> 1. **CLAUDE.md** (`./CLAUDE.md`) - "Use pnpm, not npm. Run `pnpm test` before committing. Package structure: apps/*, packages/*." Always-on conventions; cheapest first step.
-> 2. **Hook** (`PostToolUse`, matcher `Edit|Write`) - run ESLint --fix on changed files so lint never drifts. This must happen every time, so it is a hook, not a prompt rule.
-> 3. **Hook** (`PreToolUse`, matcher `Bash`, `if: "Bash(git push *)"`) - block direct pushes to `main` and `rm -rf`. Enforcement, not a request.
-> 4. **MCP** (`.mcp.json`, project scope) - a Postgres MCP server so Claude queries the DB directly instead of you pasting rows.
-> 5. **Skill** (`.claude/skills/db-conventions/`) - documents the schema, "always exclude test accounts," and common query patterns. Pairs with the Postgres MCP.
-> 6. **Command** (`.claude/skills/deploy/` with `disable-model-invocation: true`) - wraps the deploy script as `/deploy`; you time it, Claude never auto-ships.
-> 7. **Subagent** (`.claude/agents/code-reviewer.md`, `tools: Read, Grep, Glob`, `model: sonnet`) - review large diffs in isolated context so your main session stays clean.
->
-> **Commit `.claude/` so the team shares this setup.** Add features incrementally: start with 1-2, add the rest as triggers appear. If a second repo needs the same setup, package it as a **plugin**.
+Output the consultation in exactly this shape - compact enough to act on, complete enough to audit later:
 
-For a deeper category-by-category comparison, edge cases, and the full "build your setup over time" trigger table, see [references/decision-matrix.md](references/decision-matrix.md).
+```markdown
+# Claude Code setup consultation - <project>
+
+**Stack:** <languages/frameworks> | **PM:** <pnpm/uv/cargo/...> | **Tests:** `<command>` | **Lint/format:** `<command>` | **CI:** <GitHub Actions/...>
+**Existing config:** <none | list .claude/ items, .mcp.json servers, CLAUDE.md state>
+
+## Do now
+| # | Pain point | Mechanism | Location | F/S/E -> Priority |
+| - | ---------- | --------- | -------- | ----------------- |
+| 1 | <observed or stated pain> | <e.g. Hook (PostToolUse, Edit\|Write)> | `.claude/settings.json` + `.claude/hooks/format.sh` | 3/2/1 -> 4 |
+
+For each row: one sentence of *why this mechanism* (tie to the decision framework) + the starter recipe to copy (references/recipes.md #N), adapted to the detected commands.
+
+## Next steps (add when the trigger appears)
+- <trigger, e.g. "second repo needs this setup"> -> <mechanism + location>
+
+## Skipped
+- <candidate> - <why: low score / duplicate of existing config / anti-pattern>
+
+**Scopes:** commit `.claude/` and `.mcp.json` for the team; personal-only pieces go in `~/.claude/` or `.claude/settings.local.json`. Secrets only via `${VAR}` expansion, never committed.
+```
+
+Filled example (condensed): *TypeScript + pnpm monorepo, Vitest, ESLint, Postgres, shell-script deploys, no `.claude/`* -> Do now: (1) **CLAUDE.md** with pnpm/test/build commands (3/2/1 -> 4); (2) **PostToolUse hook** running ESLint+Prettier on `Edit|Write` (3/2/2 -> 3, enforcement not request); (3) **PreToolUse hook + permissions deny** blocking force-push and `.env` reads (2/3/2 -> 3). Next steps: Postgres **MCP** + `db-conventions` **skill** when DB questions recur; `/deploy` **command** (`disable-model-invocation: true`) before wiring deploys; `code-reviewer` **subagent** when diffs outgrow the main context. Skipped: GitHub MCP (gh CLI already covers it - anti-pattern #4).
+
+For the category-by-category comparison, the anti-patterns audit list, and the ad-hoc-prompt migration table, see [references/decision-matrix.md](references/decision-matrix.md).
 
 ## Sources
 

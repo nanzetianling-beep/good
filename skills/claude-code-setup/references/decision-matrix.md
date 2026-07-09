@@ -75,6 +75,44 @@ They are additive and combine freely. When the same feature exists at multiple l
 
 Don't configure everything up front. Start with CLAUDE.md plus one or two clear wins, and add the rest as triggers appear. The same triggers tell you when to update what you already have.
 
+## Migration table: from ad-hoc prompt to mechanism
+
+Users usually arrive with habits, not requirements. Map what they *already do by hand* to the mechanism that absorbs it. Starter configs for most targets are in [recipes.md](recipes.md).
+
+| You keep typing/pasting/doing... | Migrate to | Where |
+| :--- | :--- | :--- |
+| Correcting "use pnpm, not npm" (or any command Claude gets wrong twice) | CLAUDE.md line | `./CLAUDE.md` |
+| "Now run the formatter on the files you touched" | `PostToolUse` hook on `Edit\|Write` | `.claude/settings.json` |
+| "Run the tests before you say you're done" | `PostToolUse` test hook, or a Stop-time check | `.claude/settings.json` |
+| "Don't touch `.env` / never push to main / no `rm -rf`" | `permissions.deny` rule; `PreToolUse` hook for patterns needing logic | `.claude/settings.json` (+ `.claude/hooks/`) |
+| Approving the same safe command every session | `permissions.allow` entry | `.claude/settings.json` |
+| Pasting the same release/deploy checklist | Command (skill with `disable-model-invocation: true`) | `.claude/skills/deploy/` |
+| Pasting your API style guide before API work | Reference skill (auto-invocable) or `paths`-scoped rule | `.claude/skills/api-conventions/` or `.claude/rules/` |
+| Pasting query results from psql / rows from a dashboard / tickets from Jira | MCP server | `.mcp.json` |
+| Explaining the schema and "always exclude test accounts" after connecting the DB | Skill paired with the MCP server | `.claude/skills/db-conventions/` |
+| "Now review that diff for bugs" at the end of every task | Code-reviewer subagent | `.claude/agents/code-reviewer.md` |
+| "Search the whole codebase for X and just give me a summary" | Subagent (research/explore worker) | `.claude/agents/` or built-in Explore |
+| The same kickoff prompt every morning ("check CI, then...") | User-invocable skill (`/kickoff`) | `.claude/skills/kickoff/` |
+| Hand-writing commit messages in your team's format | `/commit` command with injected `git status`/`diff` | `.claude/skills/commit/` |
+| Copying this whole setup into a second repo | Plugin | plugin repo / marketplace |
+
+## Anti-patterns seen in the wild
+
+Wrong tool choices to recognize during an audit - each with why it fails and the fix.
+
+1. **Guardrails as prose.** "NEVER run rm -rf" in CLAUDE.md. A prompt instruction is a request the model can miss under context pressure; only `permissions.deny` and `PreToolUse` hooks actually block. Keep the sentence if you like, but add the enforcement.
+2. **The 500-line CLAUDE.md.** Architecture essays, API references, and onboarding docs in an always-on file tax every request and dilute the rules that matter. Keep it to commands + rules Claude actually gets wrong; move reference material to skills, path-specific rules to `.claude/rules/`.
+3. **Always-on rules hidden in a skill.** "Always use pnpm" inside an on-demand skill may never load when needed. Standing rules go in CLAUDE.md; skills are for on-demand depth. (Inverse of #2.)
+4. **MCP wrappers around local CLIs.** Building/installing an MCP server for git, gh, aws, or kubectl when Claude already runs them via Bash. MCP earns its cost for systems Bash can't reach (auth'd SaaS APIs, DBs, browsers). For a CLI, a skill documenting the right invocations is cheaper.
+5. **Judgment inside hooks.** A `PreToolUse` script grepping for "bad style" or "risky-looking" code blocks legitimate work and can't reason about context. Hooks = deterministic checks (path, pattern, exit code); judgment belongs in a reviewer subagent or skill.
+6. **Auto-invocable side effects.** A deploy/publish/email skill without `disable-model-invocation: true` - Claude can trigger it from a description match. Anything irreversible must be manual-only, plus `permissions.ask` on the underlying command as a belt-and-suspenders.
+7. **Subagents for everything.** Spawning a worker for a two-file lookup pays startup cost and loses conversation context. Subagents earn their keep when the side task would flood context or parallelize; small questions stay in the main thread.
+8. **Vague skill descriptions.** `description: Helps with testing.` never triggers (or triggers wrongly). Write third-person, key use case first, with the words users actually say: "Runs and fixes the Vitest suite. Use when tests fail or when asked to add test coverage."
+9. **Secrets committed in `.mcp.json`.** PATs and DSNs in a shared file. Use `${VAR}` expansion (`command`, `args`, `env`, `url`, `headers`) and document required variables in `.env.example`.
+10. **Chatty hooks.** A format/lint hook that prints success output on every edit bloats context each time. Exit 0 silently on success; emit output only on failure (exit 2 stderr for feedback Claude should act on).
+11. **The same rule in four places.** CLAUDE.md, a skill, a hook message, and a subagent prompt all restating the test command - they drift, and Claude gets contradictions. One source of truth per fact; other layers reference it, not restate it.
+12. **`--dangerously-skip-permissions` as a habit** (especially in CI on repos holding secrets). Scope a real allowlist with `--allowedTools` / `permissions.allow` plus `--max-turns` instead; bypass mode is for sandboxed throwaway environments.
+
 ## Quick disambiguation cheatsheet
 
 - **Who starts it?** Lifecycle event -> hook. You typing `/name` -> command. Claude matching a description -> skill/subagent. A call to an external system -> MCP.
