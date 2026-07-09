@@ -44,7 +44,7 @@ my-plugin/
 └── CHANGELOG.md
 ```
 
-Components in these default locations are auto-discovered — the manifest only needs to point at components in **non-default** paths. A single-skill plugin may place `SKILL.md` at the root (its invocation name comes from the frontmatter `name`). A root `CLAUDE.md` is **not** loaded as context — ship instructions as a skill instead. See `references/manifest-schema.md` for every field.
+Components in these default locations are auto-discovered — the manifest only needs to point at components in **non-default** paths. A single-skill plugin may place `SKILL.md` at the root (its invocation name comes from the frontmatter `name`). A root `CLAUDE.md` is **not** loaded as context — ship instructions as a skill instead. See `references/manifest-schema.md` for every field, and `references/worked-example.md` for a complete plugin built from zero.
 
 ### Manifest fields (`.claude-plugin/plugin.json`)
 
@@ -122,6 +122,14 @@ claude plugin validate ./my-plugin     # validate; add --strict for CI
 ```
 After edits run `/reload-plugins` (SKILL.md changes apply live; hooks/MCP/agents need a reload or restart; monitors need a session restart). Verify: `/my-plugin:skill-name`, agents under `/context`, hooks fire, MCP tools appear. `claude --debug` shows plugin load + MCP init errors.
 
+**Debugging a plugin that won't load** — run this checklist, in order:
+1. `claude plugin validate ./my-plugin --strict` — catches bad JSON, missing `name`, wrong-typed fields, and broken command/skill frontmatter (invalid YAML is silently dropped at runtime).
+2. Structure: is `plugin.json` at `.claude-plugin/plugin.json`, and is **everything else** (`skills/`, `commands/`, `hooks/`, `.mcp.json`) at the plugin root, not inside `.claude-plugin/`?
+3. Paths: every bundled-file reference uses `${CLAUDE_PLUGIN_ROOT}`; manifest component paths start with `./`; hook scripts are `chmod +x`.
+4. Names: invoke as `/plugin-name:skill-name` (check `/help`); hook matchers on the plugin's own MCP tools use the scoped `mcp__plugin_<plugin>_<server>__<tool>` form.
+5. `claude --debug` — read the plugin-load and MCP-init lines; smoke-test an MCP server standalone by piping it an `initialize` request.
+6. Still stuck: match your symptom in the troubleshooting table (10 errors, each symptom → cause → fix) in `references/manifest-schema.md`, and diff against the known-good plugin in `references/worked-example.md`.
+
 ### 6. Package & distribute
 
 **Marketplace (recommended for teams).** Create `.claude-plugin/marketplace.json` in a repo listing your plugin(s), push to GitHub/GitLab. Users run:
@@ -143,9 +151,9 @@ Host in a **private repo** to keep it internal (auth via git credential helpers;
 - A plugin's cache copy can't reference files outside its own directory (`../shared`); symlinks that resolve within the same marketplace are dereferenced into the cache.
 - Run `claude plugin validate --strict` in CI before publishing.
 
-## Worked example manifest
+## Worked example
 
-`.claude-plugin/plugin.json` for a plugin that bundles a skill, an agent, hooks, and an MCP server connecting to an internal API:
+For a complete end-to-end build — an `incident-tools` plugin with a command, a skill, a hook, and a stdio Node MCP server, every file shown in full, plus the local test loop and both distribution paths — see `references/worked-example.md`. A sample manifest for a plugin that bundles a skill, an agent, hooks, and an MCP server connecting to an internal API:
 
 ```json
 {

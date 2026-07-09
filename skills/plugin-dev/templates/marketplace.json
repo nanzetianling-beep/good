@@ -6,8 +6,7 @@
     "email": "devtools@acme.example"
   },
   "metadata": {
-    "description": "ACME internal Claude Code plugins",
-    "pluginRoot": "./plugins"
+    "description": "ACME internal Claude Code plugins"
   },
   "plugins": [
     {

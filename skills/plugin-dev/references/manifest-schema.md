@@ -168,6 +168,62 @@ Explicit `version` → users update only when bumped (published plugins). Omit `
 update on every commit (internal, fast-moving plugins). Don't set `version` in both places —
 `plugin.json` silently wins.
 
+## Troubleshooting: the 10 most common validation & loading errors
+
+Diagnose with `claude plugin validate ./my-plugin` (add `--strict` to promote warnings to
+errors) and `claude --debug` (shows plugin loading, manifest errors, component registration,
+and MCP server initialization). See `worked-example.md` for a known-good plugin to diff against.
+
+### 1. `plugin.json` at the wrong path
+- **Symptom**: Plugin doesn't load at all, or loads under an auto-derived name ignoring your manifest.
+- **Cause**: Manifest at `my-plugin/plugin.json` (root) or `my-plugin/.claude/plugin.json` instead of `my-plugin/.claude-plugin/plugin.json`.
+- **Fix**: `mkdir .claude-plugin && mv plugin.json .claude-plugin/`. The only file that belongs inside `.claude-plugin/` is `plugin.json` (plus `marketplace.json` in a marketplace repo root).
+
+### 2. Components nested inside `.claude-plugin/`
+- **Symptom**: Plugin loads (shows in `/plugin`) but its skills/commands/agents/hooks are missing.
+- **Cause**: `skills/`, `commands/`, `agents/`, `hooks/`, or `.mcp.json` placed inside `.claude-plugin/`. They must sit at the plugin root.
+- **Fix**: Move them up one level, next to `.claude-plugin/`. Then `/reload-plugins`.
+
+### 3. Manifest or frontmatter fails to parse
+- **Symptom**: `Invalid JSON syntax: Unexpected token ...`, `Validation errors: name: Required`, "corrupt manifest" on load — or, for command/skill `.md` files, `YAML frontmatter failed to parse ... At runtime this command loads with empty metadata (all frontmatter fields silently dropped)`.
+- **Cause**: Trailing comma / unquoted string in JSON (no comments except string-valued `"//"` keys), missing `name`, a wrong-typed field (e.g. `keywords` as a string) — or invalid YAML in frontmatter, classically an unquoted `argument-hint: [a] [b]` (two adjacent flow sequences).
+- **Fix**: `jq . .claude-plugin/plugin.json` to find the JSON error; quote bracketed frontmatter values (`argument-hint: "[a] [b]"`); then `claude plugin validate --strict`. `name` must be kebab-case with no spaces.
+
+### 4. Hardcoded paths instead of `${CLAUDE_PLUGIN_ROOT}`
+- **Symptom**: Hook/MCP server works on your machine (or via `--plugin-dir`) but breaks for installed users, or stops working after a plugin update.
+- **Cause**: Relative paths (`./scripts/x.sh`) or absolute paths (`/Users/me/...`) in `.mcp.json` / `hooks.json`. Installed plugins run from a cache dir that moves on every update.
+- **Fix**: Prefix every bundled-file reference with `${CLAUDE_PLUGIN_ROOT}`. In shell-form hook commands wrap it in escaped double quotes: `"\"${CLAUDE_PLUGIN_ROOT}\"/scripts/x.sh"`.
+
+### 5. MCP server not starting / tools not appearing
+- **Symptom**: No `mcp__plugin_...` tools; `/mcp` or `claude --debug` shows a failed/timed-out server.
+- **Cause**: `command` binary not on PATH, script path missing `${CLAUDE_PLUGIN_ROOT}`, the server crashing on boot, or it never answering `initialize` on stdout (stray `console.log` output corrupts the stdio protocol).
+- **Fix**: Run the server manually and pipe it an `initialize` request (see worked-example.md §7); it must reply with one JSON-RPC line. Log to **stderr** only. Then check `claude --debug` init output, and remember plugin MCP servers need per-server approval on first use.
+
+### 6. Hook never fires
+- **Symptom**: Event happens, script doesn't run; no error shown.
+- **Cause** (in observed order): script not executable; wrong event-name case (`postToolUse`); matcher regex not matching the tool (`bash` vs `Bash`); invalid `hooks.json`; edited hooks not reloaded.
+- **Fix**: `chmod +x scripts/*.sh`; event names are case-sensitive (`PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, ...); test the script standalone with sample JSON on stdin; run `/reload-plugins` after edits.
+
+### 7. Hook on the plugin's own MCP tools uses the bare name
+- **Symptom**: A matcher like `"incident-api"` or `"mcp__incident-api__create_incident"` never fires for the plugin's bundled server.
+- **Cause**: Plugin MCP tools are scoped: `mcp__plugin_<plugin-name>_<server-name>__<tool>`.
+- **Fix**: Match the full scoped name (e.g. `mcp__plugin_incident-tools_incident-api__create_incident`); an `mcp_tool` hook's `server` field takes `plugin:<plugin-name>:<server-name>`.
+
+### 8. Command/skill name expectations & collisions
+- **Symptom**: `/deploy` "not found" though the plugin ships it; or two sources of the same name behave unexpectedly.
+- **Cause**: Plugin skills are always namespaced — the plugin's is `/my-plugin:deploy`; bare `/deploy` is a project/user skill. Same-named `.claude/agents/` definitions override plugin agents; a `--plugin-dir` plugin with the same name as an installed one takes precedence for the session.
+- **Fix**: Invoke via `/plugin-name:skill-name` (check `/help` for the actual name). After migrating standalone config into a plugin, delete the originals from `.claude/` to avoid shadowing.
+
+### 9. Custom component paths wrong, or defaults silently dropped
+- **Symptom**: `Warning: No commands found in plugin ... custom directory`, "Path errors", or default-dir components vanish after adding a manifest key.
+- **Cause**: Custom paths must be relative to the plugin root and start with `./` (absolute paths are invalid). `commands`/`agents`/`outputStyles` keys **replace** the default directory scan (`skills` adds to it).
+- **Fix**: Use `"./dir/"` form. To keep defaults plus extras, list both: `"commands": ["./commands/", "./extras/"]`. `/doctor` flags a default folder being ignored because of a manifest key (v2.1.140+).
+
+### 10. Users never receive your updates (or `Plugin directory not found`)
+- **Symptom**: You push commits but `/plugin update` says "already at the latest version"; or installs fail with `Plugin directory not found at path: ./plugins/x`.
+- **Cause**: `version` set in `plugin.json` but never bumped (the version string is the cache key); or the marketplace entry's `source` path doesn't match the repo layout (e.g. `metadata.pluginRoot` **and** a `./plugins/...` source — the root is prepended, doubling the prefix); or a relative-path source in a marketplace added by bare URL (only `marketplace.json` is downloaded).
+- **Fix**: Bump `version` on every release or omit it entirely (git SHA versioning); set `version` in only one place — `plugin.json` silently wins. With `pluginRoot: "./plugins"` write `"source": "x"`, without it write `"source": "./plugins/x"`. Validate from the marketplace repo root: `claude plugin validate .`.
+
 ## Sources
 - https://code.claude.com/docs/en/plugins
 - https://code.claude.com/docs/en/plugins-reference
