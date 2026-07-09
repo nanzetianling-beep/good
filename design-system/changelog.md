@@ -14,6 +14,18 @@
 
 ---
 
+## 2026-07-09 — ブランド『凪 -nagi- カウンセリングルーム』への刷新 + LP制作
+- **対象**: tokens/colors.json, tokens/typography.json, tokens/effects.json, themes/dark.json, scripts/check-contrast.mjs, site/index.html(新規), gallery, tests
+- **変更内容**:
+  - カラーをプレースホルダの青系から、深い常磐グリーン(pine)×温かなアイボリー(sand)×真鍮ゴールド(brass)の3系統へ全面刷新。semantic層に `accent`(差し色)、`background.inverse`(深緑フルブリード地)、`text.on-inverse` を追加。
+  - タイポグラフィに明朝系セリフ(`font.family.serif`)を追加し、見出し=セリフ/本文=サンセリフの対比構造に。ヒーロー用の 4xl/5xl、アイブロウ用の letterSpacing.wide/wider を追加。
+  - 影を温色・低不透明・広ぼかしに変更(上質感)。radius.xl と motion のゆったり化。
+  - コントラスト検証に accent 系・on-inverse 系のペアを追加。全ペア WCAG 2.2 合格を確認。
+  - `site/index.html` を制作(ヒーロー/理念/サービス/カウンセラー/流れ/料金/お客様の声/FAQ/CTA/フッター)。ライト・ダーク両対応、reveal アニメ(reduced-motion 尊重)、スキップリンク、セマンティックHTML。
+  - ビジュアル回帰に site ページを追加し、トークン刷新に伴い全基準画像を再生成。
+- **意図(Why)**: 「カウンセリング×高級感」という要件に対し、汎用青(テック印象)は不適。この領域が求めるのは臨床的な冷たさではなく静けさ・信頼・上質であるため、自然と鎮静を想起させる深緑を基幹に、温白地で柔らかさを、真鍮ゴールドの差し色で高級感を与えた。見出しにセリフを採用したのは、品格と「間（ま）」の演出のため。深緑フルブリードの理念セクションはページに緩急と奥行きを生む意図。真鍮は小テキストでは 4.5:1 を満たさないため、装飾用(accent.default)とテキスト用(accent.text=brass.700)を分離し、誤用を構造的に防いだ。
+- **種別**: 刷新 / 新規
+
 ## 2026-07-09 — feedback.warning のコントラスト修正
 - **対象**: tokens/colors.json
 - **変更内容**: `amber.700 (#B36F00)` を新設し、`semantic.feedback.warning` の参照先を `amber.600` から `amber.700` に変更。`amber.600` は塗り(バッジ背景等)限定として残置し、$description に用途制限を明記。

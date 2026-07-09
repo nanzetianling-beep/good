@@ -1,9 +1,10 @@
 {
-  "$description": "タイポグラフィトークン。型スケール比率は1.25(Major Third)。日本語本文はline-height広め(1.7)を基準とする。",
+  "$description": "タイポグラフィトークン。見出しは明朝系セリフ(品格)、本文はサンセリフ(可読性)の対比構造。型スケール比率は1.25(Major Third)。日本語本文はline-height広め(1.8)を基準とする。",
   "font": {
     "family": {
-      "sans": { "$value": "'Inter', 'Noto Sans JP', system-ui, sans-serif", "$type": "fontFamily" },
-      "mono": { "$value": "'JetBrains Mono', 'SFMono-Regular', monospace", "$type": "fontFamily" }
+      "serif": { "$value": "'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', 'YuMincho', Georgia, serif", "$type": "fontFamily", "$description": "見出し・ブランド。上質さと静けさの演出" },
+      "sans":  { "$value": "'Zen Kaku Gothic New', 'Inter', 'Noto Sans JP', system-ui, sans-serif", "$type": "fontFamily", "$description": "本文・UI" },
+      "mono":  { "$value": "'JetBrains Mono', 'SFMono-Regular', monospace", "$type": "fontFamily" }
     },
     "size": {
       "xs":   { "$value": "0.75rem",  "$type": "dimension" },
@@ -12,17 +13,26 @@
       "lg":   { "$value": "1.25rem",  "$type": "dimension" },
       "xl":   { "$value": "1.5625rem","$type": "dimension" },
       "2xl":  { "$value": "1.953rem", "$type": "dimension" },
-      "3xl":  { "$value": "2.441rem", "$type": "dimension" }
+      "3xl":  { "$value": "2.441rem", "$type": "dimension" },
+      "4xl":  { "$value": "3.052rem", "$type": "dimension", "$description": "セクション見出し" },
+      "5xl":  { "$value": "3.815rem", "$type": "dimension", "$description": "ヒーロー見出し" }
     },
     "weight": {
-      "regular":  { "$value": "400", "$type": "fontWeight" },
-      "medium":   { "$value": "500", "$type": "fontWeight" },
-      "bold":     { "$value": "700", "$type": "fontWeight" }
+      "regular": { "$value": "400", "$type": "fontWeight" },
+      "medium":  { "$value": "500", "$type": "fontWeight" },
+      "bold":    { "$value": "700", "$type": "fontWeight" }
     },
     "lineHeight": {
-      "tight":  { "$value": 1.25, "$type": "number", "$description": "見出し用" },
-      "normal": { "$value": 1.5,  "$type": "number", "$description": "英文本文用" },
-      "relaxed":{ "$value": 1.7,  "$type": "number", "$description": "日本語本文用" }
+      "tight":   { "$value": 1.25, "$type": "number", "$description": "見出し用" },
+      "snug":    { "$value": 1.4,  "$type": "number", "$description": "大きめ見出しの多行用" },
+      "normal":  { "$value": 1.6,  "$type": "number", "$description": "英文本文用" },
+      "relaxed": { "$value": 1.8,  "$type": "number", "$description": "日本語本文用" }
+    },
+    "letterSpacing": {
+      "tight":  { "$value": "-0.01em", "$type": "dimension" },
+      "normal": { "$value": "0em",     "$type": "dimension" },
+      "wide":   { "$value": "0.15em",  "$type": "dimension", "$description": "小さいラベル・英字small caps" },
+      "wider":  { "$value": "0.3em",   "$type": "dimension", "$description": "アイブロウ(eyebrow)ラベル" }
     }
   }
 }
