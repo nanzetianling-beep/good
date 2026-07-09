@@ -75,19 +75,45 @@ See @README.md for the project overview and @package.json for npm commands.
 3. Choose the right home: team standards → `./CLAUDE.md` (commit it); personal cross-project prefs → `~/.claude/CLAUDE.md`; private per-project notes → `./CLAUDE.local.md` (gitignore it).
 4. See `templates/CLAUDE.template.md` for a starting skeleton.
 
-### 2. AUDIT
+### 2. AUDIT — runnable procedure
 
-Run `/memory` to list every CLAUDE.md / CLAUDE.local.md / rules file loaded in the session (a file not listed is **not being seen** — check its location). Then read each loaded file and apply the checklist in `references/audit-checklist.md`. Look for:
+Steps 1–6 are mechanical (run the exact commands — copy-paste one-liners live in `references/audit-checklist.md` under "Mechanical checks"); steps 7–8 need judgment. A complete worked example (bad file → report → rewrite → change log) is in `references/worked-audit.md`.
 
-- **Bloat** — lines that don't change behavior. For each line ask: *"Would removing this cause Claude to make a mistake?"* If no, cut it.
-- **Vagueness** — "format code properly" instead of "use 2-space indentation".
-- **Contradictions** — conflicting rules across files (project vs user vs nested); Claude picks arbitrarily. Reconcile them.
-- **Staleness** — commands, paths, versions, or decisions that no longer match the codebase.
-- **Misplacement** — occasional/multi-step content that belongs in a skill; file-type-specific content that belongs in a path-scoped `.claude/rules/` file; must-happen-every-time actions that belong in a hook.
-- **Secrets** — never store tokens, keys, or credentials in any memory file.
-- **Redundancy** — restating standard language conventions or things Claude learns by reading code.
+1. **Inventory.** Run `/memory` and list every loaded CLAUDE.md / CLAUDE.local.md / rules file. An expected file that is **not** listed is itself a must-fix finding (wrong name/location — e.g. `.claude.md`, `claude.md`, or outside the directory walk). Record the absolute path of each loaded file; all later steps run over this set. To trace *why* a file loaded (path-scoped rule, lazy subdirectory file), add the `InstructionsLoaded` hook.
+2. **Count lines.** `wc -l` each file. Thresholds: **≤200** pass · **201–350** should-fix (prune or split) · **>350** must-fix (well past the point where long files dilute adherence; prune, then move file-scoped rules to path-scoped `.claude/rules/`). The 200 figure is the documented guidance; 350 is this skill's escalation heuristic.
+3. **Secrets scan.** Grep for key-shaped strings and `key/token/password = value` assignments (one-liner in the checklist). Any true hit is a **must-fix**, and the fix is two actions: remove the line *and* rotate the credential — it may already be in git history.
+4. **Dead-reference scan.** (a) Extract every `@import` and check each target file exists (relative paths resolve against the *importing file's* directory). (b) Check backticked commands against reality: npm scripts named in the file exist in `package.json`; the package manager named matches the lockfile present; referenced paths exist on disk. Each dead reference is a must-fix — a false instruction is worse than no instruction.
+5. **Duplicate scan.** Normalize bullet lines (lowercase, squeeze whitespace) across **all** loaded files and `sort | uniq -d`. Exact repeats are should-fix; also eyeball near-duplicates that say the same thing twice in different words.
+6. **Contradiction scan.** Grep for opposing-pair vocabulary — tabs/spaces, semicolon, npm/yarn/pnpm/bun, merge/rebase/squash, CommonJS/ES modules, `always`/`never` + the same noun — then read each hit-cluster together, *across* files too (user vs project vs local). Every genuine contradiction is a must-fix: Claude resolves it arbitrarily.
+7. **Line-by-line judgment.** For every surviving line ask, in order: *Would removing this cause a mistake?* (no → bloat, cut) · *Can compliance be verified?* ("format properly" → vague, rewrite concrete) · *Is it still true?* (stale, fix or cut) · *Is this the right layer?* (see the placement decision table below — misplaced content is moved, not deleted).
+8. **Report.** Fill the template below. Every finding gets an ID, `file:line`, a severity from the rubric, and a concrete action (never just "bad").
 
-To debug *which* files loaded and why (path-scoped rules, lazy subdirectory files), add the `InstructionsLoaded` hook.
+**Severity rubric**
+
+| Severity | Criterion | Typical findings |
+| --- | --- | --- |
+| **Must-fix** | Harmful or false — following the file causes damage or errors | Secret/credential present; contradictory rules; dead @import; command/path/version that no longer exists; expected file not loading; file >350 lines |
+| **Should-fix** | Wastes context or weakens adherence | 201–350 lines; vague/unverifiable rules; exact or near duplicates; generic filler ("write clean code"); misplaced content (belongs in a hook/skill/rule/local file); personal absolute paths; frequently-changing trivia |
+| **Nice** | Polish — small adherence or maintenance gains | Missing header grouping; `IMPORTANT` overuse; human-only notes not in stripped `<!-- -->` comments; prose that could be tighter bullets |
+
+**Report template** (the audit's output)
+
+```markdown
+# CLAUDE.md audit — <repo> — <date>
+Loaded files (/memory): <path> (<N> lines)[, ...]   Missing/not loading: <paths or none>
+Size: <N> lines → <pass | should-fix | must-fix>
+
+## Must-fix
+- M1 <file>:<line> — <finding> → <action>
+## Should-fix
+- S1 <file>:<line> — <finding> → <action>
+## Nice
+- N1 <file>:<line> — <finding> → <action>
+## Placement moves
+- "<rule>" → <hook | skill | .claude/rules/<name>.md (paths: <glob>) | ~/.claude/CLAUDE.md | CLAUDE.local.md>
+## Proposed rewrite
+<the rewritten file, or a link to it>
+```
 
 ### 3. IMPROVE
 
@@ -106,9 +132,24 @@ Note: the **project-root** CLAUDE.md is re-read from disk and re-injected after 
 - **Human-maintainer notes**: block-level HTML comments (`<!-- ... -->`) are stripped before injection, so they cost no context — use them for notes to human maintainers. (Comments inside code blocks are preserved.)
 - **Treat as living + shared**: commit project CLAUDE.md to git, prune regularly, and add to it when you'd otherwise re-explain something (same mistake twice, repeated correction, onboarding context a teammate would need).
 
+## Memory placement decision table
+
+For each fact or rule, pick the home by criterion — misplaced content gets **moved** during an audit, not deleted:
+
+| This fact/instruction... | Goes in | One-line criterion |
+| --- | --- | --- |
+| Team-shared repo convention needed every session (commands, style, architecture, gotchas) | `./CLAUDE.md` (commit to git) | About this repo, for everyone, relevant to most sessions |
+| Personal preference that follows *you* across projects | `~/.claude/CLAUDE.md` | About you, not any repo |
+| Personal note about this repo only (local ports, private sandbox URLs) | `./CLAUDE.local.md` (gitignored) | About this repo, but not for teammates |
+| Rule that only matters for certain files or a subtree (e.g. `*.sql`, `frontend/**`) | `.claude/rules/<name>.md` with `paths:` frontmatter | Wasted context everywhere else; should load only on touch |
+| Occasional multi-step workflow or reference-heavy domain knowledge | A skill (`.claude/skills/<name>/SKILL.md`) | Needed sometimes, not every session — load on demand |
+| Action that must happen deterministically every time (format on save, block writes to a path) | A hook | CLAUDE.md is advisory; hooks are enforced by the harness |
+| Debugging insight or build quirk Claude discovered itself | Auto memory (leave it there) | Claude records these on its own; don't hand-copy into CLAUDE.md |
+| Org-wide standard no user may remove | Managed policy CLAUDE.md / `claudeMd` in managed settings | Compliance content, admin-controlled |
+
 ## Audit checklist
 
-See `references/audit-checklist.md` for the full pass/fail checklist to run during an audit.
+See `references/audit-checklist.md` for the full pass/fail checklist plus copy-paste grep one-liners, and `references/worked-audit.md` for a complete worked audit (bad file → report → rewrite).
 
 ## Before / after example
 
