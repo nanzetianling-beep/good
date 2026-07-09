@@ -1,6 +1,6 @@
 # Decision matrix: MCP vs Skill vs Hook vs Agent vs Command
 
-Detailed reference for the `claude-code-setup` skill. Read when a recommendation is non-obvious or the user wants to understand trade-offs.
+Detailed reference for the `cc-setup-advisor` skill. Read when a recommendation is non-obvious or the user wants to understand trade-offs.
 
 ## The layering model
 

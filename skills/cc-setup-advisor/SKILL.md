@@ -1,5 +1,5 @@
 ---
-name: claude-code-setup
+name: cc-setup-advisor
 disable-model-invocation: true
 description: Acts as an official Claude Code setup consultant. Inspects a project (languages, tests, build, pain points) and recommends the optimal automation approach across the five extension categories - MCP, Skill, Hook, Agent (subagent), and Command (slash command), plus CLAUDE.md - with exact file locations and config. Use when setting up Claude Code, planning an automation strategy, auditing a .claude/ setup, or deciding which tool fits a need (MCP vs skill vs hook vs subagent vs command).
 ---

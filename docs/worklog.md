@@ -130,3 +130,17 @@ SKILL.md は全て500行以内を維持し、詳細は references/ に展開（p
   本スキル独自の基準であり、その旨を各ファイル内に明記済み。
 - 一部一次ソース（playwright.dev、Anthropicブログ等）はプロキシ経由で403のため、内容は検索スニペットで
   裏取り。環境固有の事実（ブラウザパス、pipバージョン、プロキシ挙動）は実測で検証済み。
+
+## 2026-07-09 — スキル3件のリネーム（claude.aiスキルUIの保存エラー対応）
+ユーザー報告: claude.aiの「スキル」画面で一部スキルが保存できない。
+原因を調査 → **命名ルール違反**を特定:
+- `claude-code-setup` / `claude-md-management`: `name` に予約語 `claude` を含む（claude.aiで禁止）。
+- `skill-creator`: アカウントにAnthropic製の同名スキルが既存で、名前が重複。
+対応（ユーザー選択「推奨セット」）:
+- `claude-code-setup` → `cc-setup-advisor`
+- `claude-md-management` → `project-memory-manager`
+- `skill-creator` → `skill-builder`
+- ディレクトリを `git mv`、各SKILL.mdの `name:` を更新、README・marketplace.json・
+  decision-matrix.md の自己参照を更新。skill-builder内のSources外部URL
+  （anthropics/skills の実URL）は変更せず維持。
+- 上記の旧名は本ログの過去エントリでは履歴としてそのまま残す。
