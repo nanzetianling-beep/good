@@ -59,6 +59,8 @@ with page.expect_response(lambda r: "/api/products" in r.url and r.ok) as resp:
     page.get_by_role("button", name="Load more").click()
 ```
 
+`expect(...)` assertions retry until a timeout (default 5s; raise per-call with
+`to_be_visible(timeout=15000)` or globally via `page.set_default_timeout(...)`).
 Avoid `page.wait_for_timeout(...)` as a primary wait — use it only for deliberate,
 polite rate-limiting between scrape steps.
 

@@ -6,13 +6,17 @@ Pattern for membership sites / paywalled monitoring:
   1. First run  -> authenticate through the real login form, save storage_state.
   2. Later runs -> load storage_state and skip login entirely (until it expires).
 
+storage_state captures cookies + localStorage + IndexedDB (rarely sessionStorage).
+
 Credentials come from env vars — never hard-code them:
     export SITE_USER='me@example.com'
-    export SITE_PASS='••••••••'
+    export SITE_PASS='********'
     python examples/login.py
 
 storage_state (auth.json) contains live cookies/tokens: treat it as a SECRET.
-Add it to .gitignore; never commit it.
+Add it (and playwright/.auth/) to .gitignore; never commit it.
+
+Browsers are pre-installed; do NOT run `playwright install`.
 """
 import os
 import pathlib
@@ -20,7 +24,7 @@ from playwright.sync_api import sync_playwright, expect
 
 LOGIN_URL = "https://example.com/login"
 HOME_URL = "https://example.com/account"
-AUTH_FILE = pathlib.Path("auth.json")
+AUTH_FILE = pathlib.Path("auth.json")  # SECRET — gitignored
 
 
 def login_and_save(context):
@@ -37,7 +41,7 @@ def login_and_save(context):
     # not a fixed sleep. If this times out, login failed (bad creds / CAPTCHA).
     expect(page.get_by_role("link", name="Log out")).to_be_visible(timeout=15000)
 
-    context.storage_state(path=str(AUTH_FILE))  # cookies + localStorage
+    context.storage_state(path=str(AUTH_FILE))  # cookies + localStorage + IndexedDB
     page.close()
 
 
