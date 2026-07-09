@@ -1,6 +1,7 @@
 <!-- Project CLAUDE.md template. Keep it under ~200 lines. Delete sections you don't need.
      Every line should change Claude's behavior — if removing a line wouldn't cause a
-     mistake, cut it. This whole comment is stripped before loading, so it costs no context. -->
+     mistake, cut it. This whole comment is stripped before loading, so it costs no context.
+     (Note: HTML comments INSIDE fenced code blocks are NOT stripped.) -->
 
 # Project
 - <One-line description of what this project is>
@@ -34,7 +35,8 @@
 - <e.g. Set DATABASE_URL before running migrations>
 
 # Imports (optional)
-<!-- Pull in other files instead of duplicating. Imports load at launch and do NOT save context. -->
+<!-- Pull in other files instead of duplicating. Imports load at launch and do NOT save context.
+     If the repo has an AGENTS.md, prefer `@AGENTS.md` here instead of copying its content. -->
 - See @README.md for the full project overview
 - Git workflow: @docs/git-instructions.md
 
@@ -42,4 +44,5 @@
      - Team-shared → commit this file. Personal/private → CLAUDE.local.md (gitignored).
      - Never put secrets, API keys, or tokens here.
      - Must-happen-every-time actions belong in a hook, not here.
-     - File-type-specific rules belong in .claude/rules/*.md with `paths:` frontmatter. -->
+     - File-type-specific rules belong in .claude/rules/*.md with `paths:` frontmatter.
+     - Occasional workflows / domain knowledge belong in a skill (.claude/skills/), loaded on demand. -->
