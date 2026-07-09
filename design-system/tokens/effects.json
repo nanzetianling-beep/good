@@ -1,0 +1,39 @@
+{
+  "$description": "radius / shadow / motion トークン。高級感のため影は控えめ・温色に。shadowは3階層まで。motionはprefers-reduced-motion時に無効化すること。",
+  "radius": {
+    "sm":   { "$value": "0.25rem", "$type": "dimension" },
+    "md":   { "$value": "0.5rem",  "$type": "dimension" },
+    "lg":   { "$value": "1rem",    "$type": "dimension" },
+    "xl":   { "$value": "1.5rem",  "$type": "dimension", "$description": "大きなカード・画像" },
+    "full": { "$value": "9999px",  "$type": "dimension" }
+  },
+  "shadow": {
+    "sm": {
+      "$value": { "offsetX": "0", "offsetY": "1px", "blur": "3px", "spread": "0", "color": "rgba(38, 34, 30, 0.05)" },
+      "$type": "shadow",
+      "$description": "カード等の静的な浮き(温色・低不透明で上品に)"
+    },
+    "md": {
+      "$value": { "offsetX": "0", "offsetY": "8px", "blur": "24px", "spread": "-4px", "color": "rgba(38, 34, 30, 0.10)" },
+      "$type": "shadow",
+      "$description": "ホバー時の浮き・ポップオーバー"
+    },
+    "lg": {
+      "$value": { "offsetX": "0", "offsetY": "20px", "blur": "48px", "spread": "-12px", "color": "rgba(38, 34, 30, 0.16)" },
+      "$type": "shadow",
+      "$description": "モーダル・フローティングCTA"
+    }
+  },
+  "motion": {
+    "duration": {
+      "fast":   { "$value": "160ms", "$type": "duration", "$description": "hover等の即時フィードバック" },
+      "normal": { "$value": "280ms", "$type": "duration", "$description": "展開・フェード(ゆったり=上質)" },
+      "slow":   { "$value": "480ms", "$type": "duration", "$description": "スクロール表示・モーダル" }
+    },
+    "easing": {
+      "standard": { "$value": [0.4, 0, 0.2, 1], "$type": "cubicBezier" },
+      "enter":    { "$value": [0, 0, 0.2, 1],   "$type": "cubicBezier" },
+      "exit":     { "$value": [0.4, 0, 1, 1],   "$type": "cubicBezier" }
+    }
+  }
+}

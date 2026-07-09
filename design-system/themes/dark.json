@@ -1,0 +1,41 @@
+{
+  "$description": "ダークテーマのオーバーライド。深緑を基調にゴールドを主役へ。semantic層の参照先差し替え方式(実装コード無変更でテーマ切替)。ダークではpine.700が地に沈むため、primary actionを真鍮ゴールド(brass.400)にして上質さを保つ。",
+  "color": {
+    "semantic": {
+      "text": {
+        "primary":    { "$value": "{color.primitive.sand.50}", "$type": "color" },
+        "secondary":  { "$value": "{color.primitive.sand.200}", "$type": "color" },
+        "muted":      { "$value": "{color.primitive.sand.500}", "$type": "color" },
+        "inverse":    { "$value": "{color.primitive.pine.900}", "$type": "color", "$description": "ダークではボタンがゴールドになるためラベルは暗色" },
+        "on-inverse": { "$value": "{color.primitive.sand.50}", "$type": "color" }
+      },
+      "background": {
+        "default": { "$value": "{color.primitive.pine.900}", "$type": "color" },
+        "subtle":  { "$value": "{color.primitive.pine.800}", "$type": "color" },
+        "inverse": { "$value": "{color.primitive.pine.800}", "$type": "color", "$description": "ダークでは僅かに持ち上げたパネル" }
+      },
+      "border": {
+        "default": { "$value": "{color.primitive.pine.600}", "$type": "color" },
+        "accent":  { "$value": "{color.primitive.brass.400}", "$type": "color" }
+      },
+      "action": {
+        "primary":       { "$value": "{color.primitive.brass.400}", "$type": "color" },
+        "primary-hover": { "$value": "{color.primitive.brass.300}", "$type": "color" }
+      },
+      "accent": {
+        "default": { "$value": "{color.primitive.brass.300}", "$type": "color" },
+        "text":    { "$value": "{color.primitive.brass.300}", "$type": "color" }
+      },
+      "feedback": {
+        "success": { "$value": "{color.primitive.green.400}", "$type": "color" },
+        "warning": { "$value": "{color.primitive.amber.400}", "$type": "color" },
+        "danger":  { "$value": "{color.primitive.red.400}", "$type": "color" }
+      }
+    }
+  },
+  "shadow": {
+    "sm": { "$value": { "offsetX": "0", "offsetY": "1px", "blur": "3px", "spread": "0", "color": "rgba(0, 0, 0, 0.4)" }, "$type": "shadow" },
+    "md": { "$value": { "offsetX": "0", "offsetY": "8px", "blur": "24px", "spread": "-4px", "color": "rgba(0, 0, 0, 0.5)" }, "$type": "shadow" },
+    "lg": { "$value": { "offsetX": "0", "offsetY": "20px", "blur": "48px", "spread": "-12px", "color": "rgba(0, 0, 0, 0.6)" }, "$type": "shadow" }
+  }
+}

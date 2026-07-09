@@ -1,0 +1,97 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-primitive-pine-200: #c7d6ce;
+  --color-primitive-pine-300: #a8c0b5; /** ダーク地上のボーダー等 */
+  --color-primitive-pine-500: #4e7767;
+  --color-primitive-pine-600: #3a5f50;
+  --color-primitive-pine-700: #2c4a3e; /** ブランド基幹色。primary action・ダートセクション地 */
+  --color-primitive-pine-800: #1e3329;
+  --color-primitive-pine-900: #16201b; /** 最暗。ダーク地・フッター */
+  --color-primitive-sand-0: #ffffff;
+  --color-primitive-sand-50: #faf7f2; /** アイボリー基調背景 */
+  --color-primitive-sand-100: #f2ece1; /** セクション交互背景 */
+  --color-primitive-sand-200: #e5dbcb; /** ボーダー */
+  --color-primitive-sand-500: #8a8175; /** muted。18px以上限定 */
+  --color-primitive-sand-700: #57514a;
+  --color-primitive-sand-900: #26221e; /** 本文テキスト(温かみのある黒) */
+  --color-primitive-brass-300: #d8be93; /** ダーク地上の差し色・テキスト可 */
+  --color-primitive-brass-400: #c7a876; /** ダーク地のprimary action(ゴールドボタン) */
+  --color-primitive-brass-600: #9a7b4f; /** 差し色。装飾・大きい要素限定(小テキストは4.5:1未満) */
+  --color-primitive-brass-700: #7d6340; /** テキスト用の差し色(小さいラベルはこちら) */
+  --color-primitive-green-400: #6fbf9a;
+  --color-primitive-green-600: #2f6b4a;
+  --color-primitive-amber-400: #e0b33d;
+  --color-primitive-amber-700: #b36f00;
+  --color-primitive-red-400: #e08a72;
+  --color-primitive-red-600: #b4432e;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem; /** 大きなカード・画像 */
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px 0 rgba(38, 34, 30, 0.05); /** カード等の静的な浮き(温色・低不透明で上品に) */
+  --shadow-md: 0 8px 24px -4px rgba(38, 34, 30, 0.10); /** ホバー時の浮き・ポップオーバー */
+  --shadow-lg: 0 20px 48px -12px rgba(38, 34, 30, 0.16); /** モーダル・フローティングCTA */
+  --motion-duration-fast: 160ms; /** hover等の即時フィードバック */
+  --motion-duration-normal: 280ms; /** 展開・フェード(ゆったり=上質) */
+  --motion-duration-slow: 480ms; /** スクロール表示・モーダル */
+  --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --layout-container-max: 72rem; /** 1152px */
+  --layout-breakpoint-sm: 640px;
+  --layout-breakpoint-md: 768px;
+  --layout-breakpoint-lg: 1024px;
+  --layout-breakpoint-xl: 1280px;
+  --font-family-serif: 'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', 'YuMincho', Georgia, serif; /** 見出し・ブランド。上質さと静けさの演出 */
+  --font-family-sans: 'Zen Kaku Gothic New', 'Inter', 'Noto Sans JP', system-ui, sans-serif; /** 本文・UI */
+  --font-family-mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5625rem;
+  --font-size-2xl: 1.953rem;
+  --font-size-3xl: 2.441rem;
+  --font-size-4xl: 3.052rem; /** セクション見出し */
+  --font-size-5xl: 3.815rem; /** ヒーロー見出し */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-line-height-tight: 1.25; /** 見出し用 */
+  --font-line-height-snug: 1.4; /** 大きめ見出しの多行用 */
+  --font-line-height-normal: 1.6; /** 英文本文用 */
+  --font-line-height-relaxed: 1.8; /** 日本語本文用 */
+  --font-letter-spacing-tight: -0.01em;
+  --font-letter-spacing-normal: 0em;
+  --font-letter-spacing-wide: 0.15em; /** 小さいラベル・英字small caps */
+  --font-letter-spacing-wider: 0.3em; /** アイブロウ(eyebrow)ラベル */
+  --color-semantic-text-primary: var(--color-primitive-sand-900);
+  --color-semantic-text-secondary: var(--color-primitive-sand-700);
+  --color-semantic-text-muted: var(--color-primitive-sand-500); /** 小さい文字への使用禁止。18px以上限定 */
+  --color-semantic-text-inverse: var(--color-primitive-sand-50); /** primaryボタン等の暗い塗り上のラベル */
+  --color-semantic-text-on-inverse: var(--color-primitive-sand-50); /** background.inverse(ダートセクション)上のテキスト */
+  --color-semantic-background-default: var(--color-primitive-sand-50);
+  --color-semantic-background-subtle: var(--color-primitive-sand-100);
+  --color-semantic-background-inverse: var(--color-primitive-pine-700); /** 深緑のフルブリードセクション */
+  --color-semantic-border-default: var(--color-primitive-sand-200);
+  --color-semantic-border-accent: var(--color-primitive-brass-600); /** 真鍮のヘアライン */
+  --color-semantic-action-primary: var(--color-primitive-pine-700);
+  --color-semantic-action-primary-hover: var(--color-primitive-pine-800);
+  --color-semantic-accent-default: var(--color-primitive-brass-600); /** 装飾・大きい要素・ボーダー */
+  --color-semantic-accent-text: var(--color-primitive-brass-700); /** 小さいラベル・アイキャッチ文字(テキスト安全) */
+  --color-semantic-feedback-success: var(--color-primitive-green-600);
+  --color-semantic-feedback-warning: var(--color-primitive-amber-700);
+  --color-semantic-feedback-danger: var(--color-primitive-red-600);
+}

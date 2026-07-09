@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-label="カウンセラーのポートレート（仮の画像）">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3A5F50"/>
+      <stop offset="1" stop-color="#16201B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.5">
+      <stop offset="0" stop-color="#C7A876" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#C7A876" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#bg)"/>
+  <rect width="600" height="800" fill="url(#glow)"/>
+  <!-- 抽象的な人物シルエット -->
+  <g fill="#FAF7F2" opacity="0.16">
+    <circle cx="300" cy="300" r="96"/>
+    <path d="M140 640 q0 -150 160 -150 q160 0 160 150 z"/>
+  </g>
+  <!-- 静けさの水面ライン -->
+  <g fill="none" stroke="#D8BE93" stroke-width="1.4" opacity="0.4">
+    <path d="M-20 690 Q 150 660 300 690 T 620 690"/>
+    <path d="M-20 720 Q 150 690 300 720 T 620 720"/>
+  </g>
+  <text x="300" y="762" text-anchor="middle" fill="#D8BE93" opacity="0.75"
+        font-family="'Zen Kaku Gothic New', sans-serif" font-size="20" letter-spacing="6">写真（仮）PORTRAIT</text>
+</svg>

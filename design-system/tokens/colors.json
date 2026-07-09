@@ -1,0 +1,65 @@
+{
+  "$description": "カラートークン。ブランド『凪 -nagi- カウンセリングルーム』向け。深い常磐グリーン×温かなアイボリー×真鍮ゴールドで、静けさ・信頼・上質を表現する。primitive層とsemantic層の2層構造。実装からはsemantic層のみ参照すること。",
+  "color": {
+    "primitive": {
+      "pine": {
+        "900": { "$value": "#16201B", "$type": "color", "$description": "最暗。ダーク地・フッター" },
+        "800": { "$value": "#1E3329", "$type": "color" },
+        "700": { "$value": "#2C4A3E", "$type": "color", "$description": "ブランド基幹色。primary action・ダートセクション地" },
+        "600": { "$value": "#3A5F50", "$type": "color" },
+        "500": { "$value": "#4E7767", "$type": "color" },
+        "300": { "$value": "#A8C0B5", "$type": "color", "$description": "ダーク地上のボーダー等" },
+        "200": { "$value": "#C7D6CE", "$type": "color" }
+      },
+      "sand": {
+        "0":   { "$value": "#FFFFFF", "$type": "color" },
+        "50":  { "$value": "#FAF7F2", "$type": "color", "$description": "アイボリー基調背景" },
+        "100": { "$value": "#F2ECE1", "$type": "color", "$description": "セクション交互背景" },
+        "200": { "$value": "#E5DBCB", "$type": "color", "$description": "ボーダー" },
+        "500": { "$value": "#8A8175", "$type": "color", "$description": "muted。18px以上限定" },
+        "700": { "$value": "#57514A", "$type": "color" },
+        "900": { "$value": "#26221E", "$type": "color", "$description": "本文テキスト(温かみのある黒)" }
+      },
+      "brass": {
+        "300": { "$value": "#D8BE93", "$type": "color", "$description": "ダーク地上の差し色・テキスト可" },
+        "400": { "$value": "#C7A876", "$type": "color", "$description": "ダーク地のprimary action(ゴールドボタン)" },
+        "600": { "$value": "#9A7B4F", "$type": "color", "$description": "差し色。装飾・大きい要素限定(小テキストは4.5:1未満)" },
+        "700": { "$value": "#7D6340", "$type": "color", "$description": "テキスト用の差し色(小さいラベルはこちら)" }
+      },
+      "green": { "600": { "$value": "#2F6B4A", "$type": "color" }, "400": { "$value": "#6FBF9A", "$type": "color" } },
+      "amber": { "700": { "$value": "#B36F00", "$type": "color" }, "400": { "$value": "#E0B33D", "$type": "color" } },
+      "red":   { "600": { "$value": "#B4432E", "$type": "color" }, "400": { "$value": "#E08A72", "$type": "color" } }
+    },
+    "semantic": {
+      "text": {
+        "primary":    { "$value": "{color.primitive.sand.900}", "$type": "color" },
+        "secondary":  { "$value": "{color.primitive.sand.700}", "$type": "color" },
+        "muted":      { "$value": "{color.primitive.sand.500}", "$type": "color", "$description": "小さい文字への使用禁止。18px以上限定" },
+        "inverse":    { "$value": "{color.primitive.sand.50}", "$type": "color", "$description": "primaryボタン等の暗い塗り上のラベル" },
+        "on-inverse": { "$value": "{color.primitive.sand.50}", "$type": "color", "$description": "background.inverse(ダートセクション)上のテキスト" }
+      },
+      "background": {
+        "default": { "$value": "{color.primitive.sand.50}", "$type": "color" },
+        "subtle":  { "$value": "{color.primitive.sand.100}", "$type": "color" },
+        "inverse": { "$value": "{color.primitive.pine.700}", "$type": "color", "$description": "深緑のフルブリードセクション" }
+      },
+      "border": {
+        "default": { "$value": "{color.primitive.sand.200}", "$type": "color" },
+        "accent":  { "$value": "{color.primitive.brass.600}", "$type": "color", "$description": "真鍮のヘアライン" }
+      },
+      "action": {
+        "primary":       { "$value": "{color.primitive.pine.700}", "$type": "color" },
+        "primary-hover": { "$value": "{color.primitive.pine.800}", "$type": "color" }
+      },
+      "accent": {
+        "default": { "$value": "{color.primitive.brass.600}", "$type": "color", "$description": "装飾・大きい要素・ボーダー" },
+        "text":    { "$value": "{color.primitive.brass.700}", "$type": "color", "$description": "小さいラベル・アイキャッチ文字(テキスト安全)" }
+      },
+      "feedback": {
+        "success": { "$value": "{color.primitive.green.600}", "$type": "color" },
+        "warning": { "$value": "{color.primitive.amber.700}", "$type": "color" },
+        "danger":  { "$value": "{color.primitive.red.600}", "$type": "color" }
+      }
+    }
+  }
+}
