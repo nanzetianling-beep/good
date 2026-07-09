@@ -1,0 +1,26 @@
+{
+  "$description": "radius / shadow / motion トークン。shadowは3階層まで(階層が多いと視覚ノイズになるため)。motionはprefers-reduced-motion時に無効化すること。",
+  "radius": {
+    "sm":   { "$value": "0.25rem", "$type": "dimension" },
+    "md":   { "$value": "0.5rem",  "$type": "dimension" },
+    "lg":   { "$value": "1rem",    "$type": "dimension" },
+    "full": { "$value": "9999px",  "$type": "dimension" }
+  },
+  "shadow": {
+    "sm": { "$value": "0 1px 2px rgba(33, 37, 41, 0.06)", "$type": "shadow", "$description": "カード等の静的な浮き" },
+    "md": { "$value": "0 4px 12px rgba(33, 37, 41, 0.10)", "$type": "shadow", "$description": "ドロップダウン・ポップオーバー" },
+    "lg": { "$value": "0 12px 32px rgba(33, 37, 41, 0.16)", "$type": "shadow", "$description": "モーダルのみ" }
+  },
+  "motion": {
+    "duration": {
+      "fast":   { "$value": "120ms", "$type": "duration", "$description": "hover等の即時フィードバック" },
+      "normal": { "$value": "200ms", "$type": "duration", "$description": "展開・フェード" },
+      "slow":   { "$value": "320ms", "$type": "duration", "$description": "モーダル・ページ遷移" }
+    },
+    "easing": {
+      "standard": { "$value": "cubic-bezier(0.2, 0, 0, 1)", "$type": "cubicBezier" },
+      "enter":    { "$value": "cubic-bezier(0, 0, 0.2, 1)", "$type": "cubicBezier" },
+      "exit":     { "$value": "cubic-bezier(0.4, 0, 1, 1)", "$type": "cubicBezier" }
+    }
+  }
+}

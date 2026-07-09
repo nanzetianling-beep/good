@@ -1,0 +1,25 @@
+# Design System
+
+このディレクトリは `design-architect` スキル(`.claude/skills/design-architect/`)が参照・更新する唯一の情報源(Single Source of Truth)です。
+
+## 構造
+
+```
+design-system/
+├── tokens/        # W3C DTCG形式のデザイントークン ($value / $type)
+│   ├── colors.json      # プリミティブ層 + セマンティック層
+│   ├── typography.json  # フォント・型スケール・行間
+│   ├── spacing.json     # 余白スケール・コンテナ・ブレークポイント
+│   └── effects.json     # radius / shadow / motion
+├── components/    # コンポーネント別の設計ルール(1コンポーネント=1ファイル)
+├── guidelines/    # デザイン原則・トンマナ
+├── changelog.md   # 全変更の履歴(意図の記載必須)
+└── archive/       # 廃止スタイルの保管庫(削除ではなく移動)
+```
+
+## 運用ルール
+
+1. **トークン経由の原則**: 実装コードはセマンティックトークン(`color.text.primary` 等)のみを参照する。プリミティブ(`color.gray.900`)を直接使わない。
+2. **変更は必ず changelog へ**: 何を変えたかだけでなく「なぜ(意図)」を記録する。
+3. **矛盾時は人間が裁定**: 新しい抽出結果が既存ルールと矛盾した場合、AIは差分を提示し、上書きの承認を得る。
+4. **現在のトークン値は初期プレースホルダ**: 最初のブランド解析([Analyze]フェーズ)実行時に実プロジェクトの値へ置換される。

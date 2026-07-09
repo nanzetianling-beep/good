@@ -1,0 +1,47 @@
+{
+  "$description": "カラートークン。primitive層(生の色)とsemantic層(用途別)の2層構造。実装からはsemantic層のみ参照すること。",
+  "color": {
+    "primitive": {
+      "brand": {
+        "500": { "$value": "#3B5BDB", "$type": "color", "$description": "初期プレースホルダ。ブランド解析後に置換" },
+        "600": { "$value": "#3450C4", "$type": "color" },
+        "700": { "$value": "#2C45AB", "$type": "color" }
+      },
+      "gray": {
+        "0":   { "$value": "#FFFFFF", "$type": "color" },
+        "50":  { "$value": "#F8F9FA", "$type": "color" },
+        "200": { "$value": "#E9ECEF", "$type": "color" },
+        "500": { "$value": "#868E96", "$type": "color" },
+        "700": { "$value": "#495057", "$type": "color" },
+        "900": { "$value": "#212529", "$type": "color" }
+      },
+      "green": { "600": { "$value": "#2F9E44", "$type": "color" } },
+      "amber": { "600": { "$value": "#E8930C", "$type": "color" } },
+      "red":   { "600": { "$value": "#E03131", "$type": "color" } }
+    },
+    "semantic": {
+      "text": {
+        "primary":   { "$value": "{color.primitive.gray.900}", "$type": "color" },
+        "secondary": { "$value": "{color.primitive.gray.700}", "$type": "color" },
+        "muted":     { "$value": "{color.primitive.gray.500}", "$type": "color", "$description": "小さい文字への使用禁止(コントラスト4.5:1未満になるため)。18px以上限定" },
+        "inverse":   { "$value": "{color.primitive.gray.0}", "$type": "color" }
+      },
+      "background": {
+        "default": { "$value": "{color.primitive.gray.0}", "$type": "color" },
+        "subtle":  { "$value": "{color.primitive.gray.50}", "$type": "color" }
+      },
+      "border": {
+        "default": { "$value": "{color.primitive.gray.200}", "$type": "color" }
+      },
+      "action": {
+        "primary":       { "$value": "{color.primitive.brand.600}", "$type": "color" },
+        "primary-hover": { "$value": "{color.primitive.brand.700}", "$type": "color" }
+      },
+      "feedback": {
+        "success": { "$value": "{color.primitive.green.600}", "$type": "color" },
+        "warning": { "$value": "{color.primitive.amber.600}", "$type": "color" },
+        "danger":  { "$value": "{color.primitive.red.600}", "$type": "color" }
+      }
+    }
+  }
+}

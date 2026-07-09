@@ -1,0 +1,28 @@
+{
+  "$description": "タイポグラフィトークン。型スケール比率は1.25(Major Third)。日本語本文はline-height広め(1.7)を基準とする。",
+  "font": {
+    "family": {
+      "sans": { "$value": "'Inter', 'Noto Sans JP', system-ui, sans-serif", "$type": "fontFamily" },
+      "mono": { "$value": "'JetBrains Mono', 'SFMono-Regular', monospace", "$type": "fontFamily" }
+    },
+    "size": {
+      "xs":   { "$value": "0.75rem",  "$type": "dimension" },
+      "sm":   { "$value": "0.875rem", "$type": "dimension" },
+      "base": { "$value": "1rem",     "$type": "dimension" },
+      "lg":   { "$value": "1.25rem",  "$type": "dimension" },
+      "xl":   { "$value": "1.5625rem","$type": "dimension" },
+      "2xl":  { "$value": "1.953rem", "$type": "dimension" },
+      "3xl":  { "$value": "2.441rem", "$type": "dimension" }
+    },
+    "weight": {
+      "regular":  { "$value": "400", "$type": "fontWeight" },
+      "medium":   { "$value": "500", "$type": "fontWeight" },
+      "bold":     { "$value": "700", "$type": "fontWeight" }
+    },
+    "lineHeight": {
+      "tight":  { "$value": "1.25", "$type": "number", "$description": "見出し用" },
+      "normal": { "$value": "1.5",  "$type": "number", "$description": "英文本文用" },
+      "relaxed":{ "$value": "1.7",  "$type": "number", "$description": "日本語本文用" }
+    }
+  }
+}
