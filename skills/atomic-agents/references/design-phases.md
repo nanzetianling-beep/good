@@ -14,6 +14,30 @@ Companion to SKILL.md. Work top to bottom; don't advance a phase until its deliv
 
 Deliverable: step list + dependency map + chosen pattern.
 
+### Deliverable template — goal spec
+
+Fill this in before decomposing. If a row is hard to fill, the goal isn't ready yet.
+
+| Field | Entry |
+|---|---|
+| **Goal (one sentence)** | Given ___, produce ___. |
+| **Success criteria** | Measurable checks — countable, gateable (e.g. "≥ 3 citations; covers X, Y, Z"). |
+| **Inputs** | `name: type` — and where each comes from. |
+| **Final output** | `name: type/schema` — and who/what consumes it. |
+| **Failure budget** | Which partial failures are tolerable vs run-fatal (e.g. "any single fetch may fail; < 3 usable sources aborts"). |
+| **Out of scope** | Explicitly excluded work, so atoms don't grow. |
+
+Filled in for the worked example:
+
+| Field | Entry |
+|---|---|
+| Goal | Given a company name, produce a sourced competitive summary. |
+| Success criteria | ≥ 3 citations; covers positioning, top competitors, recent news. |
+| Inputs | `company: str` (user), `urls: list[str]` (from search step). |
+| Final output | `ReportOutput{passed, gaps[], markdown}` — consumed by the caller/UI. |
+| Failure budget | Any URL may fail (retry once, then drop); < 3 usable sources = abort; revise loop capped at 2. |
+| Out of scope | Financial analysis, real-time monitoring, non-public sources. |
+
 ## Phase 2 — PLAN checklist
 
 - [ ] **Pattern locked** (see `references/agent-patterns.md`); nesting/combination noted if complex.
@@ -26,6 +50,28 @@ Deliverable: step list + dependency map + chosen pattern.
 
 Deliverable: schema set + tool contracts + control-flow diagram + error/stop rules.
 
+### Deliverable template — decomposition worksheet
+
+One row per atom. This table **is** the plan — if you can't fill a cell, that atom isn't designed yet.
+The composition check is mechanical: row *n*'s output schema must equal (or be explicitly mapped to)
+row *n+1*'s input schema.
+
+| # | Step name | Input schema | Output schema | Tool / LLM / code | Failure mode | Retry policy |
+|---|---|---|---|---|---|---|
+| 1 | | | | | | |
+
+Filled in for the worked example:
+
+| # | Step name | Input schema | Output schema | Tool / LLM / code | Failure mode | Retry policy |
+|---|---|---|---|---|---|---|
+| 1 | fetch | `FetchInput{url}` | `FetchOutput{url,status,text}` | tool (HTTP) | timeout, 4xx/5xx | retry once, then drop URL |
+| 2 | extract | `ExtractInput{url,text}` | `ExtractOutput{url,facts[]}` | LLM | empty/garbage facts on messy pages | no retry; empty facts ⇒ drop URL |
+| 3 | analyze | `AnalyzeInput{company,extracts[],gaps[]}` | `AnalyzeOutput{summary,citations[]}` | LLM | thin summary, missing citations | no auto-retry — the gate loop is the retry |
+| 4 | report (gate) | `ReportInput{company,summary,citations[]}` | `ReportOutput{passed,gaps[],markdown}` | plain code | none (deterministic) | n/a; failing gate feeds `gaps` back to 3, max 2 loops |
+
+Boundary mappings to note in the worksheet: 1→2 drops `status`; 2→3 aggregates many `ExtractOutput`
+into one list (with a `MIN_SOURCES` floor); 4→3 is the only backward edge and carries only `gaps`.
+
 ## Phase 3 — IMPLEMENT checklist
 
 - [ ] **Build each atom in isolation**; unit-test against its schema with real + adversarial inputs.
@@ -35,6 +81,31 @@ Deliverable: schema set + tool contracts + control-flow diagram + error/stop rul
 - [ ] **Failure tracing** — when it breaks, isolate the responsible atom and fix locally.
 
 Deliverable: a working, tested system whose parts remain independently swappable.
+
+### Deliverable template — integration test plan
+
+Cover four layers, in order: atoms alone → junctions → injected failures → end-to-end. Write the
+failure-injection rows straight from the worksheet's "failure mode" column.
+
+| # | Layer | Test | Given | Expect |
+|---|---|---|---|---|
+| U-n | atom unit | one per atom, incl. an adversarial input | canned input model | valid output model (or clean raise) |
+| J-n | junction | one per schema boundary | canned upstream output | downstream atom accepts it unchanged |
+| F-n | failure injection | one per failure-mode row | forced tool error / bad LLM output | retry → drop → floor/abort behaves per plan |
+| S-n | stop condition | one per loop/budget | gate that never passes | loop exits at cap with best-effort output |
+| E-n | end-to-end | 2-3 realistic runs | real inputs | goal-spec success criteria met |
+
+Filled in for the worked example (abridged):
+
+| # | Layer | Test | Given | Expect |
+|---|---|---|---|---|
+| U-2 | atom unit | extract on a paywalled page | canned `ExtractInput` with junk text | `facts == []`, no crash |
+| U-4 | atom unit | gate rejects citation-less summary | `ReportInput` with 0 citations | `passed=False`, gap names the criterion |
+| J-2 | junction | fetch → extract boundary | canned `FetchOutput` | `ExtractInput` built without touching `status` |
+| F-1 | failure injection | fetch raises twice | mocked timeout | URL dropped, run continues |
+| F-2 | failure injection | too many dead URLs | only 2 usable sources | run aborts citing the `MIN_SOURCES` floor |
+| S-1 | stop condition | gate never passes | evaluator forced to fail | exits after 1 + 2 passes, returns `passed=False` + gaps |
+| E-1 | end-to-end | 3 real companies | live tools | ≥ 3 citations, all sections covered |
 
 ---
 
@@ -84,3 +155,6 @@ Eval          { passed: bool, gaps: list[str] }
 
 Because each atom is typed and isolated, swapping `web_search` for a different provider (same schema),
 or upgrading `extract`, requires no changes elsewhere — the payoff of building atomically.
+
+This example is carried all the way to compilable skeleton code — pydantic schemas, orchestrator,
+retries, partial-failure aggregation, and the bounded revise loop — in `worked-build.md`.

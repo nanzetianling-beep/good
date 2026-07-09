@@ -98,7 +98,8 @@ Deliverable: schemas for every boundary, tool contracts, the control-flow diagra
 4. **Evaluate end-to-end.** Test against the success measure from Design. Trace failures to a specific
    atom and fix locally — the payoff of atomicity is that you can.
 
-See `references/design-phases.md` for a per-phase checklist and a fully worked example.
+See `references/design-phases.md` for per-phase checklists, fill-in deliverable templates (goal spec,
+decomposition worksheet, integration test plan), and a fully worked example.
 
 ## Workflow vs autonomous agent
 
@@ -112,6 +113,24 @@ See `references/design-phases.md` for a per-phase checklist and a fully worked e
 
 Guiding rule (Anthropic): find the **simplest solution possible, and only increase complexity when it
 measurably improves outcomes.**
+
+## Smells you picked the wrong pattern
+
+| Symptom | Switch to |
+|---|---|
+| Your chain sprouts if/else branches keyed on input type | **Routing** — one classifier, N specialized handlers |
+| Chain steps don't actually consume each other's output | **Parallelization (sectioning)** — they were never sequential |
+| You re-run the same step hoping for a better answer | **Parallelization (voting)** — run N at once and aggregate |
+| A route's handler is "figure out what's needed, then do it" | **Orchestrator-workers** — subtasks are runtime-determined |
+| You keep manually re-prompting to fix the same quality issue | **Evaluator-optimizer** — codify the critique as a bounded loop |
+| The orchestrator emits the same decomposition every run | Downgrade to **chaining/parallelization** — subtasks were predictable |
+| The evaluator loop never converges, feedback is vague scores | Downgrade to **chaining** with a plain-code validation gate |
+| An autonomous agent burns turns rediscovering a fixed procedure | Downgrade to a **workflow** — encode the procedure as code paths |
+| One prompt classifies *and* extracts *and* summarizes, each degrading | Split into a **chain** of single-responsibility atoms |
+| The main context drowns in raw pages/files from one noisy step | Push that step into a **subagent**; return only the typed result |
+
+Each row is cheap to act on precisely because atoms are typed: switching patterns rewires
+orchestration code, not the atoms themselves.
 
 ## Subagents as atoms (Claude Agent SDK)
 
@@ -144,7 +163,9 @@ Goal: "Given a company name, produce a sourced competitive summary."
 - Implement: test each atom alone (especially extract on messy pages), then chain, then bound the loop.
 
 The full version — including composition boundaries and per-step error handling — is in
-`references/design-phases.md`.
+`references/design-phases.md`. The same example taken all the way to compilable skeleton code
+(pydantic schemas, orchestrator with boundary asserts, bounded retries, partial-failure aggregation,
+stop conditions) is in `references/worked-build.md`.
 
 ## Sources
 
