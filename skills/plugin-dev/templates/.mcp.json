@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "internal-api": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/api-server.js"],
+      "env": {
+        "API_ENDPOINT": "${user_config.api_endpoint}",
+        "API_TOKEN": "${user_config.api_token}"
+      },
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    },
+    "npx-based-server": {
+      "command": "npx",
+      "args": ["@your-org/mcp-server", "--plugin-mode"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    },
+    "remote-http-server": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com"
+    }
+  }
+}

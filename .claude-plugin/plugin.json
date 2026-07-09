@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "claude-code-skills-pack",
+  "displayName": "Claude Code Skills Pack",
+  "version": "1.0.0",
+  "description": "A pack of 10 productivity Skills for Claude Code: frontend design, Playwright automation, setup consulting, skill/plugin authoring, CLAUDE.md management, structured reasoning, natural Japanese writing, security guidance, and agent design.",
+  "author": {
+    "name": "nanzetianling-beep"
+  },
+  "repository": "https://github.com/nanzetianling-beep/good",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "automation",
+    "frontend",
+    "playwright",
+    "agents",
+    "security",
+    "japanese"
+  ],
+  "skills": "./skills/"
+}

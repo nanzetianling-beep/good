@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "good-skills-marketplace",
+  "owner": {
+    "name": "nanzetianling-beep"
+  },
+  "metadata": {
+    "description": "Marketplace for the Claude Code Skills Pack (10 productivity skills)."
+  },
+  "plugins": [
+    {
+      "name": "claude-code-skills-pack",
+      "source": ".",
+      "description": "10 productivity Skills: frontend-design, playwright, cc-setup-advisor, skill-builder, plugin-dev, project-memory-manager, superpowers, natural-japanese, security-guidance, atomic-agents.",
+      "version": "1.0.0",
+      "category": "productivity",
+      "tags": ["skills", "automation", "agents", "frontend", "security"]
+    }
+  ]
+}
