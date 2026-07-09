@@ -6,6 +6,11 @@ Reads the current price for a list of product URLs, compares against a saved
 baseline, reports only what CHANGED, then persists the new baseline. Idempotent:
 re-running without changes does nothing and reports nothing.
 
+Robustness kit: per-SKU bounded retries with jittered backoff, jittered polite
+delays between sites (no metronome fingerprint), structured JSON-lines logging,
+screenshot + HTML artifacts on failure, last-known-value fallback so one bad
+page never poisons the whole baseline.
+
 Run it from cron / a systemd timer, e.g. daily at 08:00:
     0 8 * * *  cd /path/to/project && \
       PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers python examples/monitor.py >> monitor.log 2>&1
@@ -13,12 +18,19 @@ Run it from cron / a systemd timer, e.g. daily at 08:00:
 For paywalled prices, log in first with examples/login.py and load its
 storage_state here via browser.new_context(storage_state="auth.json").
 
-Browsers are pre-installed; do NOT run `playwright install`.
+Browsers are pre-installed at /opt/pw-browsers; do NOT run `playwright install`.
+Python binding: `pip install playwright==1.56.0` (matches installed chromium-1194).
 """
 import json
+import logging
 import pathlib
+import random
 import re
-from playwright.sync_api import sync_playwright, expect
+import time
+
+from playwright.sync_api import Error as PWError
+from playwright.sync_api import TimeoutError as PWTimeoutError
+from playwright.sync_api import expect, sync_playwright
 
 # Watch list: give each SKU a stable key and its product URL.
 WATCH = {
@@ -26,6 +38,45 @@ WATCH = {
     "widget-b": "https://example.com/products/widget-b",
 }
 BASELINE = pathlib.Path("prices.json")  # previous run's prices; safe to commit (no secrets)
+ARTIFACT_DIR = pathlib.Path("artifacts")
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+log = logging.getLogger("monitor")
+
+
+def log_event(event: str, **fields):
+    log.info(json.dumps({"ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                         "event": event, **fields},
+                        ensure_ascii=False, default=str))
+
+
+def dump_artifacts(page, tag: str):
+    ARTIFACT_DIR.mkdir(exist_ok=True)
+    try:
+        page.screenshot(path=str(ARTIFACT_DIR / f"{tag}.png"), full_page=True)
+        (ARTIFACT_DIR / f"{tag}.html").write_text(page.content())
+        log_event("artifacts_saved", tag=tag, url=page.url)
+    except Exception as exc:
+        log_event("artifact_capture_failed", tag=tag, error=str(exc))
+
+
+def retry(fn, attempts=3, label="task"):
+    """Bounded attempts, full-jitter exponential backoff, transient errors only."""
+    for attempt in range(1, attempts + 1):
+        try:
+            return fn()
+        except (PWTimeoutError, PWError) as exc:
+            if attempt == attempts:
+                raise
+            delay = random.uniform(0, min(30.0, 2.0 ** attempt))
+            log_event("retrying", label=label, attempt=attempt,
+                      error=str(exc).splitlines()[0], sleep_s=round(delay, 1))
+            time.sleep(delay)
+
+
+def polite_pause(base=1.0, jitter=1.5):
+    """Jittered delay between page fetches — polite and non-fingerprintable."""
+    time.sleep(base + random.uniform(0, jitter))
 
 
 def parse_price(text: str):
@@ -36,8 +87,8 @@ def parse_price(text: str):
 
 def read_price(page, url: str):
     page.goto(url, wait_until="domcontentloaded")
-    page.wait_for_load_state("networkidle")
     # Prefer a semantic hook; fall back to the first currency-looking text.
+    # expect() below is the real wait — no networkidle needed.
     price_el = page.get_by_test_id("price")
     if not price_el.count():
         price_el = page.get_by_text(re.compile(r"[$€£]\s?\d")).first
@@ -46,10 +97,9 @@ def read_price(page, url: str):
 
 
 def report(changes: dict):
-    """Replace with email/Slack/webhook as needed. Here: print a diff."""
+    """Replace with email/Slack/webhook as needed. Here: structured log lines."""
     for key, (old, new) in changes.items():
-        arrow = "→"
-        print(f"[PRICE CHANGE] {key}: {old} {arrow} {new}")
+        log_event("price_change", sku=key, old=old, new=new)
 
 
 def run():
@@ -65,11 +115,17 @@ def run():
         try:
             for key, url in WATCH.items():
                 try:
-                    current[key] = read_price(page, url)
-                except Exception:
-                    page.screenshot(path=f"error-{key}.png", full_page=True)
+                    current[key] = retry(lambda u=url: read_price(page, u),
+                                         attempts=3, label=key)
+                except Exception as exc:
+                    dump_artifacts(page, f"monitor-{key}")
+                    log_event("read_failed", sku=key, url=url,
+                              error=str(exc).splitlines()[0])
                     current[key] = baseline.get(key)  # keep last known on failure
-                page.wait_for_timeout(1000)  # polite delay between requests
+                    # A dead page can poison later reads — recycle it.
+                    page.close()
+                    page = context.new_page()
+                polite_pause()
         finally:
             context.close()
             browser.close()
@@ -82,7 +138,7 @@ def run():
     if changes:
         report(changes)
     else:
-        print("No price changes.")
+        log_event("no_changes", skus=len(current))
 
     BASELINE.write_text(json.dumps(current, ensure_ascii=False, indent=2))
     return changes
