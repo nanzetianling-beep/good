@@ -1,13 +1,15 @@
 # Design Principles Reference
 
 Concrete numbers and rules behind the SKILL.md checklist. Distilled mainly from
-*Refactoring UI* (Wathan & Schoger) and Tailwind/shadcn token practice, adapted for
-web output. Use these as defaults, not laws — the brief can justify departures.
+*Refactoring UI* (Wathan & Schoger) and design-token practice, adapted for web output.
+Use these as defaults, not laws — the brief can justify departures.
 
 ## Visual hierarchy
 
 - Emphasis is relative. Establish importance with **size, weight, and color**, not by
   pushing elements around the layout.
+- **Design in grayscale first**, add color last. Building hierarchy with spacing, size, and
+  contrast before color prevents leaning on color as a crutch.
 - De-emphasize instead of emphasizing: to make secondary text recede, use a lighter grey
   or smaller size — do not use a thin font weight.
 - Don't use grey text on colored backgrounds; instead pick a color with the same hue as
@@ -42,10 +44,11 @@ web output. Use these as defaults, not laws — the brief can justify departures
   slightly toward the brand hue (cool or warm) for cohesion.
 - **Perceived brightness**: rotating hue toward brighter neighbors (e.g. toward yellow)
   while adjusting lightness keeps shades from looking muddy or washed out.
-- **Accessible contrast**: WCAG AA needs 4.5:1 for body text, 3:1 for large text (≥24px
-  or ≥19px bold) and meaningful UI elements. Test it; don't eyeball it.
-- **Tokens**: expose colors as CSS variables (`--color-primary-600`) and reference tokens
-  everywhere — no one-off hex in components. This is what makes theming and dark mode work.
+- **Accessible contrast**: WCAG AA needs 4.5:1 for body text and 3:1 for large text (≥24px,
+  or ≥18.66px / 14pt bold) and meaningful UI components. Test it; don't eyeball it.
+- **Tokens**: expose colors as CSS custom properties (`--color-primary-600`) and reference
+  tokens everywhere — no one-off hex in components. This is what makes theming, consistency,
+  and dark mode work. The W3C Design Tokens format gives a portable naming vocabulary.
 
 ## Spacing & layout
 
