@@ -29,16 +29,25 @@ if [[ ! -f "$MANIFEST" ]]; then
 fi
 
 # Validate first if the CLI is available (non-fatal if not installed).
+# --strict promotes manifest warnings (e.g. misspelled fields) to errors.
 if command -v claude >/dev/null 2>&1; then
   echo "Validating $PLUGIN_DIR ..."
-  claude plugin validate "$PLUGIN_DIR" || {
+  claude plugin validate "$PLUGIN_DIR" --strict || {
     echo "error: plugin validation failed" >&2
     exit 1
   }
 fi
 
 BASE="$(basename "$PLUGIN_DIR")"
-OUT="${2:-./${BASE}.zip}"
+
+# Default output name includes the manifest version when jq is available.
+if [[ -z "${2:-}" ]] && command -v jq >/dev/null 2>&1; then
+  VERSION="$(jq -r '.version // empty' "$MANIFEST")"
+  OUT="./${BASE}${VERSION:+-$VERSION}.zip"
+else
+  OUT="${2:-./${BASE}.zip}"
+fi
+
 mkdir -p "$(dirname "$OUT")"
 rm -f "$OUT"
 

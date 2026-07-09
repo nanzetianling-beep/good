@@ -14,13 +14,13 @@
   "license": "MIT",
   "keywords": ["automation", "internal"],
 
-  "//": "Component paths below are OPTIONAL. Delete them if skills/, agents/, commands/, hooks/hooks.json, and .mcp.json are in their default root locations — they are auto-discovered.",
+  "//": "Component paths below are OPTIONAL. Delete them when skills/, agents/, commands/, hooks/hooks.json, and .mcp.json sit in their default root locations — they are auto-discovered. Note: `skills` ADDS to the default skills/ scan; `agents`/`commands` REPLACE their default dir.",
   "skills": "./skills/",
   "agents": ["./agents/reviewer.md"],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json",
 
-  "//userConfig": "Values Claude Code prompts for when the plugin is enabled. Reference as ${user_config.KEY} in .mcp.json/hooks. Mark secrets sensitive:true (stored in the keychain).",
+  "//userConfig": "Values Claude Code prompts for when the plugin is enabled. Reference as ${user_config.KEY} in .mcp.json/hooks; also exported as CLAUDE_PLUGIN_OPTION_<KEY>. Mark secrets sensitive:true (masked, stored in the keychain).",
   "userConfig": {
     "api_endpoint": {
       "type": "string",

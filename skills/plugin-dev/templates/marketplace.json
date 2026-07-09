@@ -19,10 +19,19 @@
     },
     {
       "name": "deployment-tools",
-      "source": { "source": "github", "repo": "acme/deploy-plugin" },
+      "source": { "source": "github", "repo": "acme/deploy-plugin", "ref": "v1.2.0" },
       "description": "Deployment automation with an internal-API MCP bridge",
       "category": "ci-cd",
       "tags": ["deploy", "internal"]
+    },
+    {
+      "name": "monorepo-tool",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/acme/monorepo.git",
+        "path": "tools/claude-plugin"
+      },
+      "description": "Plugin that lives in a subdirectory of a shared monorepo"
     }
   ]
 }
