@@ -3,7 +3,7 @@
   "name": "claude-code-skills-pack",
   "displayName": "Claude Code Skills Pack",
   "version": "1.0.0",
-  "description": "A pack of 11 productivity Skills for Claude Code: frontend design, Playwright automation, setup consulting, skill/plugin authoring, CLAUDE.md management, structured reasoning, natural Japanese writing, security guidance, agent design, and a Discord bridge.",
+  "description": "A pack of 10 productivity Skills for Claude Code: frontend design, Playwright automation, setup consulting, skill/plugin authoring, CLAUDE.md management, structured reasoning, natural Japanese writing, security guidance, and agent design.",
   "author": {
     "name": "nanzetianling-beep"
   },

@@ -1,6 +1,6 @@
 # Claude Code Skills Pack
 
-A pack of **11 productivity Skills** for [Claude Code](https://code.claude.com/docs),
+A pack of **10 productivity Skills** for [Claude Code](https://code.claude.com/docs),
 each researched and synthesized from multiple authoritative sources. Skills are
 "detailed instruction manuals" that Claude loads on demand to complete a specific
 kind of task. This repo is also packaged as an installable **plugin** so you can add
@@ -9,7 +9,7 @@ all 11 skills at once.
 > These are custom skills. They complement — and do not replace — Claude Code's
 > built-in document skills (PPTX, Excel, Word, PDF).
 
-## The 11 skills
+## The 10 skills
 
 | Skill | What it does |
 | --- | --- |
@@ -23,7 +23,6 @@ all 11 skills at once.
 | [`natural-japanese`](skills/natural-japanese/SKILL.md) | Rewrite stiff, AI-sounding Japanese into natural human Japanese following a chosen tone; can follow a Reference Folder style sample. |
 | [`security-guidance`](skills/security-guidance/SKILL.md) | Defensive guardrail — audit an external skill/repo before install, spot dangerous code or secret exfiltration, defend against prompt injection. |
 | [`atomic-agents`](skills/atomic-agents/SKILL.md) | Design and build complex multi-tool agents with a phased Design → Plan → Implement method and proven workflow patterns. |
-| [`discord-plugin`](skills/discord-plugin/SKILL.md) | Bridge a Discord bot to Claude Code so you can operate your host PC's Claude Code from your phone and get deliverables back as attachments. |
 
 Each skill folder contains a focused `SKILL.md` plus supporting `references/`,
 `templates/`, `examples/`, or `scripts/` (progressive disclosure — long material
@@ -77,8 +76,7 @@ its `description`.
     ├── superpowers/
     ├── natural-japanese/
     ├── security-guidance/
-    ├── atomic-agents/
-    └── discord-plugin/
+    └── atomic-agents/
 ```
 
 ## Safety note
