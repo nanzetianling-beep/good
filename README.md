@@ -4,10 +4,29 @@ A pack of **10 productivity Skills** for [Claude Code](https://code.claude.com/d
 each researched and synthesized from multiple authoritative sources. Skills are
 "detailed instruction manuals" that Claude loads on demand to complete a specific
 kind of task. This repo is also packaged as an installable **plugin** so you can add
-all 11 skills at once.
+all 10 skills at once.
 
 > These are custom skills. They complement — and do not replace — Claude Code's
 > built-in document skills (PPTX, Excel, Word, PDF).
+
+## Invocation & model compatibility
+
+All 10 skills are set to **manual invocation only** (`disable-model-invocation: true`
+in each `SKILL.md`). Claude will **not** auto-trigger them — you run a skill
+explicitly by name:
+
+```
+/frontend-design a pricing page for a coffee subscription
+/playwright watch this product page for price drops
+```
+
+Skills are plain Markdown instruction files that the **currently active model reads** —
+they pin no model, so they work on **any Claude model that runs Claude Code**
+(Opus 4.8, Sonnet, Haiku, Fable 5, …), not just one. Switching models (`/model`)
+does not affect whether a skill loads or runs. The only model names that appear in
+the pack are illustrative `model:` values inside `claude-code-setup`'s **subagent
+example recipes** (e.g. `sonnet` / `haiku` / `opus` / `inherit`), which configure a
+subagent you might create — they do not tie any skill to a specific model.
 
 ## The 10 skills
 
@@ -31,7 +50,7 @@ lives one level down and is linked from `SKILL.md`). Every `SKILL.md` ends with 
 
 ## Install
 
-### Option A — as a plugin (installs all 11 skills at once)
+### Option A — as a plugin (installs all 10 skills at once)
 
 ```
 # In Claude Code:
@@ -54,10 +73,11 @@ cp -r skills/frontend-design ~/.claude/skills/
 mkdir -p .claude/skills && cp -r skills/frontend-design .claude/skills/
 ```
 
-Claude Code auto-discovers skills in `~/.claude/skills/<name>/SKILL.md` and
+Claude Code discovers skills in `~/.claude/skills/<name>/SKILL.md` and
 `.claude/skills/<name>/SKILL.md`. Restart Claude Code (or run `/reload-plugins`
-for the plugin) and the skill activates automatically when your request matches
-its `description`.
+for the plugin), then invoke a skill explicitly with `/<skill-name>` (these skills
+are manual-only; see **Invocation & model compatibility** above). This works the
+same on any model — Opus 4.8, Sonnet, Haiku, or Fable 5.
 
 ## Repository layout
 

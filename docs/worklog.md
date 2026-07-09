@@ -112,6 +112,19 @@ SKILL.md は全て500行以内を維持し、詳細は references/ に展開（p
   該当箇所（`Triggers: ` / `work: `）を ` — ` に置換し、全10スキルが厳密YAMLとしてパースOKであることを検証。
 - 挙動として自動化しているのはこの「スキル定義」のみ。フック等の他の自動化は追加していない。
 
+## 2026-07-09 — モデル互換性（Opus 4.8対応）の確認と明記
+ユーザー指示: 「これらのスキルはFable5のみではなくOpus4.8でも使えるようにして」。
+- 調査: 全スキルを `fable / claude-fable / opus / sonnet / haiku / model:` でグレップ。
+  → Fable 5固有のモデルID・前提は**ゼロ**。スキルはモデル非依存のMarkdown指示書であり、
+  実行中のモデル（Opus 4.8含む任意のClaudeモデル）がそのまま読んで動作する。追加改修は不要。
+- 唯一の `model:` 出現は claude-code-setup の**サブエージェント例**（`model: sonnet`、
+  コメントに `inherit, opus, haiku`）で、これは利用者が作るサブエージェント設定の例。スキル本体を
+  特定モデルに縛るものではない。
+- durableな明記として README に「Invocation & model compatibility」節を追加
+  （Opus 4.8 / Sonnet / Haiku / Fable 5 いずれでも動作、`/model` 切替の影響なし）。
+- 併せて README の陳腐化を修正: 「11 skills」→「10 skills」、自動発動の記述を `/skill名`
+  手動呼び出しの記述に更新（前ステップの `disable-model-invocation` 変更に整合）。
+
 #### エージェント報告のUNCERTAINTIES（誠実性のための記録）
 - 判断閾値の一部（CLAUDE.md 350行must-fix、skill-creatorのD1=60字/E3=0件基準）は文書化された規定ではなく
   本スキル独自の基準であり、その旨を各ファイル内に明記済み。
