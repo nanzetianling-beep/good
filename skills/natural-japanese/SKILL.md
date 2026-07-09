@@ -196,5 +196,3 @@ AIが生成しがちな「不自然な日本語」を、人間が書いたよう
 - [「公用文作成の考え方（建議）」文化審議会・令和4年／文化庁](https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/93657201.html) — 形式名詞・補助動詞・接続詞をひらがなで書く原則、横書きの読点「、」など、漢字の開きの公的基準。
 - [敬体と常体とは？混在はNG？使い分けを解説（記事ブログ）](https://xn--3kq3hlnz13dlw7bzic.jp/transcription-stylistics/) — 敬体/常体の質感の違い、混在が読みにくい理由、箇条書きや会話文での例外的な常体使用。
 - [トーンオブボイスとは？ブランドの言葉遣いを設計する方法（reiro）](https://reiro.co.jp/blog/branding-tone/) — 語彙・文体・態度・感情の4要素、パーソナリティ定義→ターゲット理解→4軸設定→Do/Don't作成→ガイドライン化という設計プロセス。
-</content>
-</invoke>
