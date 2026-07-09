@@ -116,13 +116,24 @@ Skill Creation Progress:
 - [ ] 7. Evaluate, iterate, and place
 ```
 
-**Step 1 — Gather requirements.** Interview the user before writing anything. Ask:
-- What task should the skill accomplish, and what's the end deliverable / output format?
-- What phrases or situations should *trigger* it? (These become the `description`.)
-- What context does Claude repeatedly need that it doesn't already know (schemas, conventions, house rules)? Notice what you keep re-explaining.
-- Any fragile steps that must run in an exact sequence, example files, or scripts to bundle?
-- Are the outputs objectively verifiable? (If so, evals are worthwhile; purely subjective skills like writing style rely on qualitative judgment.)
-- Which models will use it (Haiku needs more guidance than Opus)?
+**Step 1 — Gather requirements (the interview).** Interview the user before writing anything. Ask these in order, skipping only what the user already answered. Each answer maps to a specific part of the skill — record answers verbatim, especially Q3 (they become eval prompts later).
+
+| # | Question | Why it's asked | Answer becomes |
+|---|----------|----------------|----------------|
+| 1 | "In one sentence: what task, and what does the finished output look like?" | Forces one coherent capability — a multi-part answer means multiple skills. | Scope, the `name` (gerund of this sentence's verb), and the body's purpose line. |
+| 2 | "Walk me through the last time you did this by hand — every step, in order." | The real procedure beats an idealized one; it surfaces steps the user forgot they do. | The body's numbered workflow. |
+| 3 | "What would you literally type in chat to ask for this? Give 2–3 phrasings, including your laziest one." | These verbatim phrases are the trigger vocabulary — and the should-trigger evals. | `description` trigger terms (Step 3) and the Step 7 eval battery. |
+| 4 | "What file types, filenames, paths, or tools are involved?" | Concrete nouns are what disambiguate this skill among 100+ others. | `description` triggers; optionally a `paths` glob. |
+| 5 | "When you do this with Claude today, what does it get wrong or keep asking about?" | Only add context that closes an observed gap, not an imagined one. | Body content selection; confirmed by the Step 2 baseline. |
+| 6 | "Is there long material — policy docs, schemas, style guides, past outputs? Roughly how long?" | Long or rarely-needed material shouldn't load on every trigger. | `references/` files, linked one level deep. |
+| 7 | "Which parts are identical every time — could they be code?" | Deterministic steps run cheaper and more reliably as scripts than as regenerated reasoning. | `scripts/` (state run-vs-read intent; list dependencies). |
+| 8 | "Where does it break if done slightly differently? What must never vary?" | Sets the degree of freedom per step. | Prose for flexible steps; exact "run exactly this" commands for fragile ones. |
+| 9 | "Show me one good past output. How do you judge an output correct?" | Verifiable criteria make evals meaningful; a real sample anchors the format. | The Examples section and the Step 7 behavior-eval success criteria. |
+| 10 | "Should Claude trigger this on its own, or only when you invoke it? Any side effects — sends, deploys, deletes?" | Side-effectful workflows should be manual-only; known tool needs can be pre-approved. | `disable-model-invocation: true` and/or `allowed-tools`. |
+| 11 | "Is this just for you, this repo's team, or shared wider?" | Determines placement and portability constraints. | Personal / project / plugin directory (see Directory placement). |
+| 12 | "Which models will run it?" | Haiku needs more explicit guidance and guardrails than Opus. | Body verbosity; which tiers to test in Step 7. |
+
+The mapping in one line: **scope → `name`; triggers → `description`; procedure → body; long material → `references/`; deterministic steps → `scripts/`.** A complete interview transcript and the skill it produced are in `references/worked-example.md`.
 
 **Step 2 — Choose name + scope, establish a baseline.** Pick a specific, gerund-form `name`; keep scope tight — one coherent capability per skill. The directory name must equal `name`. Then run one or two representative tasks **without** any skill to see where Claude actually falls short. This is eval-driven development: only add context that closes an observed gap, not imagined ones.
 
@@ -134,14 +145,33 @@ Skill Creation Progress:
 
 **Step 6 — Validate.** Run the skill against the quality checklist in `references/quality-checklist.md`. Fix every failing item before showing the user.
 
-**Step 7 — Evaluate, iterate, and place (the eval/revise loop).** Do not ship on first draft:
-1. Write ~3 realistic test prompts a real user would actually type (concrete: file paths, casual phrasing, typos), plus expected-behavior notes.
-2. Run each with the skill loaded; compare against the Step 2 baseline (or, when improving an existing skill, its previous version).
-3. Judge each output against the intended behavior and success criteria.
-4. Diagnose failures — usually the `description` didn't trigger, a step was skipped, or context was missing/buried.
-5. Revise (generalize from feedback, keep the prompt lean, explain the why); don't overfit to one case. Re-run until outputs are consistently correct.
-6. Optimize the `description` specifically for triggering: draft should-trigger and should-not-trigger (near-miss) prompts and confirm the skill fires only when intended.
-7. Place the skill in the correct directory (see below), confirm the folder name and `name` match, and tell the user to reload so the metadata loads. Package it if they want to share it.
+**Step 7 — Evaluate, iterate, and place (the eval/revise loop).** Do not ship on first draft. There are two eval types: **trigger evals** (does the skill fire at the right moments?) and **behavior evals** (does it do the right thing once fired?).
+
+*7a. Build the trigger battery.* Write 3–5 **should-trigger** prompts, each a different distance from the description's wording:
+- one verbatim phrasing from interview Q3;
+- one lazy/casual phrasing ("can you do the expenses for this week?");
+- one that names only an artifact, not the task ("here's transactions.csv from the portal");
+- one with different vocabulary or a typo ("weekly expence report pls").
+
+Write 3–5 **near-miss** prompts — adjacent requests that share vocabulary with the description but must NOT fire:
+- same domain, different task ("split this dinner bill with my roommate");
+- same artifact, different intent ("why is the CSV export failing?");
+- a task another installed skill (or no skill) should own.
+
+Record everything in a table: `prompt | expect (fire / no fire) | got`.
+
+*7b. Run it.* One **fresh session per prompt** — a warm session's context contaminates triggering. Paste the prompt and note whether the skill loaded (the transcript shows the skill invocation; `claude --debug` prints skill loading and frontmatter parse errors). Pass bar: **every should-trigger fires, zero near-misses fire.**
+
+*7c. A/B a description.* Change **only the description** between comparison runs — never description and body together, or the result can't be attributed. Run the identical battery against version A and version B; adopt B only if it fires on at least as many should-triggers and no more near-misses. Typical fixes for under-triggering: add the user's literal vocabulary (lazy phrasings, non-English terms they actually use), concrete filenames/extensions, an explicit "Use when…" sentence. For over-triggering: remove generic words, add a "not for X" clause.
+
+*7d. Behavior evals.* Reuse the Step 2 baseline prompts (realistic: file paths, casual phrasing, typos) plus edge cases from interview Q8. Run with the skill loaded; judge against the interview Q9 success criteria; compare to the baseline (or previous version, when improving an existing skill). Diagnose each failure — bad trigger, skipped step, or missing/buried context — and revise by generalizing, not by patching one prompt. Re-run until consistently correct.
+
+*One round, worked (abridged — full version in `references/worked-example.md`):*
+> Should-trigger S3 — "can you do the expenses for this week?" — did **not** fire (4/5). Diagnosis: description v1 listed only formal phrasings and the filename; the lazy phrasing the user gave in interview Q3 was never carried into the description.
+> Revision (description only): append `…asks to "do the expenses", or mentions the weekly spending summary`.
+> Re-run of the full battery: 5/5 should-trigger fire; near-misses unchanged at 0/4 — "split this dinner bill" still correctly ignored. Adopt v2.
+
+*7e. Place.* Place the skill in the correct directory (see below), confirm the folder name and `name` match, and tell the user to reload so the metadata loads. Package it if they want to share it.
 
 ## Quality checklist (the eval gate)
 
@@ -155,7 +185,8 @@ Verify before delivering. Full version in `references/quality-checklist.md`.
 - [ ] Examples are concrete input/output pairs, not abstract descriptions.
 - [ ] Consistent terminology throughout; no time-sensitive statements.
 - [ ] Scripts (if any) handle errors and document their constants; dependencies listed; MCP tools fully qualified.
-- [ ] At least 3 realistic test prompts run against a baseline; observed failures fixed.
+- [ ] Trigger battery run: ≥3 should-trigger and ≥3 near-miss prompts, fresh session each — all should-triggers fire, zero near-misses fire.
+- [ ] At least 3 realistic behavior prompts run against a baseline; observed failures diagnosed and fixed; full battery re-run clean after the last edit.
 
 ## Directory placement
 
@@ -211,12 +242,13 @@ Use UTC timestamps consistently across report generation.
 ​```
 ```
 
-That single file is a valid, shippable skill. Grow it — add `references/scope-conventions.md` or a `scripts/` validator — only when a real need appears.
+That single file is a valid, shippable skill. Grow it — add `references/scope-conventions.md` or a `scripts/` validator — only when a real need appears. For a larger example that exercises the whole workflow (interview → skill with references and a script → eval battery → revision), see `references/worked-example.md`.
 
 ## Bundled resources
 
-- `templates/SKILL.template.md` — copy this as the starting point for a new skill body.
-- `references/quality-checklist.md` — the full validation and evaluation checklist.
+- `templates/SKILL.template.md` — copy this as the starting point for a new skill body; contains choose-one blocks for the three common body shapes (workflow / reference / generator).
+- `references/quality-checklist.md` — the full pass/fail validation and evaluation checklist, with mechanical checks and thresholds.
+- `references/worked-example.md` — a complete end-to-end run: user request → interview transcript → resulting SKILL.md → eval battery → one revision. Read it before your first interview.
 
 ## Sources
 
