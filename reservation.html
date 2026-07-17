@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>来店予約 | TAKEUCHI BRIDAL</title>
+  <meta name="description" content="タケウチブライダルの来店予約ページ。ご購入・ご相談・電池交換・修理まで、金沢・福井・富山の各店舗にてご予約を承ります。" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link href="https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/css/yakuhanjp.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <img class="logo__img" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+      </a>
+      <div class="mobile-nav-panel" id="mobileNavPanel">
+        <nav class="gnav" id="gnav">
+          <ul>
+            <li><a href="watches.html">新作時計のお知らせ</a></li>
+            <li><a href="products.html">取扱商品</a></li>
+            <li><a href="calendar.html">カレンダー・フェア</a></li>
+            <li><a href="index.html#stores">店舗情報</a></li>
+          </ul>
+        </nav>
+        <div class="header__btns">
+          <a href="reservation.html" class="header__cta-text">来店予約 &rsaquo;</a>
+          <a href="contact.html" class="header__cta-fill">お問い合わせ &rsaquo;</a>
+        </div>
+      </div>
+      <button type="button" class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileNavPanel">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- RESERVATION -->
+  <section class="sec sec--gray" id="reservation">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">reservation</h2>
+      <p class="sec__jp">来店予約</p>
+      <p class="sec__sub fade">ご購入・ご相談・電池交換・修理まで、<br>どんなご用件でも、お気軽にご予約ください。</p>
+    </div>
+
+    <div class="res-wrap">
+
+      <!-- フォーム
+        ▼ 送信先の設定（未設定のあいだは送信ボタンを押すと案内文が出るだけで、内容は誰にも届きません）
+           1. Formspree（https://formspree.io/）等でフォームを作成する
+           2. 下の <form> の action="" に発行されたエンドポイントURLを入れる
+           3. あわせて method="get" を method="post" に変える
+      -->
+      <form class="res-form fade" id="resForm" action="" method="get">
+        <!-- 商品ページから来たときだけ表示される「ご相談中の商品」 -->
+        <div class="res-form__item" id="resItem" hidden>
+          <span class="res-form__item-tag">ご相談の商品</span>
+          <span class="res-form__item-name" id="resItemName"></span>
+          <input type="hidden" name="item" id="resItemInput" value="">
+        </div>
+        <div>
+          <label class="res-form__label" for="res-store">ご来店希望店舗 <span class="req">必須</span></label>
+          <select class="res-form__select" id="res-store" name="store" required>
+            <option value="">選択してください</option>
+            <option value="金沢・タテマチ店">金沢・タテマチ店（石川県）</option>
+            <option value="福井・開発本店">福井・開発本店（福井県）</option>
+            <option value="福井・エルパ店">福井・エルパ店（福井県）</option>
+            <option value="福井・ベル店">福井・ベル店（福井県）</option>
+            <option value="富山インター・二口町店">富山インター・二口町店（富山県）</option>
+          </select>
+          <a class="res-form__inline-link" href="index.html#stores">店舗情報はこちら &rsaquo;</a>
+        </div>
+        <div>
+          <label class="res-form__label" for="res-date">ご来店予定日</label>
+          <input class="res-form__input" type="date" id="res-date" name="date">
+          <p class="res-form__note">※本日ご来店をご希望の方は、お電話にてご連絡ください。</p>
+          <p class="res-form__note">※エルパ店のみ施設の休業日に準じます。</p>
+        </div>
+        <div>
+          <label class="res-form__label" for="res-time">ご来店希望時間 <span class="req">必須</span></label>
+          <select class="res-form__select" id="res-time" name="time" required>
+            <option value="">11時〜19時の間でお選びください</option>
+            <option value="11:00 〜">11:00 〜</option>
+            <option value="11:30 〜">11:30 〜</option>
+            <option value="12:00 〜">12:00 〜</option>
+            <option value="12:30 〜">12:30 〜</option>
+            <option value="13:00 〜">13:00 〜</option>
+            <option value="13:30 〜">13:30 〜</option>
+            <option value="14:00 〜">14:00 〜</option>
+            <option value="14:30 〜">14:30 〜</option>
+            <option value="15:00 〜">15:00 〜</option>
+            <option value="15:30 〜">15:30 〜</option>
+            <option value="16:00 〜">16:00 〜</option>
+            <option value="16:30 〜">16:30 〜</option>
+            <option value="17:00 〜">17:00 〜</option>
+            <option value="17:30 〜">17:30 〜</option>
+            <option value="18:00 〜">18:00 〜</option>
+            <option value="18:30 〜">18:30 〜</option>
+          </select>
+        </div>
+        <div>
+          <label class="res-form__label" for="res-people">ご来店予定人数 <span class="req">必須</span></label>
+          <input class="res-form__input" type="number" id="res-people" name="people" min="1" max="10" step="1" placeholder="2" required>
+        </div>
+        <div class="res-form__row--2col">
+          <div>
+            <label class="res-form__label" for="res-name">お名前 <span class="req">必須</span></label>
+            <input class="res-form__input" type="text" id="res-name" name="name" placeholder="山田 太郎" required>
+          </div>
+          <div>
+            <label class="res-form__label" for="res-kana">お名前（フリガナ） <span class="req">必須</span></label>
+            <input class="res-form__input" type="text" id="res-kana" name="kana" placeholder="ヤマダ タロウ" required>
+          </div>
+        </div>
+        <div class="res-form__row--2col">
+          <div>
+            <label class="res-form__label" for="res-tel">お電話番号 <span class="req">必須</span></label>
+            <input class="res-form__input" type="tel" id="res-tel" name="tel" placeholder="080-1234-5678" required>
+          </div>
+          <div>
+            <label class="res-form__label" for="res-email">メールアドレス <span class="req">必須</span></label>
+            <input class="res-form__input" type="email" id="res-email" name="email" placeholder="example@mail.com" required>
+          </div>
+        </div>
+        <div>
+          <label class="res-form__label" for="res-purpose">ご来店目的 <span class="req">必須</span></label>
+          <select class="res-form__select" id="res-purpose" name="purpose" required>
+            <option value="">下記より選択してください</option>
+            <option value="商品のご相談">商品のご相談</option>
+            <option value="修理・電池交換のご相談">修理・電池交換のご相談</option>
+            <option value="定期点検">定期点検</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+        <div class="res-form__row--2col">
+          <div>
+            <label class="res-form__label" for="res-brand">ブランド名</label>
+            <input class="res-form__input" type="text" id="res-brand" name="brand" placeholder="セイコー">
+          </div>
+          <div>
+            <label class="res-form__label" for="res-item">商品名 または 品番</label>
+            <input class="res-form__input" type="text" id="res-item" name="item" placeholder="プロスペックス SBDC171">
+          </div>
+        </div>
+        <div>
+          <label class="res-form__label" for="res-staff">担当者</label>
+          <input class="res-form__input" type="text" id="res-staff" name="staff" placeholder="ご希望の担当者がいる場合はご記入ください">
+        </div>
+        <div>
+          <label class="res-form__label" for="res-note">備考欄</label>
+          <textarea class="res-form__textarea" id="res-note" name="note" rows="4" placeholder="ご予算・お探しのもの・その他ご要望など"></textarea>
+        </div>
+        <div class="res-form__agree">
+          <label class="res-form__agree-label">
+            <input type="checkbox" name="agree" value="同意する" required>
+            <span><a href="https://www.g-takeuchi.com/privacy-policy" target="_blank" rel="noopener">個人情報の取り扱い</a>に関して同意する</span>
+          </label>
+          <span class="req">必須</span>
+        </div>
+        <div class="res-form__submit">
+          <button type="submit" class="res-form__btn">送信する</button>
+          <p class="res-form__notice" id="resNotice" hidden>
+            申し訳ございません。現在このフォームは準備中です。<br>
+            お手数ですが、下記のお電話またはLINEからご予約ください。
+          </p>
+        </div>
+      </form>
+
+      <!-- 電話予約 -->
+      <div class="res-tel-wrap fade">
+        <p class="res-tel-label">お電話からも承っておりますので、お気軽にご連絡ください。</p>
+        <div class="res-tel-grid">
+          <div class="res-tel-item">
+            <p class="res-tel-item__store">金沢・タテマチ店</p>
+            <a class="res-tel-item__num" href="tel:076-256-0120">076-256-0120</a>
+            <p class="res-tel-item__hours">営業時間 11:00〜19:30（定休日なし）</p>
+          </div>
+          <div class="res-tel-item">
+            <p class="res-tel-item__store">福井・開発本店</p>
+            <a class="res-tel-item__num" href="tel:0776-53-8355">0776-53-8355</a>
+            <p class="res-tel-item__hours">営業時間 11:00〜19:30（定休日なし）</p>
+          </div>
+          <div class="res-tel-item">
+            <p class="res-tel-item__store">福井・エルパ店</p>
+            <a class="res-tel-item__num" href="tel:0776-57-2605">0776-57-2605</a>
+            <p class="res-tel-item__hours">営業時間 10:00〜20:00（施設に準ずる）</p>
+          </div>
+          <div class="res-tel-item">
+            <p class="res-tel-item__store">富山インター・二口町店</p>
+            <a class="res-tel-item__num" href="tel:076-481-6776">076-481-6776</a>
+            <p class="res-tel-item__hours">営業時間 11:00〜19:30（定休日なし）</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINE
+        金沢・福井開発本店・富山の3店はタケウチブライダル共通アカウント（lin.ee/OFG7rif）、
+        エルパ店のみLPAの別アカウント（lin.ee/dOWV41v）。店舗ごとの個別アカウントは存在しない。
+      -->
+      <div class="res-line-wrap fade">
+        <p class="res-line-label">公式LINEからもご予約いただけます</p>
+        <div class="res-line-grid">
+          <a href="https://lin.ee/OFG7rif" class="res-line-btn" target="_blank" rel="noopener">
+            <span class="res-line-btn__area">石川</span>
+            金沢・タテマチ店
+            <span class="res-line-btn__badge">LINE ›</span>
+          </a>
+          <a href="https://lin.ee/OFG7rif" class="res-line-btn" target="_blank" rel="noopener">
+            <span class="res-line-btn__area">福井</span>
+            福井・開発本店
+            <span class="res-line-btn__badge">LINE ›</span>
+          </a>
+          <a href="https://lin.ee/dOWV41v" class="res-line-btn" target="_blank" rel="noopener">
+            <span class="res-line-btn__area">福井</span>
+            福井・エルパ店
+            <span class="res-line-btn__badge">LINE ›</span>
+          </a>
+          <a href="https://lin.ee/OFG7rif" class="res-line-btn" target="_blank" rel="noopener">
+            <span class="res-line-btn__area">富山</span>
+            富山インター・二口町店
+            <span class="res-line-btn__badge">LINE ›</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__top">
+      <img class="footer__logo" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+    </div>
+    <nav class="footer__nav">
+      <ul>
+        <li><a href="index.html#about">わたしたちについて</a></li>
+        <li><a href="index.html#seiko">セイコーサロン</a></li>
+        <li><a href="index.html#brands">取扱ブランド</a></li>
+        <li><a href="watches.html">新作時計のお知らせ</a></li>
+        <li><a href="products.html">取扱商品</a></li>
+        <li><a href="calendar.html">カレンダー・フェア</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+        <li><a href="reservation.html">来店予約</a></li>
+        <li><a href="index.html#stores">店舗情報</a></li>
+      </ul>
+    </nav>
+    <div class="footer__bottom">
+      <p>&copy; 2025 TAKEUCHI BRIDAL. All rights reserved.</p>
+      <a href="https://www.g-takeuchi.com" target="_blank" rel="noopener">g-takeuchi.com</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

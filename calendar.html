@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>年間カレンダー・フェア | TAKEUCHI BRIDAL</title>
+  <meta name="description" content="タケウチブライダルの節目カレンダーとフェア・お知らせ。月ごとの記念日・特別な日と、大切な人への時計ギフト提案、開催中のフェア情報をご紹介します。" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link href="https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/css/yakuhanjp.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- FLOAT CTA -->
+  <a href="reservation.html" class="float-cta" id="floatCta">来店予約</a>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <img class="logo__img" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+      </a>
+      <div class="mobile-nav-panel" id="mobileNavPanel">
+        <nav class="gnav" id="gnav">
+          <ul>
+            <li><a href="watches.html">新作時計のお知らせ</a></li>
+            <li><a href="products.html">取扱商品</a></li>
+            <li><a href="calendar.html">カレンダー・フェア</a></li>
+            <li><a href="index.html#stores">店舗情報</a></li>
+          </ul>
+        </nav>
+        <div class="header__btns">
+          <a href="reservation.html" class="header__cta-text">来店予約 &rsaquo;</a>
+          <a href="contact.html" class="header__cta-fill">お問い合わせ &rsaquo;</a>
+        </div>
+      </div>
+      <button type="button" class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileNavPanel">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CALENDAR -->
+  <section class="sec" id="calendar">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">calendar</h2>
+      <p class="sec__jp"><span class="np">年間</span><span class="np">カレンダー</span></p>
+      <p class="sec__sub fade">節目の日に寄り添う時計と、大切な人へのギフト提案。<br>月を選んで、その月の特別な日をチェックしてください。</p>
+    </div>
+
+    <div class="cal-nav fade" id="calNav">
+      <button type="button" class="cal-nav__btn" data-month="1">1<span>JAN</span></button>
+      <button type="button" class="cal-nav__btn" data-month="2">2<span>FEB</span></button>
+      <button type="button" class="cal-nav__btn" data-month="3">3<span>MAR</span></button>
+      <button type="button" class="cal-nav__btn" data-month="4">4<span>APR</span></button>
+      <button type="button" class="cal-nav__btn" data-month="5">5<span>MAY</span></button>
+      <button type="button" class="cal-nav__btn" data-month="6">6<span>JUN</span></button>
+      <button type="button" class="cal-nav__btn" data-month="7">7<span>JUL</span></button>
+      <button type="button" class="cal-nav__btn" data-month="8">8<span>AUG</span></button>
+      <button type="button" class="cal-nav__btn" data-month="9">9<span>SEP</span></button>
+      <button type="button" class="cal-nav__btn" data-month="10">10<span>OCT</span></button>
+      <button type="button" class="cal-nav__btn" data-month="11">11<span>NOV</span></button>
+      <button type="button" class="cal-nav__btn" data-month="12">12<span>DEC</span></button>
+    </div>
+
+    <div class="cal-view fade" id="calView">
+      <div class="cal-hero">
+        <div class="cal-hero__media">
+          <img id="calHeroImg" src="images/calendar/01.jpg" alt="" />
+          <span class="cal-hero__month"><span id="calYear">2026</span><span class="cal-hero__dot">.</span><span id="calMonthNum">01</span></span>
+        </div>
+        <div class="cal-hero__text">
+          <p class="cal-hero__sub" id="calSub">新年・人生リスタート</p>
+          <h3 class="cal-hero__theme" id="calTheme">「今年を変える一本」フェア</h3>
+          <p class="cal-hero__lead" id="calLead">新しい一年を、時計とともに始める。</p>
+          <p class="cal-hero__body" id="calBody">今年の目標やこれからの歩みをうかがいながら、節目にふさわしい一本をご提案します。</p>
+          <p class="cal-hero__perk"><span class="cal-hero__perk-label">特典</span><span id="calPerk">未来年表シート作成（無料）</span></p>
+          <p class="cal-hero__bridal" id="calBridal" hidden></p>
+          <a href="reservation.html" class="cal-hero__cta">この月のご相談・来店予約 &rsaquo;</a>
+        </div>
+      </div>
+
+      <p class="cal-strip__label">この月の記念日・特別な日</p>
+      <div class="cal-strip" id="calDays"></div>
+    </div>
+  </section>
+
+  <!--
+    ===========================================================================
+    FAIR（バナー画像＋詳細テキスト）── 毎月の更新方法
+    ===========================================================================
+    ■ バナー画像
+      images/fair/ に置いて、<img src="images/fair/○○.jpg"> で読み込みます。
+      推奨サイズ：横1000px × 縦1200px前後（縦長）／jpg・png／600KB以下目安。
+      バナーがまだ無い月は、<img> のかわりに .fair-card__banner-placeholder の
+      div を入れておくと、破損画像ではなく「準備中」の枠が表示されます。
+
+    ■ フェアを増やすとき
+      下の <div class="fair-card"> ～ </div> を、そのままコピーして
+      .fair-cards の中に並べるだけです。枚数の制限はありません。
+      1枚のときは横幅いっぱい、2枚以上になると自動的に段組みになります。
+
+    ■ 書き換える箇所（1カードにつき5か所）
+      1. <img src>  … バナー画像のパス
+      2. <img alt>  … バナーの内容を短く（読み上げ・画像非表示時に使われる）
+      3. fair-card__date  … 「2026 JULY」など
+      4. fair-card__title … 「PROSPEX FAIR」など（英字・短めに）
+      5. fair-card__sub / fair-card__text … サブタイトルと詳細テキスト
+    ===========================================================================
+  -->
+  <section class="sec" id="fair">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">fair &amp; news</h2>
+      <p class="sec__jp"><span class="np">期間限定の</span><span class="np">ブランドからの</span><span class="np">ノベルティや特典</span></p>
+    </div>
+    <div class="fair-cards fade">
+
+      <!-- ▼ LONGINES フェア -->
+      <div class="fair-card">
+        <div class="fair-card__banner">
+          <!-- 画像取寄中：正式バナーができたら images/fair/ に置いて src を差し替えてください -->
+          <div class="fair-card__banner-placeholder">
+            <svg class="fair-card__banner-ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" /><path d="M3 16l5-5 4 4 3-3 6 6" /><circle cx="9" cy="9" r="1.5" />
+            </svg>
+            <p class="fair-card__banner-ph-label">LONGINES</p>
+            <p class="fair-card__banner-ph-sub">バナー画像を準備中です</p>
+          </div>
+        </div>
+        <div class="fair-card__body">
+          <p class="fair-card__date">2026 JULY – AUGUST</p>
+          <h3 class="fair-card__title">LONGINES FAIR</h3>
+          <p class="fair-card__sub">7/18(土)〜8/8(日)｜金沢タテマチ店 初開催</p>
+          <p class="fair-card__text"><span class="np">金沢タテマチ店で</span><span class="np">初開催となる、</span><br><span class="np">LONGINES</span><span class="np">（ロンジン）フェア。</span><br><br><span class="np">《フェア特典》</span><br><span class="np">・最大60回まで</span><span class="np">分割手数料無料</span><br><span class="np">・ご成約の方へ、</span><span class="np">ロンジン非売品</span><span class="np">ノベルティを進呈</span><br><span class="np">（数量限定・</span><span class="np">なくなり次第終了）</span><br><br><span class="np">人気の</span><span class="np">パイロットウォッチから、</span><br><span class="np">普段は見られない</span><span class="np">希少モデルまで</span><span class="np">幅広くご用意。</span><br><br><span class="np">ご婚約記念や</span><span class="np">ペアウォッチ、</span><span class="np">結納返しなど、</span><br><span class="np">大切な節目の</span><span class="np">一本にも</span><span class="np">おすすめのフェアです。</span></p>
+          <a href="fair-longines.html" class="fair-card__link">フェアの詳細はこちら &rsaquo;</a>
+        </div>
+      </div>
+      <!-- ▲ LONGINES フェア -->
+
+      <!-- ▼ フェア1枚目 -->
+      <div class="fair-card">
+        <div class="fair-card__banner">
+          <!-- 暫定：正式なバナーができたら images/fair/ に置いて src を差し替えてください
+               例）<img src="images/fair/2026-07-prospex.jpg" alt="PROSPEX FAIR 2026年7月"> -->
+          <img src="https://www.g-takeuchi.com/wp-content/uploads/SARX125.jpg" alt="PROSPEX FAIR 2026年7月">
+        </div>
+        <div class="fair-card__body">
+          <p class="fair-card__date">2026 JULY</p>
+          <h3 class="fair-card__title">PROSPEX FAIR</h3>
+          <p class="fair-card__sub">７月中：プロスペックスフェア 開催中</p>
+          <p class="fair-card__text"><span class="np">SEIKOプロスペックスの</span><span class="np">最新コレクションが勢揃い。</span><br><span class="np">ダイバーズウォッチから</span><span class="np">フィールドウォッチまで</span><span class="np">多数ご用意。</span><br><span class="np">期間中ご来店のお客様に</span><span class="np">限定ノベルティを</span><span class="np">プレゼントいたします。</span></p>
+          <a href="reservation.html" class="fair-card__link">来店予約・詳細はこちら &rsaquo;</a>
+        </div>
+      </div>
+      <!-- ▲ フェア1枚目 -->
+
+      <!-- ▼ フェアを増やすときは、この塊をコピーして使ってください
+      <div class="fair-card">
+        <div class="fair-card__banner">
+          <div class="fair-card__banner-placeholder">
+            <svg class="fair-card__banner-ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" /><path d="M3 16l5-5 4 4 3-3 6 6" /><circle cx="9" cy="9" r="1.5" />
+            </svg>
+            <p class="fair-card__banner-ph-label">BANNER</p>
+            <p class="fair-card__banner-ph-sub">バナー画像を準備中です</p>
+          </div>
+        </div>
+        <div class="fair-card__body">
+          <p class="fair-card__date">2026 AUGUST</p>
+          <h3 class="fair-card__title">SUMMER FAIR</h3>
+          <p class="fair-card__sub">８月中：サマーフェア 開催予定</p>
+          <p class="fair-card__text">フェアの詳細テキストをここに入れてください。</p>
+          <a href="reservation.html" class="fair-card__link">来店予約・詳細はこちら &rsaquo;</a>
+        </div>
+      </div>
+      ▲ ここまで -->
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__top">
+      <img class="footer__logo" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+    </div>
+    <nav class="footer__nav">
+      <ul>
+        <li><a href="index.html#about">わたしたちについて</a></li>
+        <li><a href="index.html#concept">コンセプト</a></li>
+        <li><a href="index.html#seiko">セイコーサロン</a></li>
+        <li><a href="index.html#brands">取扱ブランド</a></li>
+        <li><a href="calendar.html">カレンダー・フェア</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+        <li><a href="reservation.html">来店予約</a></li>
+        <li><a href="index.html#stores">店舗情報</a></li>
+      </ul>
+    </nav>
+    <div class="footer__bottom">
+      <p>&copy; 2025 TAKEUCHI BRIDAL. All rights reserved.</p>
+      <a href="https://www.g-takeuchi.com" target="_blank" rel="noopener">g-takeuchi.com</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

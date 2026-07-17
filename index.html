@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAKEUCHI BRIDAL | 時計</title>
+  <meta name="description" content="結婚・就職・記念日など、人生の節目に寄り添う時計をタケウチで。セイコーウオッチサロン併設。金沢・福井・富山の店舗にてご来店予約受付中。" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link href="https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/css/yakuhanjp.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- FLOAT CTA -->
+  <a href="reservation.html" class="float-cta" id="floatCta">来店予約</a>
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <img class="logo__img" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+      </a>
+      <div class="mobile-nav-panel" id="mobileNavPanel">
+        <nav class="gnav" id="gnav">
+          <ul>
+            <li><a href="watches.html">新作時計のお知らせ</a></li>
+            <li><a href="products.html">取扱商品</a></li>
+            <li><a href="calendar.html">カレンダー・フェア</a></li>
+            <li><a href="#stores">店舗情報</a></li>
+          </ul>
+        </nav>
+        <div class="header__btns">
+          <a href="reservation.html" class="header__cta-text">来店予約 &rsaquo;</a>
+          <a href="contact.html" class="header__cta-fill">お問い合わせ &rsaquo;</a>
+        </div>
+      </div>
+      <button type="button" class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileNavPanel">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO CAROUSEL（節目カレンダー／今月のお知らせ） -->
+  <section class="hero-carousel fade-hero" id="top">
+    <div class="hero-carousel__viewport">
+      <div class="hero-carousel__track" id="heroTrack">
+        <div class="hero-carousel__slide is-active" data-index="0">
+          <div class="hero-carousel__text">
+            <p class="hero-carousel__eyebrow">CALENDAR FEATURE</p>
+            <p class="hero-carousel__jp">節目カレンダー</p>
+            <h2 class="hero-carousel__title">7月の特別な日</h2>
+            <p class="hero-carousel__desc">7/7 七夕・カップルの日<br>毎月22日 夫婦の日</p>
+            <a href="calendar.html" target="_blank" class="hero-carousel__link">カレンダーを見る ›</a>
+          </div>
+          <a href="calendar.html" target="_blank" class="hero-carousel__photo"><img src="images/calendar/07.jpg" alt="節目カレンダー" /></a>
+        </div>
+        <div class="hero-carousel__slide" data-index="1">
+          <div class="hero-carousel__text">
+            <p class="hero-carousel__eyebrow">NEXT MONTH</p>
+            <p class="hero-carousel__jp">翌月の節目カレンダー</p>
+            <h2 class="hero-carousel__title">8月の特別な日</h2>
+            <p class="hero-carousel__desc">8/11 山の日<br>お盆・帰省シーズン</p>
+            <a href="calendar.html" target="_blank" class="hero-carousel__link">カレンダーを見る ›</a>
+          </div>
+          <a href="calendar.html" target="_blank" class="hero-carousel__photo"><img src="images/calendar/08.jpg" alt="翌月の節目カレンダー" /></a>
+        </div>
+        <div class="hero-carousel__slide" data-index="2">
+          <div class="hero-carousel__text">
+            <p class="hero-carousel__eyebrow">MONTHLY NEWS</p>
+            <p class="hero-carousel__jp">今月のお知らせ</p>
+            <h2 class="hero-carousel__title">PROSPEX FAIR<br>開催中</h2>
+            <p class="hero-carousel__desc">期間中ご来店のお客様に<br>限定ノベルティをプレゼント</p>
+            <a href="calendar.html#fair" class="hero-carousel__link">詳細を見る ›</a>
+          </div>
+          <a href="calendar.html#fair" target="_blank" class="hero-carousel__photo"><img src="https://www.g-takeuchi.com/wp-content/uploads/SARX125.jpg" alt="今月のお知らせ" /></a>
+        </div>
+        <div class="hero-carousel__slide" data-index="3">
+          <div class="hero-carousel__text">
+            <p class="hero-carousel__eyebrow">FAIR &amp; NEWS</p>
+            <p class="hero-carousel__jp">金沢タテマチ店 初開催</p>
+            <h2 class="hero-carousel__title">LONGINES FAIR</h2>
+            <p class="hero-carousel__desc">7/18(土)〜8/8(日)<br><span class="np">最大60回まで</span><span class="np">分割手数料無料</span></p>
+            <a href="fair-longines.html" class="hero-carousel__link">詳細を見る ›</a>
+          </div>
+          <a href="fair-longines.html" class="hero-carousel__photo">
+            <!-- 画像あとで差し替え：<img src="images/fair/2026-07-longines.jpg" alt="LONGINES FAIR" /> -->
+            <span class="hero-carousel__photo-ph">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" /><path d="M3 16l5-5 4 4 3-3 6 6" /><circle cx="9" cy="9" r="1.5" />
+              </svg>
+              <span class="hero-carousel__photo-ph-label">LONGINES</span>
+              <span class="hero-carousel__photo-ph-sub">画像を準備中です</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-carousel__dots" id="heroDots">
+      <button type="button" class="hero-carousel__dot is-active" data-goto="0" aria-label="スライド1"></button>
+      <button type="button" class="hero-carousel__dot" data-goto="1" aria-label="スライド2"></button>
+      <button type="button" class="hero-carousel__dot" data-goto="2" aria-label="スライド3"></button>
+      <button type="button" class="hero-carousel__dot" data-goto="3" aria-label="スライド4"></button>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <h2 class="intro__en fade">takeuchi watch</h2>
+    <div class="intro__body fade">
+      <p><span class="np">結婚・就職・記念日など、</span><br><span class="np">人生の節目に寄り添う時計を、</span><span class="np">タケウチで。</span></p>
+      <p><span class="np">「時計の贈り物といえばタケウチ」という</span><span class="np">文化をつくるため、</span><br><span class="np">北陸の全店舗にて</span><span class="np">セイコーウオッチサロンを</span><span class="np">併設しています。</span></p>
+      <p><span class="np">電池交換・修理・プレゼント相談も、</span><span class="np">購入でなくても大歓迎。</span><br><span class="np">まずはお気軽にご来店ください。</span></p>
+    </div>
+  </div>
+
+
+  <!-- FAIR PROMO -->
+  <section class="sec" id="fair-promo">
+    <a href="fair-longines.html" class="fair-promo fade">
+      <span class="fair-promo__tag">FAIR &amp; NEWS</span>
+      <div class="fair-promo__main">
+        <p class="fair-promo__date"><span class="np">2026.7.18(土)〜8.8(日)</span><span class="np">｜金沢タテマチ店 初開催</span></p>
+        <h2 class="fair-promo__title">LONGINES FAIR</h2>
+        <p class="fair-promo__text"><span class="np">最大60回まで分割手数料無料。</span><span class="np">ご成約でロンジン非売品</span><span class="np">ノベルティ進呈（数量限定）。</span></p>
+      </div>
+      <span class="fair-promo__link">詳細を見る &rsaquo;</span>
+    </a>
+  </section>
+
+  <!-- NEW ARRIVALS / 新着時計 -->
+  <section class="sec sec--gray" id="new-arrivals">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">new arrivals</h2>
+      <p class="sec__jp">新着時計</p>
+      <p class="sec__sub fade">入荷したばかりの注目モデルをご紹介します。</p>
+    </div>
+    <div class="watch-grid watch-grid--3col" id="newArrivalsGrid"></div>
+    <div class="featured-more fade">
+      <a href="watches.html#products" class="featured-more__btn">新着一覧を見る &rsaquo;</a>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS / 取扱商品 -->
+  <section class="sec" id="featured-products">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">products</h2>
+      <p class="sec__jp">取扱商品</p>
+      <p class="sec__sub fade">新作・注目の一本をピックアップ。気になる一本は、そのまま来店予約へお進みいただけます。</p>
+    </div>
+    <div class="watch-grid" id="featuredGrid"></div>
+    <div class="featured-more fade">
+      <a href="products.html" class="featured-more__btn">取扱商品一覧を見る &rsaquo;</a>
+    </div>
+  </section>
+
+  <!-- BRANDS -->
+  <section class="sec sec--gray" id="brands">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">watch brands</h2>
+      <p class="sec__jp">取扱ブランド</p>
+      <p class="sec__sub fade"><span class="np">セイコー・シチズン・カシオを</span><span class="np">中心に、</span><br><span class="np">38ブランドを</span><span class="np">取り扱っています。</span><br><span class="np">お取り扱いは店舗により</span><span class="np">異なります。</span></p>
+    </div>
+    <div class="watch-tabs" id="brandStoreTabs">
+      <button class="watch-tab active" data-store="">全て</button>
+      <button class="watch-tab" data-store="kanazawa">金沢・タテマチ店</button>
+      <button class="watch-tab" data-store="kaihatsu">福井・開発本店</button>
+      <button class="watch-tab" data-store="elpa">福井・エルパ店</button>
+      <button class="watch-tab" data-store="bell">福井・ベル店</button>
+      <button class="watch-tab" data-store="toyama">富山インター・二口町店</button>
+    </div>
+    <div class="brand-grid-wrap fade">
+      <div class="brand-grid" id="brandGrid">
+        <a class="brand-cell" href="https://www.agnesb-store.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/AGN-S-B.png" alt="agnès b." loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/astron" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">ASTRON</span></a>
+        <a class="brand-cell" href="https://citizen.jp/attesa/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/ATTESA.png" alt="ATTESA" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.casio.com/jp/watches/baby-g/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/BABY-G.png" alt="BABY-G" loading="lazy" /></a>
+        <a class="brand-cell" href="https://campanola.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/CAMPANOLA.svg" alt="CAMPANOLA" loading="lazy" /></a>
+        <a class="brand-cell" href="https://citizen.jp/citizen_l/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/CITIZEN-L.png" alt="CITIZEN L" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.cuervoysobrinos.com/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">CUERVO Y SOBRINOS</span></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/dolce_exceline" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">DOLCE&amp;EXCELINE</span></a>
+        <a class="brand-cell" href="https://citizen.jp/one/index.html" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--invert" src="images/brand-logos/ECO-DRIVE-ONE.png" alt="Eco-Drive One" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.casio.com/jp/watches/edifice/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/EDIFICE.png" alt="EDIFICE" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.edox.ch/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/EDOX.svg" alt="EDOX" loading="lazy" /></a>
+        <a class="brand-cell" href="https://citizen.jp/exceed/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/EXCEED.png" alt="EXCEED" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.casio.com/jp/watches/gshock/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--mono" src="images/brand-logos/G-SHOCK.png" alt="G-SHOCK" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.grand-seiko.com/jp-ja/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/GRAND-SEIKO.svg" alt="Grand Seiko" loading="lazy" /></a>
+        <a class="brand-cell" href="https://katharinehamnett.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/KATHARINE-HAMNETT-LONDON.jpg" alt="KATHARINE HAMNETT LONDON" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.kentex-jp.com/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--invert-multiply" src="images/brand-logos/KENTEX.png" alt="KENTEX" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/kingseiko" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">KING SEIKO</span></a>
+        <a class="brand-cell" href="https://www.longines.com/ja-jp" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">LONGINES</span></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/lukia" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/LUKIA.png" alt="LUKIA" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.luminox.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/LUMINOX.png" alt="Luminox" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.monologue.watch/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--invert" src="images/brand-logos/MONOLOGUE.png" alt="monologue" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.casio.com/jp/watches/oceanus/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">OCEANUS</span></a>
+        <a class="brand-cell" href="https://www.orient-watch.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">ORIENT</span></a>
+        <a class="brand-cell" href="https://www.orientstar.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/ORIENT-STAR.png" alt="ORIENT STAR" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.oris.ch/ja-jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/ORIS.svg" alt="ORIS" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.pequignet.com/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">PEQUIGNET</span></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/presage" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">PRESAGE</span></a>
+        <a class="brand-cell" href="https://citizen.jp/promaster/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--invert" src="images/brand-logos/PROMASTER.png" alt="PROMASTER" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/prospex" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">PROSPEX</span></a>
+        <a class="brand-cell" href="https://www.casio.com/jp/watches/protrek/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/PROTREK.png" alt="PROTREK" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.raymond-weil.com/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">RAYMOND WEIL</span></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/5sports" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">SEIKO 5 SPORTS</span></a>
+        <a class="brand-cell" href="https://www.seikowatches.com/jp-ja/products/series8" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">SERIES 8</span></a>
+        <a class="brand-cell" href="https://www.casio.com/jp/watches/sheen/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo brand-cell__logo--multiply" src="images/brand-logos/SHEEN.jpg" alt="SHEEN" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.tissotwatches.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/TISSOT.svg" alt="TISSOT" loading="lazy" /></a>
+        <a class="brand-cell" href="https://www.tomfordfashion.com/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><span class="brand-cell__en">TOM FORD</span></a>
+        <a class="brand-cell" href="https://wicca-w.jp/" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/WICCA.svg" alt="wicca" loading="lazy" /></a>
+        <a class="brand-cell" href="https://citizen.jp/xc/index.html" target="_blank" rel="noopener"><span class="brand-cell__corner" aria-hidden="true"></span><img class="brand-cell__logo" src="images/brand-logos/XC.png" alt="xC" loading="lazy" /></a>
+      </div>
+      <p class="brand-grid__note" id="brandGridNote" hidden></p>
+    </div>
+  </section>
+
+  <!-- SEIKO SALON -->
+  <section class="sec" id="seiko">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">seiko watch salon</h2>
+      <p class="sec__jp"><span class="np">セイコー</span><span class="np">ウオッチサロン</span></p>
+      <p class="sec__sub fade"><span class="np">タケウチのブライダル店舗内に、</span><br><span class="np">正規のセイコーウオッチサロンが</span><span class="np">4店舗併設されています。</span></p>
+    </div>
+    <div class="seiko-feats">
+      <div class="seiko-feat fade">
+        <svg class="seiko-feat__ico" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="27" stroke="#1c1c1c" stroke-width=".8"/><path d="M20 30l7 7 13-14" stroke="#1c1c1c" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>正規品・確かな保証</h3>
+        <p><span class="np">セイコー公式サロンとして、</span><br><span class="np">正規品の販売と</span><span class="np">確かなアフターサービスを</span><span class="np">提供しています。</span></p>
+      </div>
+      <div class="seiko-feat fade">
+        <svg class="seiko-feat__ico" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="22" stroke="#1c1c1c" stroke-width=".8"/><circle cx="30" cy="30" r="27" stroke="#e0e0de" stroke-width=".5"/><path d="M30 18v12l7 4" stroke="#1c1c1c" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <h3>その日中に修理・電池交換</h3>
+        <p>電池交換は最短当日対応。<br>大切な時計をできるだけ早くお返しします。</p>
+      </div>
+      <div class="seiko-feat fade">
+        <svg class="seiko-feat__ico" viewBox="0 0 60 60" fill="none"><rect x="8" y="14" width="44" height="34" rx="2" stroke="#1c1c1c" stroke-width=".8"/><path d="M18 14v-4M42 14v-4M8 25h44" stroke="#1c1c1c" stroke-width=".8" stroke-linecap="round"/><circle cx="21" cy="37" r="3" fill="#1c1c1c"/><circle cx="30" cy="37" r="3" fill="#c4c4c2"/><circle cx="39" cy="37" r="3" fill="#c4c4c2"/></svg>
+        <h3>フェア・新作を定期開催</h3>
+        <p>新作発表や限定モデルの先行体験など、<br>特別なイベントを毎月開催しています。</p>
+      </div>
+    </div>
+    <div class="seiko-shoprow fade">
+      <p class="seiko-shoprow__label">設置店舗</p>
+      <div class="seiko-shoprow__btns">
+        <a href="https://kanazawa.takeuchi-bridal.com/reservation" target="_blank" rel="noopener" class="seiko-shop-btn"><span class="seiko-shop-btn__area">石川</span>金沢・タテマチ店 &rsaquo;</a>
+        <a href="https://fukui.takeuchi-bridal.com/watch_collection" target="_blank" rel="noopener" class="seiko-shop-btn"><span class="seiko-shop-btn__area">福井</span>福井・開発本店 &rsaquo;</a>
+        <a href="https://lpa-bridal.com/watch-collection" target="_blank" rel="noopener" class="seiko-shop-btn"><span class="seiko-shop-btn__area">福井</span>福井・エルパ店 &rsaquo;</a>
+        <a href="https://takeuchi-bridal.com/shop/toyama/" target="_blank" rel="noopener" class="seiko-shop-btn"><span class="seiko-shop-btn__area">富山</span>富山インター・二口町店 &rsaquo;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="sec" id="about">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">about us</h2>
+      <p class="sec__jp"><span class="np">わたしたち</span><span class="np">について</span></p>
+    </div>
+    <p class="about__lead fade"><span class="np">宝石時計の武内といいます。</span><br><span class="np">TAKEUCHIは1948年創業</span><br><span class="np">ブライダルジュエリーをはじめ、</span><br><span class="np">国産ブランドを中心とした</span><span class="np">高級時計を取り扱っております。</span></p>
+    <div class="about-marquee-wrap">
+      <div class="about-marquee">
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about01.webp" alt="福井・エルパ店" /><p>セイコーウオッチサロン：福井・エルパ店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about03.webp" alt="福井・開発本店" /><p>セイコーウオッチサロン：福井・開発本店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about04.webp" alt="金沢・タテマチ店" /><p>セイコーウオッチサロン：金沢・タテマチ店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about02.webp" alt="福井・ベル店" /><p>正規取扱店：福井・ベル店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about01.webp" alt="福井・エルパ店" /><p>セイコーウオッチサロン：福井・エルパ店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about03.webp" alt="福井・開発本店" /><p>セイコーウオッチサロン：福井・開発本店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about04.webp" alt="金沢・タテマチ店" /><p>セイコーウオッチサロン：金沢・タテマチ店</p></div>
+        <div class="about-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_about02.webp" alt="福井・ベル店" /><p>正規取扱店：福井・ベル店</p></div>
+      </div>
+    </div>
+    <p class="about__quote fade">わたしたちが大切にしている言葉<br>「Bijou de famille（家族の宝石）」<br>親から子へ、子から未来へ家族の絆を繋ぐ、<br>あなたらしい輝きを纏っていただけるよう、<br>最高のご提案をいたします。</p>
+  </section>
+
+  <!-- LIFESTYLE BAND -->
+  <div class="lifestyle-band fade">
+    <div class="lifestyle-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_customer01.webp" alt="" /></div>
+    <div class="lifestyle-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_customer02.webp" alt="" /></div>
+    <div class="lifestyle-photo"><img src="https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_customer03.webp" alt="" /></div>
+  </div>
+
+  <!-- STORES -->
+  <section class="sec" id="stores">
+    <div class="sec__hd fade">
+      <h2 class="sec__en">stores</h2>
+      <p class="sec__jp">店舗情報</p>
+    </div>
+    <div class="stores-grid">
+      <div class="store-card fade">
+        <a class="store-card__photo" href="https://maps.app.goo.gl/1Uq6cq5GBHusYzJH9" target="_blank" rel="noopener" style="background-image:url('https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_shop01.webp')" aria-label="福井・開発本店をGoogleマップで見る">
+          <span class="store-card__map-tag">MAP ›</span>
+        </a>
+        <div class="store-card__body">
+          <p class="store-card__area">福井県</p>
+          <h3><a href="https://fukui.takeuchi-bridal.com/watch_collection" target="_blank" rel="noopener" class="store-card__name">福井・開発本店</a></h3>
+          <p class="store-card__badge">セイコーウオッチサロン 併設</p>
+          <dl>
+            <dt>住所</dt><dd>福井県福井市開発<br>タケウチブライダル店内</dd>
+            <dt>TEL</dt><dd><a href="tel:0776-53-8355">0776-53-8355</a></dd>
+            <dt>営業時間</dt><dd>11:00〜19:30</dd>
+            <dt>定休日</dt><dd>なし</dd>
+          </dl>
+          <div class="store-card__gmap"><iframe src="https://maps.google.com/maps?q=36.0853554,136.2381421&z=17&hl=ja&output=embed" width="100%" height="170" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="福井・開発本店の地図"></iframe></div>
+          <div class="store-card__cta">
+            <a href="https://line.me/ti/p/9wga2VLNKE" target="_blank" rel="noopener" class="store-card__btn store-card__btn--line store-card__btn--icon" aria-label="LINEで相談"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.2c-4.85 0-8.8 3.16-8.8 7.05 0 3.48 3.13 6.4 7.36 6.95.29.06.68.19.78.43.09.22.06.55.03.77l-.12.74c-.04.22-.18.87.77.47.95-.4 5.1-3 6.96-5.14C20.35 14.1 20.8 12.7 20.8 11.25c0-3.89-3.95-7.05-8.8-7.05zM8.2 13.4H6.6c-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v2.7H8.2c.24 0 .43.18.43.42 0 .23-.19.42-.43.42zm1.67-.42c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v3.12zm3.77 0c0 .18-.12.34-.29.4a.44.44 0 01-.14.02c-.13 0-.26-.06-.34-.17l-1.6-2.18v1.93c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.18.12-.34.29-.4a.42.42 0 01.47.15l1.61 2.18V9.86c0-.23.19-.42.43-.42.23 0 .42.19.42.42v3.12zm2.72-1.98c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.18v.71h1.18c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.6c-.24 0-.43-.19-.43-.43V9.86c0-.23.19-.42.42-.42h1.6c.24 0 .43.19.43.42 0 .24-.19.43-.42.43h-1.18v.71h1.18z"/></svg></a>
+            <a href="mailto:honten@g-takeuchi.com" class="store-card__btn store-card__btn--ghost store-card__btn--icon" aria-label="メールで問い合わせ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></a>
+            <a href="https://fukui.takeuchi-bridal.com/watch_collection" target="_blank" rel="noopener" class="store-card__btn store-card__btn--full">来店予約 &rsaquo;</a>
+          </div>
+        </div>
+      </div>
+      <div class="store-card fade">
+        <a class="store-card__photo" href="https://maps.app.goo.gl/TXmdYw5ftRJiXeLq6" target="_blank" rel="noopener" style="background-image:url('https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_shop02.webp')" aria-label="福井・エルパ店をGoogleマップで見る">
+          <span class="store-card__map-tag">MAP ›</span>
+        </a>
+        <div class="store-card__body">
+          <p class="store-card__area">福井県</p>
+          <h3><a href="https://lpa-bridal.com/watch-collection" target="_blank" rel="noopener" class="store-card__name">福井・エルパ店</a></h3>
+          <p class="store-card__badge">セイコーウオッチサロン 併設</p>
+          <dl>
+            <dt>住所</dt><dd>福井県福井市開発5丁目1001<br>タケウチブライダル店内</dd>
+            <dt>TEL</dt><dd><a href="tel:0776-57-2605">0776-57-2605</a></dd>
+            <dt>営業時間</dt><dd>10:00〜20:00（施設に準ずる）</dd>
+            <dt>定休日</dt><dd>施設休業日に準ずる</dd>
+          </dl>
+          <div class="store-card__gmap"><iframe src="https://maps.google.com/maps?q=36.0937929,136.2489859&z=17&hl=ja&output=embed" width="100%" height="170" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="福井・エルパ店の地図"></iframe></div>
+          <div class="store-card__cta">
+            <a href="https://line.me/ti/p/1zBBGVdGqi" target="_blank" rel="noopener" class="store-card__btn store-card__btn--line store-card__btn--icon" aria-label="LINEで相談"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.2c-4.85 0-8.8 3.16-8.8 7.05 0 3.48 3.13 6.4 7.36 6.95.29.06.68.19.78.43.09.22.06.55.03.77l-.12.74c-.04.22-.18.87.77.47.95-.4 5.1-3 6.96-5.14C20.35 14.1 20.8 12.7 20.8 11.25c0-3.89-3.95-7.05-8.8-7.05zM8.2 13.4H6.6c-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v2.7H8.2c.24 0 .43.18.43.42 0 .23-.19.42-.43.42zm1.67-.42c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v3.12zm3.77 0c0 .18-.12.34-.29.4a.44.44 0 01-.14.02c-.13 0-.26-.06-.34-.17l-1.6-2.18v1.93c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.18.12-.34.29-.4a.42.42 0 01.47.15l1.61 2.18V9.86c0-.23.19-.42.43-.42.23 0 .42.19.42.42v3.12zm2.72-1.98c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.18v.71h1.18c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.6c-.24 0-.43-.19-.43-.43V9.86c0-.23.19-.42.42-.42h1.6c.24 0 .43.19.43.42 0 .24-.19.43-.42.43h-1.18v.71h1.18z"/></svg></a>
+            <a href="mailto:elpa@g-takeuchi.com" class="store-card__btn store-card__btn--ghost store-card__btn--icon" aria-label="メールで問い合わせ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></a>
+            <a href="https://lpa-bridal.com/watch-collection" target="_blank" rel="noopener" class="store-card__btn store-card__btn--full">来店予約 &rsaquo;</a>
+          </div>
+        </div>
+      </div>
+      <div class="store-card fade">
+        <a class="store-card__photo" href="https://maps.app.goo.gl/NFNesPvKRpamSzrL7" target="_blank" rel="noopener" style="background-image:url('https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_shop04.webp')" aria-label="金沢・タテマチ店をGoogleマップで見る">
+          <span class="store-card__map-tag">MAP ›</span>
+        </a>
+        <div class="store-card__body">
+          <p class="store-card__area">石川県</p>
+          <h3><a href="https://kanazawa.takeuchi-bridal.com/reservation" target="_blank" rel="noopener" class="store-card__name">金沢・タテマチ店</a></h3>
+          <p class="store-card__badge">セイコーウオッチサロン 併設</p>
+          <dl>
+            <dt>住所</dt><dd>金沢市竪町45-2 CoCoTTo KANAZAWA 1F<br>タケウチブライダル店内</dd>
+            <dt>TEL</dt><dd><a href="tel:076-256-0120">076-256-0120</a></dd>
+            <dt>営業時間</dt><dd>11:00〜19:30</dd>
+            <dt>定休日</dt><dd>なし</dd>
+          </dl>
+          <div class="store-card__gmap"><iframe src="https://maps.google.com/maps?q=36.5601299,136.6516249&z=17&hl=ja&output=embed" width="100%" height="170" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="金沢・タテマチ店の地図"></iframe></div>
+          <div class="store-card__cta">
+            <a href="https://line.me/ti/p/OgrFX_LbkY" target="_blank" rel="noopener" class="store-card__btn store-card__btn--line store-card__btn--icon" aria-label="LINEで相談"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.2c-4.85 0-8.8 3.16-8.8 7.05 0 3.48 3.13 6.4 7.36 6.95.29.06.68.19.78.43.09.22.06.55.03.77l-.12.74c-.04.22-.18.87.77.47.95-.4 5.1-3 6.96-5.14C20.35 14.1 20.8 12.7 20.8 11.25c0-3.89-3.95-7.05-8.8-7.05zM8.2 13.4H6.6c-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v2.7H8.2c.24 0 .43.18.43.42 0 .23-.19.42-.43.42zm1.67-.42c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v3.12zm3.77 0c0 .18-.12.34-.29.4a.44.44 0 01-.14.02c-.13 0-.26-.06-.34-.17l-1.6-2.18v1.93c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.18.12-.34.29-.4a.42.42 0 01.47.15l1.61 2.18V9.86c0-.23.19-.42.43-.42.23 0 .42.19.42.42v3.12zm2.72-1.98c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.18v.71h1.18c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.6c-.24 0-.43-.19-.43-.43V9.86c0-.23.19-.42.42-.42h1.6c.24 0 .43.19.43.42 0 .24-.19.43-.42.43h-1.18v.71h1.18z"/></svg></a>
+            <a href="mailto:kanazawa@g-takeuchi.com" class="store-card__btn store-card__btn--ghost store-card__btn--icon" aria-label="メールで問い合わせ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></a>
+            <a href="https://kanazawa.takeuchi-bridal.com/reservation" target="_blank" rel="noopener" class="store-card__btn store-card__btn--full">来店予約 &rsaquo;</a>
+          </div>
+        </div>
+      </div>
+      <div class="store-card fade">
+        <a class="store-card__photo" href="https://maps.app.goo.gl/UxC8mouoHYff58n26" target="_blank" rel="noopener" style="background-image:url('https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_shop06.webp')" aria-label="富山インター・二口町店をGoogleマップで見る">
+          <span class="store-card__map-tag">MAP ›</span>
+        </a>
+        <div class="store-card__body">
+          <p class="store-card__area">富山県</p>
+          <h3><a href="https://takeuchi-bridal.com/shop/toyama/" target="_blank" rel="noopener" class="store-card__name">富山インター・二口町店</a></h3>
+          <p class="store-card__badge">セイコーウオッチサロン 併設</p>
+          <dl>
+            <dt>住所</dt><dd>富山市二口町4丁目5-3<br>タケウチブライダル店内</dd>
+            <dt>TEL</dt><dd><a href="tel:076-481-6776">076-481-6776</a></dd>
+            <dt>営業時間</dt><dd>11:00〜19:30</dd>
+            <dt>定休日</dt><dd>なし</dd>
+          </dl>
+          <div class="store-card__gmap"><iframe src="https://maps.google.com/maps?q=36.6784148,137.1984528&z=17&hl=ja&output=embed" width="100%" height="170" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="富山インター・二口町店の地図"></iframe></div>
+          <div class="store-card__cta">
+            <a href="https://line.me/ti/p/AaqHsapw79" target="_blank" rel="noopener" class="store-card__btn store-card__btn--line store-card__btn--icon" aria-label="LINEで相談"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.2c-4.85 0-8.8 3.16-8.8 7.05 0 3.48 3.13 6.4 7.36 6.95.29.06.68.19.78.43.09.22.06.55.03.77l-.12.74c-.04.22-.18.87.77.47.95-.4 5.1-3 6.96-5.14C20.35 14.1 20.8 12.7 20.8 11.25c0-3.89-3.95-7.05-8.8-7.05zM8.2 13.4H6.6c-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v2.7H8.2c.24 0 .43.18.43.42 0 .23-.19.42-.43.42zm1.67-.42c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v3.12zm3.77 0c0 .18-.12.34-.29.4a.44.44 0 01-.14.02c-.13 0-.26-.06-.34-.17l-1.6-2.18v1.93c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.18.12-.34.29-.4a.42.42 0 01.47.15l1.61 2.18V9.86c0-.23.19-.42.43-.42.23 0 .42.19.42.42v3.12zm2.72-1.98c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.18v.71h1.18c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.6c-.24 0-.43-.19-.43-.43V9.86c0-.23.19-.42.42-.42h1.6c.24 0 .43.19.43.42 0 .24-.19.43-.42.43h-1.18v.71h1.18z"/></svg></a>
+            <a href="mailto:toyama@g-takeuchi.com" class="store-card__btn store-card__btn--ghost store-card__btn--icon" aria-label="メールで問い合わせ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></a>
+            <a href="https://takeuchi-bridal.com/shop/toyama/" target="_blank" rel="noopener" class="store-card__btn store-card__btn--full">来店予約 &rsaquo;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stores-subhd fade">
+      <span class="stores-subhd__line" aria-hidden="true"></span>
+      <p class="stores-subhd__ttl">正規取扱店</p>
+      <span class="stores-subhd__line" aria-hidden="true"></span>
+    </div>
+    <p class="stores-subhd__note fade">セイコーウオッチサロン併設店のほか、<br>下記の店舗でもお取り扱いしております。</p>
+
+    <div class="stores-grid">
+      <div class="store-card fade">
+        <a class="store-card__photo" href="https://maps.app.goo.gl/wTfYydAk7sxAC8mq8" target="_blank" rel="noopener" style="background-image:url('https://www.g-takeuchi.com/wp-content/themes/takeuchi/lp_watch2/assets/images/img_shop03.webp')" aria-label="福井・ベル店をGoogleマップで見る">
+          <span class="store-card__map-tag">MAP ›</span>
+        </a>
+        <div class="store-card__body">
+          <p class="store-card__area">福井県</p>
+          <h3><span class="store-card__name">福井・ベル店〈1F〉</span></h3>
+          <p class="store-card__badge">正規取扱店</p>
+          <dl>
+            <dt>住所</dt><dd>福井市花堂南2丁目16-1<br>ショッピングシティベル店内</dd>
+            <dt>TEL</dt><dd><a href="tel:0776-35-8882">0776-35-8882</a></dd>
+          </dl>
+          <div class="store-card__gmap"><iframe src="https://maps.google.com/maps?q=%E7%A6%8F%E4%BA%95%E5%B8%82%E8%8A%B1%E5%A0%82%E5%8D%972%E4%B8%81%E7%9B%AE16-1%20%E3%82%B7%E3%83%A7%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%86%E3%82%A3%E3%83%99%E3%83%AB&z=17&hl=ja&output=embed" width="100%" height="170" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="福井・ベル店〈1F〉の地図"></iframe></div>
+          <div class="store-card__cta">
+            <a href="https://line.me/ti/p/tczdB0dCY-" target="_blank" rel="noopener" class="store-card__btn store-card__btn--line store-card__btn--icon" aria-label="LINEで相談"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.2c-4.85 0-8.8 3.16-8.8 7.05 0 3.48 3.13 6.4 7.36 6.95.29.06.68.19.78.43.09.22.06.55.03.77l-.12.74c-.04.22-.18.87.77.47.95-.4 5.1-3 6.96-5.14C20.35 14.1 20.8 12.7 20.8 11.25c0-3.89-3.95-7.05-8.8-7.05zM8.2 13.4H6.6c-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v2.7H8.2c.24 0 .43.18.43.42 0 .23-.19.42-.43.42zm1.67-.42c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.23.19-.42.42-.42.24 0 .43.19.43.42v3.12zm3.77 0c0 .18-.12.34-.29.4a.44.44 0 01-.14.02c-.13 0-.26-.06-.34-.17l-1.6-2.18v1.93c0 .23-.19.42-.43.42-.23 0-.42-.19-.42-.42V9.86c0-.18.12-.34.29-.4a.42.42 0 01.47.15l1.61 2.18V9.86c0-.23.19-.42.43-.42.23 0 .42.19.42.42v3.12zm2.72-1.98c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.18v.71h1.18c.23 0 .42.19.42.42 0 .24-.19.43-.42.43h-1.6c-.24 0-.43-.19-.43-.43V9.86c0-.23.19-.42.42-.42h1.6c.24 0 .43.19.43.42 0 .24-.19.43-.42.43h-1.18v.71h1.18z"/></svg></a>
+            <a href="mailto:bell@g-takeuchi.com" class="store-card__btn store-card__btn--ghost store-card__btn--icon" aria-label="メールで問い合わせ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></a>
+            <a href="reservation.html" class="store-card__btn store-card__btn--full">来店予約 &rsaquo;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVATION -->
+  <!-- CONTACT -->
+  <section class="sec contact-cta" id="contact">
+    <span class="contact-cta__watermark" aria-hidden="true">CONTACT</span>
+    <div class="contact-cta__inner">
+      <h2 class="contact-cta__title fade">在庫のご確認やお取り置きも、<br>お気軽にお問い合わせください。</h2>
+      <p class="contact-cta__lead fade">些細なことでも、専門のスタッフが対応いたします。<br>どうぞお気軽にご連絡ください。</p>
+      <div class="contact-cta__btns fade">
+        <a href="contact.html" class="contact-cta__btn">
+          <span class="contact-cta__btn-txt"><span class="contact-cta__btn-jp">お問い合わせ</span><span class="contact-cta__btn-en">CONTACT FORM</span></span>
+          <span class="contact-cta__btn-ico" aria-hidden="true"></span>
+        </a>
+        <a href="reservation.html" class="contact-cta__btn">
+          <span class="contact-cta__btn-txt"><span class="contact-cta__btn-jp">来店予約</span><span class="contact-cta__btn-en">RESERVATION FORM</span></span>
+          <span class="contact-cta__btn-ico" aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="contact-cta__tel fade">
+        <div class="contact-cta__tel-head">
+          <p class="contact-cta__tel-ttl">お電話でのお問い合わせ</p>
+        </div>
+        <div class="contact-cta__tel-grid">
+          <a class="contact-cta__tel-item" href="tel:0776-53-8355">
+            <span class="contact-cta__tel-store"><span class="contact-cta__tel-area">福井</span>福井・開発本店</span>
+            <span class="contact-cta__tel-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h3l1.5 5-2 1.5a12 12 0 005 5l1.5-2 5 1.5v3a2 2 0 01-2 2A16 16 0 014.5 5a2 2 0 012-2z"/></svg>0776-53-8355</span>
+            <span class="contact-cta__tel-hours">営業時間 11:00〜19:30</span>
+          </a>
+          <a class="contact-cta__tel-item" href="tel:0776-57-2605">
+            <span class="contact-cta__tel-store"><span class="contact-cta__tel-area">福井</span>福井・エルパ店</span>
+            <span class="contact-cta__tel-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h3l1.5 5-2 1.5a12 12 0 005 5l1.5-2 5 1.5v3a2 2 0 01-2 2A16 16 0 014.5 5a2 2 0 012-2z"/></svg>0776-57-2605</span>
+            <span class="contact-cta__tel-hours">営業時間 10:00〜20:00</span>
+          </a>
+          <a class="contact-cta__tel-item" href="tel:076-256-0120">
+            <span class="contact-cta__tel-store"><span class="contact-cta__tel-area">石川</span>金沢・タテマチ店</span>
+            <span class="contact-cta__tel-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h3l1.5 5-2 1.5a12 12 0 005 5l1.5-2 5 1.5v3a2 2 0 01-2 2A16 16 0 014.5 5a2 2 0 012-2z"/></svg>076-256-0120</span>
+            <span class="contact-cta__tel-hours">営業時間 11:00〜19:30</span>
+          </a>
+          <a class="contact-cta__tel-item" href="tel:076-481-6776">
+            <span class="contact-cta__tel-store"><span class="contact-cta__tel-area">富山</span>富山インター・二口町店</span>
+            <span class="contact-cta__tel-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h3l1.5 5-2 1.5a12 12 0 005 5l1.5-2 5 1.5v3a2 2 0 01-2 2A16 16 0 014.5 5a2 2 0 012-2z"/></svg>076-481-6776</span>
+            <span class="contact-cta__tel-hours">営業時間 11:00〜19:30</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__top">
+      <img class="footer__logo" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+    </div>
+    <nav class="footer__nav">
+      <ul>
+        <li><a href="#about">わたしたちについて</a></li>
+        <li><a href="#seiko">セイコーサロン</a></li>
+        <li><a href="#brands">取扱ブランド</a></li>
+        <li><a href="watches.html">新作時計のお知らせ</a></li>
+        <li><a href="products.html">取扱商品</a></li>
+        <li><a href="calendar.html">カレンダー・フェア</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+        <li><a href="reservation.html">来店予約</a></li>
+        <li><a href="#stores">店舗情報</a></li>
+      </ul>
+    </nav>
+    <div class="footer__bottom">
+      <p>&copy; 2025 TAKEUCHI BRIDAL. All rights reserved.</p>
+      <a href="https://www.g-takeuchi.com" target="_blank" rel="noopener">g-takeuchi.com</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商品詳細 | TAKEUCHI BRIDAL</title>
+  <meta name="description" content="タケウチブライダル取扱時計の商品詳細。取扱店舗への来店予約・ご試着・購入のご相談を承ります。ネット販売は行っておりません。" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link href="https://cdn.jsdelivr.net/npm/yakuhanjp@2.0.0/dist/css/yakuhanjp.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- FLOAT CTA -->
+  <a href="reservation.html" class="float-cta" id="floatCta">来店予約</a>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <img class="logo__img" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+      </a>
+      <div class="mobile-nav-panel" id="mobileNavPanel">
+        <nav class="gnav" id="gnav">
+          <ul>
+            <li><a href="watches.html">新作時計のお知らせ</a></li>
+            <li><a href="products.html">取扱商品</a></li>
+            <li><a href="calendar.html">カレンダー・フェア</a></li>
+            <li><a href="index.html#stores">店舗情報</a></li>
+          </ul>
+        </nav>
+        <div class="header__btns">
+          <a href="reservation.html" class="header__cta-text">来店予約 &rsaquo;</a>
+          <a href="contact.html" class="header__cta-fill">お問い合わせ &rsaquo;</a>
+        </div>
+      </div>
+      <button type="button" class="nav-toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileNavPanel">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 商品詳細は script.js の PRODUCTS から ?id= に応じて自動生成されます -->
+  <main class="sec product" id="productDetail"></main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__top">
+      <img class="footer__logo" src="images/logo-takeuchi.png" alt="TAKEUCHI Since 1948" />
+    </div>
+    <nav class="footer__nav">
+      <ul>
+        <li><a href="index.html#about">わたしたちについて</a></li>
+        <li><a href="index.html#seiko">セイコーサロン</a></li>
+        <li><a href="index.html#brands">取扱ブランド</a></li>
+        <li><a href="watches.html">新作時計のお知らせ</a></li>
+        <li><a href="calendar.html">カレンダー・フェア</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+        <li><a href="reservation.html">来店予約</a></li>
+        <li><a href="index.html#stores">店舗情報</a></li>
+      </ul>
+    </nav>
+    <div class="footer__bottom">
+      <p>&copy; 2025 TAKEUCHI BRIDAL. All rights reserved.</p>
+      <a href="https://www.g-takeuchi.com" target="_blank" rel="noopener">g-takeuchi.com</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
