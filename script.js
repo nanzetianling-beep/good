@@ -370,9 +370,58 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
   ■ 取扱店舗の考え方
     店舗ごとに扱うブランドが異なるため、「そのブランドを扱う店＝その商品の取扱店」として
-    BRAND_STORES で一括管理する。商品を追加しても取扱店の指定は不要。
+    下の STORE_BRANDS（店舗別の取扱ブランド）で一括管理する。商品を追加しても取扱店の指定は不要。
     ある品番だけ取扱店が違う場合のみ、その商品に stores: ['elpa', ...] を書いて上書きする。
 */
+
+/* =========================================================
+   店舗別の取扱ブランド（サイト共通の単一情報源 / source of truth）
+   ---------------------------------------------------------
+   各店の公式ページ（watch_info / watch-collection）の掲載ブランドに基づく。
+   ここを直すと、以下の両方へ自動で反映される：
+     (1) index.html #brands の店舗別ブランドタブ（絞り込み表示）
+     (2) product.html の商品詳細「この商品の取り扱い店舗」
+         ＝ 来店予約・お問い合わせの送信先店舗
+   ラベル表記は index.html のロゴ画像の alt（またはセルの表示テキスト）と一致させること。
+   ========================================================= */
+const STORE_BRANDS = {
+  kanazawa: ['PROSPEX', 'KING SEIKO', 'ASTRON', 'PRESAGE', 'LONGINES', 'TISSOT', 'RAYMOND WEIL', 'G-SHOCK', 'OCEANUS', 'ORIENT STAR'],
+  kaihatsu: ['Grand Seiko', 'PROSPEX', 'KING SEIKO', 'ASTRON', 'PRESAGE', 'CAMPANOLA', 'CUERVO Y SOBRINOS', 'PEQUIGNET', 'ORIS', 'TOM FORD', 'TISSOT'],
+  elpa:     ['Grand Seiko', 'KING SEIKO', 'ASTRON', 'PROSPEX', 'PRESAGE', 'SEIKO 5 SPORTS', 'SERIES 8', 'OCEANUS', 'DOLCE&EXCELINE', 'LUKIA', 'xC', 'wicca', 'EXCEED', 'ATTESA', 'CITIZEN L', 'ORIENT', 'ORIENT STAR', 'G-SHOCK', 'BABY-G', 'PROTREK', 'EDOX', 'TISSOT', 'Luminox'],
+  bell:     ['PROSPEX', 'ASTRON', 'PRESAGE', 'SEIKO 5 SPORTS', 'LUKIA', 'xC', 'wicca', 'OCEANUS', 'G-SHOCK', 'BABY-G', 'PROTREK', 'EXCEED', 'ATTESA', 'ORIENT STAR', 'ORIENT', 'KENTEX', 'monologue'],
+  toyama:   ['PROSPEX', 'KING SEIKO', 'ASTRON', 'PRESAGE', 'ORIENT STAR']
+};
+
+/* 商品の brand（日本語表記）→ STORE_BRANDS のラベルへの対応表。
+   PRODUCTS に新しいブランドの商品を追加するときは、その日本語ブランド名をここに1行足すだけで、
+   商品詳細の来店予約・お問い合わせが自動的に「その商品を扱う店舗」だけへ絞り込まれる。
+   （対応が無いブランドは全店扱いとしてフォールバックする） */
+const BRAND_ALIASES = {
+  'プロスペックス':   'PROSPEX',
+  'キングセイコー':   'KING SEIKO',
+  'アストロン':       'ASTRON',
+  'プレザージュ':     'PRESAGE',
+  'グランドセイコー': 'Grand Seiko',
+  'ロンジン':         'LONGINES',
+  'ティソ':           'TISSOT',
+  'レイモンドウェイル':'RAYMOND WEIL',
+  'トムフォード':     'TOM FORD',
+  'オリス':           'ORIS',
+  'カンパノラ':       'CAMPANOLA',
+  'オリエントスター': 'ORIENT STAR',
+  'オリエント':       'ORIENT',
+  'ルミノックス':     'Luminox',
+  'ケンテックス':     'KENTEX',
+  'モノローグ':       'monologue',
+  'エドックス':       'EDOX',
+  'オシアナス':       'OCEANUS',
+  'エクシード':       'EXCEED',
+  'アテッサ':         'ATTESA',
+  'クロスシー':       'xC',
+  'ウィッカ':         'wicca',
+  'ルキア':           'LUKIA'
+};
+
 (function () {
   const STORES = {
     kanazawa: { name: '金沢・タテマチ店',        area: '石川県', tel: '076-256-0120', hours: '11:00〜19:30', closed: '不定休' },
@@ -383,14 +432,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   };
   const ALL = ['kanazawa', 'kaihatsu', 'elpa', 'bell', 'toyama'];
 
-  /* ブランドごとの取扱店舗。各店の公式ページの掲載ブランドに基づく。
-     取扱ブランドが変わったら、ここを直せば商品一覧・詳細の両方に反映される。 */
-  const BRAND_STORES = {
-    'プロスペックス':   ['kanazawa', 'kaihatsu', 'elpa', 'bell', 'toyama'],
-    'アストロン':       ['kanazawa', 'kaihatsu', 'elpa', 'bell', 'toyama'],
-    'プレザージュ':     ['kanazawa', 'kaihatsu', 'elpa', 'bell', 'toyama'],
-    'キングセイコー':   ['kanazawa', 'kaihatsu', 'elpa', 'toyama']  // ベル店は取扱なし
-  };
+  /* ブランド→取扱店。上の STORE_BRANDS から自動生成する（単一情報源）。
+     取扱店が変わったら STORE_BRANDS を直すだけでよい。
+     生成結果（ラベル→取扱店）例：'PROSPEX'→全5店、'KING SEIKO'→ベル以外、
+     'LONGINES'/'RAYMOND WEIL'→タテマチ、'Grand Seiko'→開発本店・エルパ など。 */
+  const BRAND_STORES = {};
+  ALL.forEach(store => (STORE_BRANDS[store] || []).forEach(label => {
+    (BRAND_STORES[label] || (BRAND_STORES[label] = [])).push(store);
+  }));
 
   const PRODUCTS = [
     { id: "prospex-sbej011", brand: "プロスペックス", badge: "", ref: "SBEJ011", price: "¥218,900", photo: "https://www.g-takeuchi.com/wp-content/uploads/SBEJ011.jpg", lead: "フィールドからダイバーズまで、挑戦を支えるプロスペックス。" },
@@ -523,8 +572,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   ];
 
   const byId = id => PRODUCTS.find(p => p.id === id);
-  // 取扱店舗：商品個別の指定を優先し、無ければブランドの取扱店を使う
-  const storesOf = p => p.stores || BRAND_STORES[p.brand] || ALL;
+  // 取扱店舗：商品個別の指定(stores)を最優先。無ければ brand を STORE_BRANDS のラベルへ
+  // 変換して、そのブランドを扱う店舗を使う。対応が無ければ全店にフォールバック。
+  const storesOf = p => p.stores || BRAND_STORES[BRAND_ALIASES[p.brand] || p.brand] || ALL;
   // 表示用の商品名（例：プロスペックス【新作】SBEJ029）
   const titleOf = p => p.brand + (p.badge ? '【' + p.badge + '】' : ' ') + p.ref;
   // 予約フォームへ引き継ぐURL（商品名・目的・任意で店舗）
@@ -755,7 +805,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
    ---------------------------------------------------------
    店舗ごとに扱うブランドが異なるため、タブで絞り込めるようにする。
    ブランド名は各セルの alt（ロゴ画像）または表示テキストと突き合わせるので、
-   下のリストの表記は index.html のセルの表記と一致させること。
+   ファイル上部の共通 STORE_BRANDS の表記は index.html のセルの表記と一致させること。
    各店の公式ページ（watch_info / watch-collection）の掲載ブランドに基づく。
    ========================================================= */
 (function () {
@@ -763,13 +813,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   const tabs = document.getElementById('brandStoreTabs');
   if (!grid || !tabs) return;
 
-  const STORE_BRANDS = {
-    kanazawa: ['PROSPEX', 'KING SEIKO', 'ASTRON', 'PRESAGE', 'LONGINES', 'TISSOT', 'RAYMOND WEIL', 'G-SHOCK', 'OCEANUS', 'ORIENT STAR'],
-    kaihatsu: ['Grand Seiko', 'PROSPEX', 'KING SEIKO', 'ASTRON', 'PRESAGE', 'CAMPANOLA', 'CUERVO Y SOBRINOS', 'PEQUIGNET', 'ORIS', 'TOM FORD', 'TISSOT'],
-    elpa:     ['Grand Seiko', 'KING SEIKO', 'ASTRON', 'PROSPEX', 'PRESAGE', 'SEIKO 5 SPORTS', 'SERIES 8', 'OCEANUS', 'DOLCE&EXCELINE', 'LUKIA', 'xC', 'wicca', 'EXCEED', 'ATTESA', 'CITIZEN L', 'ORIENT', 'ORIENT STAR', 'G-SHOCK', 'BABY-G', 'PROTREK', 'EDOX', 'TISSOT', 'Luminox'],
-    bell:     ['PROSPEX', 'ASTRON', 'PRESAGE', 'SEIKO 5 SPORTS', 'LUKIA', 'xC', 'wicca', 'OCEANUS', 'G-SHOCK', 'BABY-G', 'PROTREK', 'EXCEED', 'ATTESA', 'ORIENT STAR', 'ORIENT', 'KENTEX', 'monologue'],
-    toyama:   ['PROSPEX', 'KING SEIKO', 'ASTRON', 'PRESAGE', 'ORIENT STAR']
-  };
+  // 店舗別の取扱ブランドは、ファイル上部の共通 STORE_BRANDS を単一情報源として参照する
+  // （商品詳細の取扱店ルーティングと同じデータ）。
 
   // セルの表示名を取り出す（ロゴ画像なら alt、文字だけのセルならその文字）
   const labelOf = cell => {
