@@ -199,6 +199,21 @@
   .rate .tag.must{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink)}
   .rate .tag.rec{background:color-mix(in srgb,var(--gold) 16%,transparent);border-color:color-mix(in srgb,var(--gold) 40%,transparent);color:var(--gold)}
 
+  /* ============ FEATURE TABLE ============ */
+  .ftbl{width:100%}
+  .ftbl th{font-size:12px}
+  .ftbl td{font-size:13px;vertical-align:middle;padding:9px 16px}
+  .ftbl td .fn{font-weight:700;color:var(--ink)}
+  .ftbl td .fnote{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .ftbl td.cost{font-weight:700;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ftbl td.rec-col{white-space:nowrap}
+  .ftbl td.rec-col .stars{vertical-align:middle}
+  .ftbl .pill{display:inline-block;margin-left:9px;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--ink-soft);vertical-align:middle}
+  .ftbl .pill.must{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink)}
+  .ftbl .pill.rec{background:color-mix(in srgb,var(--gold) 16%,transparent);border-color:color-mix(in srgb,var(--gold) 40%,transparent);color:var(--gold)}
+  .ftbl-note{font-size:11.5px;color:var(--muted);margin:12px 2px 0}
+
   /* ============ ROADMAP ============ */
   .road{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
   @media(max-width:860px){.road{grid-template-columns:1fr}}
@@ -363,23 +378,28 @@
   <section class="slide">
     <div class="inner">
       <span class="eyebrow">02 · 機能（前回ご提案の「欲しい機能」）</span>
-      <h2 class="title">基本機能 ─ おすすめ度で見る土台の8つ</h2>
+      <h2 class="title">基本機能 ─ おすすめ度と料金</h2>
       <p class="legend">
         <span><b>★★★★★</b> 必須（土台）</span>
         <span><b>★★★★</b> 強く推奨</span>
         <span><b>★★★</b> 推奨</span>
-        <span style="color:var(--muted)">※金額ではなく「おすすめ度」で表示しています</span>
       </p>
-      <div class="feat-grid two">
-        <div class="feat tier5"><div class="top"><span class="no">1</span><span class="nm">統合データベース</span></div><div class="desc">選手・企業・案件を一元管理。全機能の土台。二重入力と属人化を解消。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">必須・土台</span></div></div>
-        <div class="feat tier5"><div class="top"><span class="no">2</span><span class="nm">営業パイプライン</span></div><div class="desc">案件を「発掘→提案→交渉→受注」のカンバンで管理。金額と確度を可視化。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">必須・土台</span></div></div>
-        <div class="feat tier5"><div class="top"><span class="no">3</span><span class="nm">スマホ・音声タスク</span></div><div class="desc">移動中に音声で完了。期限接近を自動で上位表示。代表の最重要課題に直結。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">必須・土台</span></div></div>
-        <div class="feat tier4"><div class="top"><span class="no">4</span><span class="nm">ダッシュボード</span></div><div class="desc">売上見込み・案件ステージ・タスク消化をグラフで一目に。数字で意思決定。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">土台</span></div></div>
-        <div class="feat tier4"><div class="top"><span class="no">5</span><span class="nm">LINE連携＋自動応答bot</span></div><div class="desc">24時間AI応答、複雑な相談は有人へ。会話をCRMに自動記録。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">連携</span></div></div>
-        <div class="feat tier4"><div class="top"><span class="no">6</span><span class="nm">AI提案書ジェネレーター</span></div><div class="desc">企業HPのURL入力→自社の選手・実績と突き合わせ提案書を自動生成。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">連携</span></div></div>
-        <div class="feat tier4"><div class="top"><span class="no">7</span><span class="nm">実績ボード</span></div><div class="desc">選手の戦績・進捗をスポンサーが常時閲覧。AIが御礼・報告文を自動生成しLTV向上。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">連携</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">8</span><span class="nm">営業メール支援</span></div><div class="desc">企業別メールの自動作成・送信。リスト生成は取得ルールを固めて段階導入。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">連携</span></div></div>
+      <div class="tbl-wrap">
+        <table class="ftbl">
+          <thead><tr><th>機能</th><th>おすすめ度</th><th class="num">初期費用</th><th class="num">月額（目安）</th></tr></thead>
+          <tbody>
+            <tr><td><span class="fn">1　統合データベース</span><span class="fnote">全機能の土台。二重入力と属人化を解消。</span></td><td class="rec-col"><span class="stars" data-score="5"></span><span class="pill must">必須・土台</span></td><td class="cost">20〜35万</td><td class="cost">5,000円</td></tr>
+            <tr><td><span class="fn">2　営業パイプライン</span><span class="fnote">発掘→受注をカンバンで可視化。</span></td><td class="rec-col"><span class="stars" data-score="5"></span><span class="pill must">必須・土台</span></td><td class="cost">15〜25万</td><td class="cost">3,000円</td></tr>
+            <tr><td><span class="fn">3　スマホ・音声タスク</span><span class="fnote">移動中に音声で完了。代表の最重要課題。</span></td><td class="rec-col"><span class="stars" data-score="5"></span><span class="pill must">必須・土台</span></td><td class="cost">20〜30万</td><td class="cost">3,000円</td></tr>
+            <tr><td><span class="fn">4　ダッシュボード</span><span class="fnote">売上・案件・タスクを一目に。</span></td><td class="rec-col"><span class="stars" data-score="4"></span><span class="pill rec">土台</span></td><td class="cost">10〜20万</td><td class="cost">3,000円</td></tr>
+            <tr><td><span class="fn">5　LINE連携＋自動応答bot</span><span class="fnote">24時間AI応答。会話を自動記録。</span></td><td class="rec-col"><span class="stars" data-score="4"></span><span class="pill rec">連携</span></td><td class="cost">20〜40万</td><td class="cost">15,000円</td></tr>
+            <tr><td><span class="fn">6　AI提案書ジェネレーター</span><span class="fnote">URL入力で提案書を自動生成。</span></td><td class="rec-col"><span class="stars" data-score="4"></span><span class="pill rec">連携</span></td><td class="cost">15〜30万</td><td class="cost">8,000円</td></tr>
+            <tr><td><span class="fn">7　実績ボード</span><span class="fnote">戦績を常時共有しLTV向上。</span></td><td class="rec-col"><span class="stars" data-score="4"></span><span class="pill rec">連携</span></td><td class="cost">10〜20万</td><td class="cost">5,000円</td></tr>
+            <tr><td><span class="fn">8　営業メール支援</span><span class="fnote">企業別メールを自動下書き。</span></td><td class="rec-col"><span class="stars" data-score="3"></span><span class="pill">連携</span></td><td class="cost">10〜20万</td><td class="cost">5,000円</td></tr>
+          </tbody>
+        </table>
       </div>
+      <p class="ftbl-note">※ おすすめ度＝導入の優先度目安。月額は運用・API利用の目安で、プラン月額（3プラン参照）に含みます。</p>
     </div>
   </section>
 
@@ -387,24 +407,30 @@
   <section class="slide">
     <div class="inner">
       <span class="eyebrow">02 · 機能（追加機能）</span>
-      <h2 class="title">追加機能 ─ おすすめ度で選ぶプラス9つ</h2>
+      <h2 class="title">追加機能 ─ おすすめ度と料金</h2>
       <p class="legend">
         <span><b style="color:var(--accent-ink)">★★★★★ 最優先</b> 収益に直結</span>
         <span><b>★★★★</b> 強く推奨</span>
         <span><b>★★★</b> 推奨</span>
         <span><b>★★</b> 任意</span>
       </p>
-      <div class="feat-grid three">
-        <div class="feat tier5"><div class="top"><span class="no">9</span><span class="nm">契約・請求＋更新アラート</span></div><div class="desc">更新前に自動通知。うっかり失注を防ぎLTV向上。請求書も。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">最優先</span></div></div>
-        <div class="feat tier4"><div class="top"><span class="no">10</span><span class="nm">SNS影響力の自動集計</span></div><div class="desc">選手の宣伝価値を数値化。提案の説得力・営業の武器に。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">最優先</span></div></div>
-        <div class="feat tier4"><div class="top"><span class="no">11</span><span class="nm">ROI・露出レポート</span></div><div class="desc">費用対効果を自動レポート化。継続（更新）の決め手に。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">最優先</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">12</span><span class="nm">紹介・アライアンス管理</span></div><div class="desc">紹介と紹介料を自動集計。連鎖紹介を資産化。KOKU送客とも。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">13</span><span class="nm">少額スポンサー集金</span></div><div class="desc">「1口1,000円」をネットで集金。月額の自動支払いにも対応。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">15</span><span class="nm">選手セルフ入力ポータル</span></div><div class="desc">選手が自分で戦績・報告を入力。運営の入力負担を軽減。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">17</span><span class="nm">メディア事業との連動</span></div><div class="desc">8月ローンチのメディア掲載を管理し、露出をスポンサー価値へ還元。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">14</span><span class="nm">福利厚生・特典カタログ配信</span></div><div class="desc">スポンサー向け特典を一覧化しLINEで配信。動機を増やす。</div><div class="rate"><span class="stars" data-score="2"></span><span class="tag">任意</span></div></div>
-        <div class="feat tier3"><div class="top"><span class="no">16</span><span class="nm">カレンダー連携＋通知</span></div><div class="desc">Googleカレンダー連携で予定も一元化。締切・更新を通知。</div><div class="rate"><span class="stars" data-score="2"></span><span class="tag">任意</span></div></div>
+      <div class="tbl-wrap">
+        <table class="ftbl">
+          <thead><tr><th>機能</th><th>おすすめ度</th><th class="num">初期費用</th><th class="num">月額（目安）</th></tr></thead>
+          <tbody>
+            <tr><td><span class="fn">9　契約・請求＋更新アラート</span><span class="fnote">更新前に自動通知。失注を防止。</span></td><td class="rec-col"><span class="stars" data-score="5"></span><span class="pill must">最優先</span></td><td class="cost">15〜25万</td><td class="cost">3,000円</td></tr>
+            <tr><td><span class="fn">10　SNS影響力の自動集計</span><span class="fnote">宣伝価値を数値化。営業の武器に。</span></td><td class="rec-col"><span class="stars" data-score="4"></span><span class="pill rec">最優先</span></td><td class="cost">20〜35万</td><td class="cost">8,000円</td></tr>
+            <tr><td><span class="fn">11　ROI・露出レポート</span><span class="fnote">費用対効果で更新の決め手。</span></td><td class="rec-col"><span class="stars" data-score="4"></span><span class="pill rec">最優先</span></td><td class="cost">10〜20万</td><td class="cost">3,000円</td></tr>
+            <tr><td><span class="fn">12　紹介・アライアンス管理</span><span class="fnote">紹介料を自動集計。連鎖を資産化。</span></td><td class="rec-col"><span class="stars" data-score="3"></span><span class="pill">追加</span></td><td class="cost">10〜20万</td><td class="cost">2,000円</td></tr>
+            <tr><td><span class="fn">13　少額スポンサー集金</span><span class="fnote">1口1,000円をネット集金。</span></td><td class="rec-col"><span class="stars" data-score="3"></span><span class="pill">追加</span></td><td class="cost">20〜35万</td><td class="cost">3,000円<sup>※</sup></td></tr>
+            <tr><td><span class="fn">14　福利厚生・特典カタログ配信</span><span class="fnote">特典をLINEで配信。</span></td><td class="rec-col"><span class="stars" data-score="2"></span><span class="pill">任意</span></td><td class="cost">10〜15万</td><td class="cost">2,000円</td></tr>
+            <tr><td><span class="fn">15　選手セルフ入力ポータル</span><span class="fnote">選手が自分で入力。運営負担減。</span></td><td class="rec-col"><span class="stars" data-score="3"></span><span class="pill">追加</span></td><td class="cost">15〜25万</td><td class="cost">3,000円</td></tr>
+            <tr><td><span class="fn">16　カレンダー連携＋通知</span><span class="fnote">予定を一元化し通知。</span></td><td class="rec-col"><span class="stars" data-score="2"></span><span class="pill">任意</span></td><td class="cost">10〜15万</td><td class="cost">2,000円</td></tr>
+            <tr><td><span class="fn">17　メディア事業との連動</span><span class="fnote">掲載を継続の成果へ。</span></td><td class="rec-col"><span class="stars" data-score="3"></span><span class="pill">追加</span></td><td class="cost">10〜15万</td><td class="cost">2,000円</td></tr>
+          </tbody>
+        </table>
       </div>
+      <p class="ftbl-note">※ 月額は運用・API利用の目安。⑬は別途、決済手数料（取引額×約3.6%）がかかります。</p>
     </div>
   </section>
 
@@ -420,7 +446,7 @@
           <div class="ph">PHASE 1</div><div class="pw">受託・約1〜1.5ヶ月</div>
           <h3>土台をつくる</h3>
           <p>統合DB＋パイプライン＋音声タスク＋ダッシュボード。工数の大きい認証まわりを最初に固める。</p>
-          <div class="cost">50〜100万<small>初期・概算</small></div>
+          <div class="cost">約100万<small>初期・概算（Plan A）</small></div>
         </div>
         <div class="phase">
           <div class="ph">PHASE 2</div><div class="pw">受託＋伴走・随時</div>
@@ -450,9 +476,9 @@
           <div class="pn">Plan A</div><div class="pt">スモールスタート</div>
           <div class="pd">まず土台だけを最小限で作って始める。</div>
           <div class="price">
-            <div class="big">50〜100<small>万</small></div>
-            <div class="row"><span>月額</span><span>約5.5万 / 月</span></div>
-            <div class="row"><span>1年目合計</span><span>約120〜165万</span></div>
+            <div class="big">100<small>万</small></div>
+            <div class="row"><span>月額</span><span>10万 / 月</span></div>
+            <div class="row"><span>1年目合計</span><span>220万</span></div>
           </div>
           <ul class="feats"><li>土台の4機能（①〜④）</li><li>統合DB・パイプライン</li><li>音声タスク・ダッシュボード</li></ul>
         </div>
@@ -461,9 +487,9 @@
           <div class="pn">Plan B</div><div class="pt">スタンダード</div>
           <div class="pd">収益に効く所までひと通り。バランス最良。</div>
           <div class="price">
-            <div class="big">200〜280<small>万</small></div>
-            <div class="row"><span>月額</span><span>約10万 / 月</span></div>
-            <div class="row"><span>1年目合計</span><span class="best-col">約320〜400万</span></div>
+            <div class="big">150<small>万</small></div>
+            <div class="row"><span>月額</span><span>15万 / 月</span></div>
+            <div class="row"><span>1年目合計</span><span class="best-col">330万</span></div>
           </div>
           <ul class="feats"><li>Aの4機能をすべて含む</li><li>LINE・AI提案書・実績ボード</li><li>営業メール支援</li><li>最優先の追加3（契約更新・ROI・SNS）</li></ul>
         </div>
@@ -471,9 +497,9 @@
           <div class="pn">Plan C</div><div class="pt">フル装備</div>
           <div class="pd">17機能すべて。集金・紹介・選手参加まで。</div>
           <div class="price">
-            <div class="big">300〜430<small>万</small></div>
-            <div class="row"><span>月額</span><span>約13万 / 月</span></div>
-            <div class="row"><span>1年目合計</span><span>約480〜590万</span></div>
+            <div class="big">200<small>万</small></div>
+            <div class="row"><span>月額</span><span>20万 / 月</span></div>
+            <div class="row"><span>1年目合計</span><span>440万</span></div>
           </div>
           <ul class="feats"><li>A・Bの11機能をすべて含む</li><li>集金・紹介・特典配信</li><li>選手ポータル・カレンダー</li><li>メディア連動</li></ul>
         </div>
@@ -492,16 +518,16 @@
         <table>
           <thead><tr><th>シナリオ</th><th class="num">初期費用</th><th class="num">月額×12</th><th class="num">1年目合計</th></tr></thead>
           <tbody>
-            <tr><td>A スモール</td><td class="num">50〜100万</td><td class="num">約66万</td><td class="num">約120〜165万</td></tr>
-            <tr class="total"><td>B スタンダード ★推奨</td><td class="num">200〜280万</td><td class="num">約120万</td><td class="num">約320〜400万</td></tr>
-            <tr><td>C フル装備</td><td class="num">300〜430万</td><td class="num">約156万</td><td class="num">約480〜590万</td></tr>
+            <tr><td>A スモール</td><td class="num">100万</td><td class="num">120万</td><td class="num">220万</td></tr>
+            <tr class="total"><td>B スタンダード ★推奨</td><td class="num">150万</td><td class="num">180万</td><td class="num">330万</td></tr>
+            <tr><td>C フル装備</td><td class="num">200万</td><td class="num">240万</td><td class="num">440万</td></tr>
           </tbody>
         </table>
       </div>
       <div class="two-col" style="margin-top:18px">
         <div class="card" style="background:var(--surface-2)">
-          <h3>月額のおもな内訳</h3>
-          <p>LINE公式（0.5〜1.5万）／ AI従量（1〜3万）／ 音声入力（0〜0.3万）／ SNS取得（0〜1万）／ ホスティング・DB・認証（0〜2万）／ KOKU運用保守（3〜6万）<br><b style="color:var(--ink)">合計目安：約7〜13万円 / 月</b>（決済手数料 別途 取引額×約3.6%）</p>
+          <h3>月額について</h3>
+          <p>プランに応じて <b style="color:var(--ink)">10〜20万円 / 月</b>。LINE公式・AI従量・音声入力・SNS取得・ホスティング/DB/認証・KOKU運用保守を含みます。各機能の月額目安は機能一覧に記載。<br>決済手数料は別途 取引額×約3.6%。</p>
         </div>
         <div class="card">
           <h3>金額を左右する3点</h3>
@@ -518,7 +544,7 @@
       <h2 class="title">まず土台。効果を確かめて、収益直結の順に足す</h2>
       <p class="subtitle">初期投資を抑えつつ、効果を確かめながら次を判断できます。</p>
       <div class="flow">
-        <div class="step"><div class="k">STEP 0</div><h3>スモールスタート</h3><p>土台のみ・50〜100万＋月5.5万で走り始める。</p></div>
+        <div class="step"><div class="k">STEP 0</div><h3>スモールスタート</h3><p>土台のみ・約100万＋月10万で走り始める。</p></div>
         <div class="sep">→</div>
         <div class="step"><div class="k">STEP 1 ★★★★★</div><h3>⑨ 契約更新アラート</h3><p>うっかり失注を防ぎ、まず「守り」を固める。</p></div>
         <div class="sep">→</div>
