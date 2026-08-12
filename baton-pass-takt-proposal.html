@@ -1,0 +1,600 @@
+<title>TAKT ご提案</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --paper:#f4f2ec;
+    --surface:#ffffff;
+    --surface-2:#faf8f3;
+    --ink:#17223b;
+    --ink-soft:#33405c;
+    --muted:#5d667c;
+    --line:#e4dfd3;
+    --line-strong:#d3ccbc;
+    --navy:#182749;
+    --navy-deep:#0f1c38;
+    --accent:#d9542f;
+    --accent-ink:#b7431f;
+    --accent-soft:rgba(217,84,47,.10);
+    --teal:#2b767c;
+    --gold:#cf9526;
+    --gold-soft:#e7d9b4;
+    --shadow:0 1px 2px rgba(23,34,59,.06),0 6px 22px rgba(23,34,59,.08);
+    --shadow-lg:0 10px 40px rgba(15,28,56,.16);
+    --radius:14px;
+    --maxw:1120px;
+    --serif:"Hiragino Mincho ProN","Yu Mincho",serif;
+    --sans:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",YuGothic,"Noto Sans JP",Meiryo,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0e131f;
+      --surface:#161f31;
+      --surface-2:#1a2436;
+      --ink:#eef1f7;
+      --ink-soft:#c4ccdb;
+      --muted:#93a0b8;
+      --line:#28324a;
+      --line-strong:#37425e;
+      --navy:#1b294a;
+      --navy-deep:#0b1526;
+      --accent:#f0704a;
+      --accent-ink:#f79170;
+      --accent-soft:rgba(240,112,74,.14);
+      --teal:#49aab0;
+      --gold:#e2b559;
+      --gold-soft:#4a4327;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.35);
+      --shadow-lg:0 12px 44px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0e131f;--surface:#161f31;--surface-2:#1a2436;--ink:#eef1f7;--ink-soft:#c4ccdb;
+    --muted:#93a0b8;--line:#28324a;--line-strong:#37425e;--navy:#1b294a;--navy-deep:#0b1526;
+    --accent:#f0704a;--accent-ink:#f79170;--accent-soft:rgba(240,112,74,.14);--teal:#49aab0;
+    --gold:#e2b559;--gold-soft:#4a4327;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.35);
+    --shadow-lg:0 12px 44px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.7;
+  }
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* ============ DECK / SLIDES ============ */
+  .deck{position:relative}
+  .slide{
+    display:none;
+    min-height:100vh;
+    padding:clamp(28px,5vw,72px) clamp(20px,5vw,72px) 92px;
+    position:relative;
+  }
+  .slide.active{display:flex;flex-direction:column;justify-content:center;animation:fade .45s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.slide.active{animation:none}}
+  .inner{width:100%;max-width:var(--maxw);margin:0 auto}
+
+  /* eyebrow / heading */
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent-ink);margin:0 0 18px;
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--accent);border-radius:2px}
+  h1,h2,h3{margin:0;text-wrap:balance;line-height:1.25}
+  .title{font-size:clamp(24px,3.4vw,40px);font-weight:800;letter-spacing:.01em;color:var(--ink)}
+  .subtitle{color:var(--muted);font-size:clamp(14px,1.4vw,17px);margin-top:12px;max-width:60ch}
+  .divider{height:1px;background:var(--line);margin:22px 0}
+
+  /* ============ FOOTER BAR ============ */
+  .chrome{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px clamp(16px,4vw,40px);
+    background:color-mix(in srgb,var(--paper) 82%,transparent);
+    backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);
+  }
+  .brand-mini{display:flex;align-items:center;gap:9px;font-weight:700;color:var(--ink-soft);letter-spacing:.02em}
+  .brand-mini .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .nav{display:flex;align-items:center;gap:6px}
+  .nav button{
+    appearance:none;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);
+    width:34px;height:32px;border-radius:9px;cursor:pointer;font-size:15px;line-height:1;
+    display:grid;place-items:center;transition:.15s;
+  }
+  .nav button:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .nav button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .counter{min-width:56px;text-align:center;font-weight:700;color:var(--ink-soft)}
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:41;transition:width .3s ease;border-radius:0 3px 3px 0}
+
+  /* ============ TITLE SLIDE ============ */
+  .cover{
+    background:
+      radial-gradient(1200px 500px at 88% -10%,rgba(217,84,47,.16),transparent 60%),
+      linear-gradient(160deg,var(--navy-deep),var(--navy));
+    color:#f4f2ec;border-radius:0;
+  }
+  .cover .eyebrow{color:#f0a58c}
+  .cover .eyebrow::before{background:var(--accent)}
+  .cover-kicker{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#c8d0e2;font-weight:700}
+  .cover h1{font-size:clamp(34px,6vw,68px);font-weight:800;letter-spacing:.01em;margin-top:14px;color:#fff}
+  .cover h1 .x{color:#f0a58c;font-weight:600;padding:0 .12em}
+  .cover .lead{font-size:clamp(16px,1.8vw,21px);color:#dbe1ee;margin-top:10px;font-weight:600}
+  .cover .tagline{margin-top:26px;font-size:clamp(15px,1.6vw,18px);color:#aeb9d1;max-width:44ch}
+  .cover .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .cover .badge{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+    font-size:13px;font-weight:600;color:#e7ebf4;
+  }
+  .cover .meta{margin-top:34px;font-size:12.5px;color:#93a0be;line-height:1.9}
+  .cover .baton{
+    position:absolute;right:clamp(24px,6vw,90px);top:50%;transform:translateY(-50%) rotate(-32deg);
+    width:min(30vw,340px);height:14px;border-radius:999px;
+    background:linear-gradient(90deg,#d9542f,#f0a58c);
+    box-shadow:0 0 0 10px rgba(217,84,47,.12);opacity:.9;display:none;
+  }
+  @media(min-width:900px){.cover .baton{display:block}}
+
+  /* ============ GENERIC CARDS ============ */
+  .grid{display:grid;gap:14px}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;box-shadow:var(--shadow);
+  }
+  .card h3{font-size:16px;font-weight:700;color:var(--ink)}
+  .card p{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+
+  /* problem -> solution */
+  .ps{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin-top:6px}
+  .ps + .ps{margin-top:12px}
+  .ps .pain,.ps .sol{border-radius:12px;padding:15px 17px;font-size:13.5px}
+  .ps .pain{background:var(--surface-2);border:1px solid var(--line)}
+  .ps .sol{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+  .ps .lab{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+  .ps .pain .lab{color:var(--muted)}
+  .ps .sol .lab{color:var(--accent-ink)}
+  .ps .arrow{display:grid;place-items:center;color:var(--accent);font-size:20px;font-weight:800}
+  @media(max-width:760px){.ps{grid-template-columns:1fr}.ps .arrow{transform:rotate(90deg)}}
+
+  /* ============ FEATURE CARDS (recommendation) ============ */
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;font-size:12px;color:var(--muted)}
+  .legend b{color:var(--ink-soft)}
+  .feat-grid{display:grid;gap:11px}
+  .feat-grid.two{grid-template-columns:repeat(2,1fr)}
+  .feat-grid.three{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:860px){.feat-grid.two,.feat-grid.three{grid-template-columns:1fr}}
+  .feat{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;
+    position:relative;overflow:hidden;
+  }
+  .feat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.85}
+  .feat.tier5::before{background:var(--accent)}
+  .feat.tier4::before{background:var(--gold)}
+  .feat.tier3::before{background:var(--teal)}
+  .feat .top{display:flex;align-items:center;gap:9px}
+  .feat .no{
+    flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+    background:var(--navy);color:#fff;font-size:12px;font-weight:800;
+  }
+  .feat .nm{font-size:14px;font-weight:700;color:var(--ink);line-height:1.35}
+  .feat .desc{font-size:12px;color:var(--muted);line-height:1.55}
+  .rate{display:flex;align-items:center;gap:9px;margin-top:auto}
+  .stars{display:inline-flex;gap:1px;font-size:14px;line-height:1;letter-spacing:1px}
+  .stars .s{color:var(--gold-soft)}
+  .stars .s.on{color:var(--gold)}
+  .rate .tag{
+    font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--ink-soft);white-space:nowrap;
+  }
+  .rate .tag.must{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink)}
+  .rate .tag.rec{background:color-mix(in srgb,var(--gold) 16%,transparent);border-color:color-mix(in srgb,var(--gold) 40%,transparent);color:var(--gold)}
+
+  /* ============ ROADMAP ============ */
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  @media(max-width:860px){.road{grid-template-columns:1fr}}
+  .phase{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);position:relative}
+  .phase .ph{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--accent-ink)}
+  .phase .pw{font-size:12px;color:var(--muted);margin-top:2px}
+  .phase h3{font-size:15px;margin-top:12px;color:var(--ink)}
+  .phase p{font-size:13px;color:var(--muted);margin:8px 0 0}
+  .phase .cost{margin-top:14px;font-weight:800;color:var(--ink);font-size:15px}
+  .phase .cost small{display:block;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.05em}
+
+  /* ============ PLANS ============ */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:6px}
+  @media(max-width:860px){.plans{grid-template-columns:1fr}}
+  .plan{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .plan.best{border:1.5px solid var(--accent);box-shadow:var(--shadow-lg);position:relative}
+  .plan.best .ribbon{
+    position:absolute;top:-12px;right:18px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;
+    letter-spacing:.08em;padding:5px 12px;border-radius:999px;
+  }
+  .plan .pn{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--accent-ink);text-transform:uppercase}
+  .plan .pt{font-size:20px;font-weight:800;margin-top:4px;color:var(--ink)}
+  .plan .pd{font-size:12.5px;color:var(--muted);margin-top:6px;min-height:34px}
+  .plan .price{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .plan .price .big{font-size:26px;font-weight:800;color:var(--ink)}
+  .plan .price .big small{font-size:13px;color:var(--muted);font-weight:700}
+  .plan .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);margin-top:8px}
+  .plan .row span:first-child{color:var(--muted)}
+  .plan .feats{margin:16px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--ink-soft)}
+  .plan .feats li{padding:5px 0 5px 20px;position:relative}
+  .plan .feats li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
+
+  /* ============ TABLE ============ */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--surface)}
+  th,td{padding:11px 16px;text-align:left;border-bottom:1px solid var(--line)}
+  thead th{background:var(--surface-2);font-size:12px;letter-spacing:.04em;color:var(--ink-soft);font-weight:800}
+  tbody tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.total td{background:var(--accent-soft);font-weight:800;color:var(--ink)}
+  .best-col{color:var(--accent-ink);font-weight:800}
+
+  /* ============ NEXT STEPS / callout ============ */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+  .flow .step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);flex:1;min-width:180px}
+  .flow .step .k{font-size:11px;font-weight:800;color:var(--accent-ink);letter-spacing:.08em}
+  .flow .step h3{font-size:15px;margin-top:6px;color:var(--ink)}
+  .flow .step p{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+  .flow .sep{color:var(--accent);font-size:22px;font-weight:800}
+  @media(max-width:760px){.flow .sep{display:none}.flow .step{flex-basis:100%}}
+  .callout{background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:16px 20px;font-size:13.5px;color:var(--ink-soft);margin-top:18px}
+  .note{font-size:11.5px;color:var(--muted);line-height:1.85;margin-top:16px}
+
+  .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start}
+  @media(max-width:860px){.two-col{grid-template-columns:1fr}}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);text-align:center}
+  .kpi .v{font-size:22px;font-weight:800;color:var(--ink)}
+  .kpi .l{font-size:11.5px;color:var(--muted);margin-top:4px}
+
+  /* hint */
+  .hint{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);z-index:39;font-size:11.5px;color:var(--muted);
+    background:color-mix(in srgb,var(--surface) 90%,transparent);border:1px solid var(--line);padding:6px 12px;border-radius:999px;
+    box-shadow:var(--shadow);transition:opacity .5s}
+
+  @media print{
+    .chrome,.progress,.hint{display:none}
+    .slide{display:flex!important;page-break-after:always;min-height:auto;padding:26px}
+    body{background:#fff}
+  }
+</style>
+
+<div class="progress" id="prog"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · COVER -->
+  <section class="slide cover active">
+    <span class="baton"></span>
+    <div class="inner">
+      <div class="cover-kicker">BATON PASS &nbsp;×&nbsp; KOKU</div>
+      <h1>管理CRM <span class="x">「</span>TAKT<span class="x">」</span></h1>
+      <div class="lead">選手とスポンサーをつなぐ、管理の土台を。</div>
+      <p class="tagline">LINEとスプレッドシートに散らばった情報を、ひとつのCRMへ。<br>提案・実績・タスクまで、段階的に。</p>
+      <div class="badge-row">
+        <span class="badge">🗂 情報の一元化</span>
+        <span class="badge">📱 スマホ・音声タスク</span>
+        <span class="badge">🤝 継続する座組み</span>
+      </div>
+      <div class="meta">
+        ご提案資料（企画・機能ガイド・おすすめ度・概算見積もり）<br>
+        作成：株式会社KOKU ／ ヒアリング：2026年7月3日 ／ ※金額は概算のたたき台です
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · AGENDA -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">Agenda</span>
+      <h2 class="title">本日ご提案する内容</h2>
+      <p class="subtitle">「なぜ作るか」から始め、機能はおすすめ度で、費用は概算レンジでお伝えします。</p>
+      <div class="divider"></div>
+      <div class="grid" style="grid-template-columns:repeat(2,1fr)">
+        <div class="card"><h3>01 &nbsp;企画 ─ 何を、なぜ作るか</h3><p>散在する情報を一元化する管理CRM「TAKT」の狙いと、課題→解決の対応。</p></div>
+        <div class="card"><h3>02 &nbsp;機能 ─ おすすめ度で見る</h3><p>前回の「欲しい機能」＋追加機能を、★のおすすめ度で整理。</p></div>
+        <div class="card"><h3>03 &nbsp;進め方 ─ 作る順番</h3><p>土台から段階的に。効果の大きいものから載せていくロードマップ。</p></div>
+        <div class="card"><h3>04 &nbsp;費用 ─ 概算見積もり</h3><p>A/B/Cの3プランと1年目総額の目安（正式額はKOKUより別途）。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · CONCEPT -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">01 · 企画</span>
+      <h2 class="title">土台となるCRMを起点に、段階的に載せる</h2>
+      <p class="subtitle">最優先の土台＝管理CRM。ここに提案書の自動化・実績共有・LINE連携・タスク管理を順に積み上げます。</p>
+      <div class="divider"></div>
+      <div class="two-col">
+        <div>
+          <div class="card" style="background:var(--surface-2)">
+            <h3>ねらい</h3>
+            <p>選手・スポンサー・案件を1つのDBに統合。「誰が・いつ・何をしたか」の履歴が自動で残り、属人化を解消して<b style="color:var(--ink)">引き継ぎ可能</b>な状態に。</p>
+          </div>
+          <div class="callout">「移動が多くPCを開けない」代表の最重要課題に対し、<b>スマホ・音声でタスクを完結</b>できる形を土台に組み込みます。</div>
+        </div>
+        <div class="kpis" style="grid-template-columns:1fr">
+          <div class="kpi"><div class="v">1つのDB</div><div class="l">選手・スポンサー・案件を統合</div></div>
+          <div class="kpi"><div class="v">スマホ完結</div><div class="l">移動中に音声でタスク完了</div></div>
+          <div class="kpi"><div class="v">段階導入</div><div class="l">効果を見ながら次を判断</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · PROBLEM -> SOLUTION -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">01 · 企画</span>
+      <h2 class="title">現状の痛み → CRMでの解決</h2>
+      <p class="subtitle">ヒアリング議事録（2026/07/03）で挙がった課題を、機能に翻訳します。</p>
+      <div class="divider"></div>
+      <div class="ps">
+        <div class="pain"><div class="lab">現状の痛み</div>選手＝LINE、スポンサー＝LINE＋スプレッドシートに情報が散在。履歴が残らず属人化。</div>
+        <div class="arrow">→</div>
+        <div class="sol"><div class="lab">CRMでの解決</div>選手・スポンサー・案件を1つのDBに統合。履歴が自動で残り、引き継ぎ可能に。</div>
+      </div>
+      <div class="ps">
+        <div class="pain"><div class="lab">現状の痛み</div>タスクの漏れが多い。登録しても忘れる。移動が多くPCを開けない（代表の最重要課題）。</div>
+        <div class="arrow">→</div>
+        <div class="sol"><div class="lab">CRMでの解決</div>案件に紐づくタスクをスマホで完結。移動中に音声で完了、期限が近いものを自動で上位表示。</div>
+      </div>
+      <div class="ps">
+        <div class="pain"><div class="lab">現状の痛み</div>営業商材・案件マッチング・福利厚生案内がバラバラの導線。提案作成にも時間がかかる。</div>
+        <div class="arrow">→</div>
+        <div class="sol"><div class="lab">CRMでの解決</div>LINEを窓口にCRMと連携し導線を1本化。企業HPのURLから提案書を自動生成。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · BASIC FEATURES (recommendation) -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">02 · 機能（前回ご提案の「欲しい機能」）</span>
+      <h2 class="title">基本機能 ─ おすすめ度で見る土台の8つ</h2>
+      <p class="legend">
+        <span><b>★★★★★</b> 必須（土台）</span>
+        <span><b>★★★★</b> 強く推奨</span>
+        <span><b>★★★</b> 推奨</span>
+        <span style="color:var(--muted)">※金額ではなく「おすすめ度」で表示しています</span>
+      </p>
+      <div class="feat-grid two">
+        <div class="feat tier5"><div class="top"><span class="no">1</span><span class="nm">統合データベース</span></div><div class="desc">選手・企業・案件を一元管理。全機能の土台。二重入力と属人化を解消。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">必須・土台</span></div></div>
+        <div class="feat tier5"><div class="top"><span class="no">2</span><span class="nm">営業パイプライン</span></div><div class="desc">案件を「発掘→提案→交渉→受注」のカンバンで管理。金額と確度を可視化。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">必須・土台</span></div></div>
+        <div class="feat tier5"><div class="top"><span class="no">3</span><span class="nm">スマホ・音声タスク</span></div><div class="desc">移動中に音声で完了。期限接近を自動で上位表示。代表の最重要課題に直結。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">必須・土台</span></div></div>
+        <div class="feat tier4"><div class="top"><span class="no">4</span><span class="nm">ダッシュボード</span></div><div class="desc">売上見込み・案件ステージ・タスク消化をグラフで一目に。数字で意思決定。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">土台</span></div></div>
+        <div class="feat tier4"><div class="top"><span class="no">5</span><span class="nm">LINE連携＋自動応答bot</span></div><div class="desc">24時間AI応答、複雑な相談は有人へ。会話をCRMに自動記録。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">連携</span></div></div>
+        <div class="feat tier4"><div class="top"><span class="no">6</span><span class="nm">AI提案書ジェネレーター</span></div><div class="desc">企業HPのURL入力→自社の選手・実績と突き合わせ提案書を自動生成。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">連携</span></div></div>
+        <div class="feat tier4"><div class="top"><span class="no">7</span><span class="nm">実績ボード</span></div><div class="desc">選手の戦績・進捗をスポンサーが常時閲覧。AIが御礼・報告文を自動生成しLTV向上。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">連携</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">8</span><span class="nm">営業メール支援</span></div><div class="desc">企業別メールの自動作成・送信。リスト生成は取得ルールを固めて段階導入。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">連携</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · ADDITIONAL FEATURES (recommendation) -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">02 · 機能（追加機能）</span>
+      <h2 class="title">追加機能 ─ おすすめ度で選ぶプラス9つ</h2>
+      <p class="legend">
+        <span><b style="color:var(--accent-ink)">★★★★★ 最優先</b> 収益に直結</span>
+        <span><b>★★★★</b> 強く推奨</span>
+        <span><b>★★★</b> 推奨</span>
+        <span><b>★★</b> 任意</span>
+      </p>
+      <div class="feat-grid three">
+        <div class="feat tier5"><div class="top"><span class="no">9</span><span class="nm">契約・請求＋更新アラート</span></div><div class="desc">更新前に自動通知。うっかり失注を防ぎLTV向上。請求書も。</div><div class="rate"><span class="stars" data-score="5"></span><span class="tag must">最優先</span></div></div>
+        <div class="feat tier4"><div class="top"><span class="no">10</span><span class="nm">SNS影響力の自動集計</span></div><div class="desc">選手の宣伝価値を数値化。提案の説得力・営業の武器に。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">最優先</span></div></div>
+        <div class="feat tier4"><div class="top"><span class="no">11</span><span class="nm">ROI・露出レポート</span></div><div class="desc">費用対効果を自動レポート化。継続（更新）の決め手に。</div><div class="rate"><span class="stars" data-score="4"></span><span class="tag rec">最優先</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">12</span><span class="nm">紹介・アライアンス管理</span></div><div class="desc">紹介と紹介料を自動集計。連鎖紹介を資産化。KOKU送客とも。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">13</span><span class="nm">少額スポンサー集金</span></div><div class="desc">「1口1,000円」をネットで集金。月額の自動支払いにも対応。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">15</span><span class="nm">選手セルフ入力ポータル</span></div><div class="desc">選手が自分で戦績・報告を入力。運営の入力負担を軽減。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">17</span><span class="nm">メディア事業との連動</span></div><div class="desc">8月ローンチのメディア掲載を管理し、露出をスポンサー価値へ還元。</div><div class="rate"><span class="stars" data-score="3"></span><span class="tag">追加</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">14</span><span class="nm">福利厚生・特典カタログ配信</span></div><div class="desc">スポンサー向け特典を一覧化しLINEで配信。動機を増やす。</div><div class="rate"><span class="stars" data-score="2"></span><span class="tag">任意</span></div></div>
+        <div class="feat tier3"><div class="top"><span class="no">16</span><span class="nm">カレンダー連携＋通知</span></div><div class="desc">Googleカレンダー連携で予定も一元化。締切・更新を通知。</div><div class="rate"><span class="stars" data-score="2"></span><span class="tag">任意</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · ROADMAP -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">03 · 進め方</span>
+      <h2 class="title">ロードマップ ─ 作る順番</h2>
+      <p class="subtitle">工数の大きい認証まわりを含む土台を最初に固め、効果の大きいものから順に載せます。</p>
+      <div class="divider"></div>
+      <div class="road">
+        <div class="phase">
+          <div class="ph">PHASE 1</div><div class="pw">受託・約1〜1.5ヶ月</div>
+          <h3>土台をつくる</h3>
+          <p>統合DB＋パイプライン＋音声タスク＋ダッシュボード。工数の大きい認証まわりを最初に固める。</p>
+          <div class="cost">50〜100万<small>初期・概算</small></div>
+        </div>
+        <div class="phase">
+          <div class="ph">PHASE 2</div><div class="pw">受託＋伴走・随時</div>
+          <h3>連携＋最優先の追加</h3>
+          <p>LINE＋AI提案書＋実績ボードに、最優先の追加3機能（契約更新・ROI・SNS集計）を。</p>
+          <div class="cost">1機能 10万〜<small>随時追加</small></div>
+        </div>
+        <div class="phase">
+          <div class="ph">PHASE 3</div><div class="pw">随時</div>
+          <h3>拡張する</h3>
+          <p>集金・紹介・選手ポータル・カレンダー・メディア連動。効果の大きいものから順に。</p>
+          <div class="cost">1機能 10万〜<small>随時追加</small></div>
+        </div>
+      </div>
+      <div class="callout"><b>アライアンス構想：</b>BATON PASS（企業アポの角度が高い）× KOKU（オリジナルシステム）は相互補完。中小スポンサーへの送客と紹介料の分配、「スポンサー限定サイト（企業マッチング）」へ。単なる受発注で終わらせず、継続的な座組みを目指します。</div>
+    </div>
+  </section>
+
+  <!-- 8 · PLANS -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">04 · 費用</span>
+      <h2 class="title">3つのプラン</h2>
+      <p class="subtitle">まず土台だけで始める → 収益に効く所までそろえる → まるごと仕組み化。金額は概算です。</p>
+      <div class="plans">
+        <div class="plan">
+          <div class="pn">Plan A</div><div class="pt">スモールスタート</div>
+          <div class="pd">まず土台だけを最小限で作って始める。</div>
+          <div class="price">
+            <div class="big">50〜100<small>万</small></div>
+            <div class="row"><span>月額</span><span>約5.5万 / 月</span></div>
+            <div class="row"><span>1年目合計</span><span>約120〜165万</span></div>
+          </div>
+          <ul class="feats"><li>土台の4機能（①〜④）</li><li>統合DB・パイプライン</li><li>音声タスク・ダッシュボード</li></ul>
+        </div>
+        <div class="plan best">
+          <div class="ribbon">★ おすすめ</div>
+          <div class="pn">Plan B</div><div class="pt">スタンダード</div>
+          <div class="pd">収益に効く所までひと通り。バランス最良。</div>
+          <div class="price">
+            <div class="big">200〜280<small>万</small></div>
+            <div class="row"><span>月額</span><span>約10万 / 月</span></div>
+            <div class="row"><span>1年目合計</span><span class="best-col">約320〜400万</span></div>
+          </div>
+          <ul class="feats"><li>Aの4機能をすべて含む</li><li>LINE・AI提案書・実績ボード</li><li>営業メール支援</li><li>最優先の追加3（契約更新・ROI・SNS）</li></ul>
+        </div>
+        <div class="plan">
+          <div class="pn">Plan C</div><div class="pt">フル装備</div>
+          <div class="pd">17機能すべて。集金・紹介・選手参加まで。</div>
+          <div class="price">
+            <div class="big">300〜430<small>万</small></div>
+            <div class="row"><span>月額</span><span>約13万 / 月</span></div>
+            <div class="row"><span>1年目合計</span><span>約480〜590万</span></div>
+          </div>
+          <ul class="feats"><li>A・Bの11機能をすべて含む</li><li>集金・紹介・特典配信</li><li>選手ポータル・カレンダー</li><li>メディア連動</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · ESTIMATE -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">04 · 費用</span>
+      <h2 class="title">1年目の総額（概算）</h2>
+      <p class="subtitle">初期費用＋月額×12の目安。月額はAI利用量・LINE連携の深さ・利用者数で変動します。</p>
+      <div class="divider"></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>シナリオ</th><th class="num">初期費用</th><th class="num">月額×12</th><th class="num">1年目合計</th></tr></thead>
+          <tbody>
+            <tr><td>A スモール</td><td class="num">50〜100万</td><td class="num">約66万</td><td class="num">約120〜165万</td></tr>
+            <tr class="total"><td>B スタンダード ★推奨</td><td class="num">200〜280万</td><td class="num">約120万</td><td class="num">約320〜400万</td></tr>
+            <tr><td>C フル装備</td><td class="num">300〜430万</td><td class="num">約156万</td><td class="num">約480〜590万</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col" style="margin-top:18px">
+        <div class="card" style="background:var(--surface-2)">
+          <h3>月額のおもな内訳</h3>
+          <p>LINE公式（0.5〜1.5万）／ AI従量（1〜3万）／ 音声入力（0〜0.3万）／ SNS取得（0〜1万）／ ホスティング・DB・認証（0〜2万）／ KOKU運用保守（3〜6万）<br><b style="color:var(--ink)">合計目安：約7〜13万円 / 月</b>（決済手数料 別途 取引額×約3.6%）</p>
+        </div>
+        <div class="card">
+          <h3>金額を左右する3点</h3>
+          <p>① LINE⇔CRM連携の範囲 ／ ② 想定利用者数・同時利用数 ／ ③ AI利用の想定ボリューム。正式なお見積もりはKOKUより別途提示いたします。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · RECOMMENDED APPROACH -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">04 · おすすめの進め方</span>
+      <h2 class="title">まず土台。効果を確かめて、収益直結の順に足す</h2>
+      <p class="subtitle">初期投資を抑えつつ、効果を確かめながら次を判断できます。</p>
+      <div class="flow">
+        <div class="step"><div class="k">STEP 0</div><h3>スモールスタート</h3><p>土台のみ・50〜100万＋月5.5万で走り始める。</p></div>
+        <div class="sep">→</div>
+        <div class="step"><div class="k">STEP 1 ★★★★★</div><h3>⑨ 契約更新アラート</h3><p>うっかり失注を防ぎ、まず「守り」を固める。</p></div>
+        <div class="sep">→</div>
+        <div class="step"><div class="k">STEP 2 ★★★★</div><h3>⑪ ROI・露出レポート</h3><p>効果を見せて、継続（更新）の決め手に。</p></div>
+        <div class="sep">→</div>
+        <div class="step"><div class="k">STEP 3 ★★★★</div><h3>⑩ SNS影響力集計</h3><p>宣伝価値を数値化し、新規営業の武器に。</p></div>
+      </div>
+      <div class="callout">この3つ（⑨→⑪→⑩）は<b>収益に直結する「最優先」機能</b>。スモールスタートの上に、この順で載せていくのがおすすめです。</div>
+    </div>
+  </section>
+
+  <!-- 11 · CLOSING -->
+  <section class="slide cover">
+    <div class="inner">
+      <span class="cover-kicker">Next Action</span>
+      <h1 style="font-size:clamp(28px,4.6vw,52px)">土台から、いっしょに。</h1>
+      <p class="tagline" style="color:#dbe1ee;max-width:52ch">最優先で着手する機能をお選びください。正式なお見積もりと実装範囲は、KOKUより別途ご提示します。</p>
+      <div class="badge-row">
+        <span class="badge">① 着手する機能の選定（BATON PASS）</span>
+        <span class="badge">② 正式提案・見積もり（KOKU）</span>
+      </div>
+      <div class="meta" style="margin-top:32px">
+        ※ 本資料はヒアリング議事録（2026/07/03）とKOKU提示の目安、各API公開価格をもとにした概算のたたき台です。<br>
+        金額は実装範囲・利用者数・AI利用量・LINE連携の深さで変動します。会計・法務の専門的助言ではありません。<br>
+        © 2026 KOKU Inc. ／ TAKT proposal for BATON PASS
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="hint" id="hint">← → キーでスライド送り</div>
+<div class="chrome">
+  <div class="brand-mini"><span class="dot"></span>TAKT ご提案 ／ KOKU × BATON PASS</div>
+  <div class="nav">
+    <button id="prev" aria-label="前のスライド">‹</button>
+    <span class="counter"><span id="cur">1</span> / <span id="tot">11</span></span>
+    <button id="next" aria-label="次のスライド">›</button>
+  </div>
+</div>
+
+<script>
+  // fill stars
+  document.querySelectorAll('.stars').forEach(function(el){
+    var n=parseInt(el.getAttribute('data-score'),10)||0;
+    var h='';
+    for(var i=1;i<=5;i++){h+='<span class="s'+(i<=n?' on':'')+'">★</span>';}
+    el.innerHTML=h;
+  });
+
+  var slides=Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i=0, tot=slides.length;
+  document.getElementById('tot').textContent=tot;
+  var prog=document.getElementById('prog'), cur=document.getElementById('cur');
+  function show(n){
+    i=Math.max(0,Math.min(tot-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i);});
+    cur.textContent=i+1;
+    prog.style.width=((i+1)/tot*100)+'%';
+    window.scrollTo(0,0);
+  }
+  function next(){show(i+1);} function prev(){show(i-1);}
+  document.getElementById('next').addEventListener('click',next);
+  document.getElementById('prev').addEventListener('click',prev);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(tot-1);}
+  });
+  // click right/left third of screen to navigate (ignore clicks on controls)
+  document.getElementById('deck').addEventListener('click',function(e){
+    if(e.target.closest('a,button')) return;
+    var x=e.clientX, w=window.innerWidth;
+    if(x> w*0.72) next(); else if(x< w*0.28) prev();
+  });
+  var hint=document.getElementById('hint');
+  setTimeout(function(){hint.style.opacity='0';},4000);
+  show(0);
+</script>
