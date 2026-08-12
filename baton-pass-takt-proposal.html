@@ -19,6 +19,7 @@
     --teal:#2b767c;
     --gold:#cf9526;
     --gold-soft:#e7d9b4;
+    --hi:#d9542f;--mid:#1667b5;--lo:#2e8b57;
     --shadow:0 1px 2px rgba(23,34,59,.06),0 6px 22px rgba(23,34,59,.08);
     --shadow-lg:0 10px 40px rgba(15,28,56,.16);
     --radius:14px;
@@ -44,6 +45,7 @@
       --teal:#49aab0;
       --gold:#e2b559;
       --gold-soft:#4a4327;
+      --hi:#de5b34;--mid:#4a90d9;--lo:#3f9e6b;
       --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.35);
       --shadow-lg:0 12px 44px rgba(0,0,0,.5);
     }
@@ -52,7 +54,7 @@
     --paper:#0e131f;--surface:#161f31;--surface-2:#1a2436;--ink:#eef1f7;--ink-soft:#c4ccdb;
     --muted:#93a0b8;--line:#28324a;--line-strong:#37425e;--navy:#1b294a;--navy-deep:#0b1526;
     --accent:#f0704a;--accent-ink:#f79170;--accent-soft:rgba(240,112,74,.14);--teal:#49aab0;
-    --gold:#e2b559;--gold-soft:#4a4327;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.35);
+    --gold:#e2b559;--gold-soft:#4a4327;--hi:#de5b34;--mid:#4a90d9;--lo:#3f9e6b;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.35);
     --shadow-lg:0 12px 44px rgba(0,0,0,.5);
   }
 
@@ -213,6 +215,28 @@
   .ftbl .pill.must{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink)}
   .ftbl .pill.rec{background:color-mix(in srgb,var(--gold) 16%,transparent);border-color:color-mix(in srgb,var(--gold) 40%,transparent);color:var(--gold)}
   .ftbl-note{font-size:11.5px;color:var(--muted);margin:12px 2px 0}
+
+  /* ============ MONTHLY VIZ ============ */
+  .mviz-intro{background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:12px;padding:13px 18px;font-size:14px;color:var(--ink-soft);margin:2px 0 16px;line-height:1.6}
+  .mchart{display:flex;flex-direction:column;gap:15px}
+  .mgrp{display:flex;flex-direction:column;gap:9px}
+  .mgh{font-size:13.5px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .mgh .mdot{width:13px;height:13px;border-radius:4px;flex:none}
+  .mdot.hi{background:var(--hi)} .mdot.mid{background:var(--mid)} .mdot.lo{background:var(--lo)}
+  .mgh .why{font-weight:600;color:var(--muted);font-size:12px}
+  .mrow{display:flex;flex-direction:column;gap:4px}
+  .mrow .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .mrow .lbl{font-size:12.5px;color:var(--ink-soft)}
+  .mrow .lbl b{color:var(--ink);font-weight:700}
+  .mrow .v{font-size:13.5px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .mbar{height:13px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+  .mbar i{display:block;height:100%;border-radius:5px 4px 4px 5px}
+  .mbar i.hi{background:var(--hi)} .mbar i.mid{background:var(--mid)} .mbar i.lo{background:var(--lo)}
+  .mrecon{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:15px 20px;font-size:14px;color:var(--ink-soft);box-shadow:var(--shadow);line-height:1.7}
+  .mrecon b{color:var(--ink)}
+  .mrecon .eq{color:var(--accent-ink);font-weight:800}
 
   /* ============ ROADMAP ============ */
   .road{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
@@ -533,6 +557,39 @@
           <h3>金額を左右する3点</h3>
           <p>① LINE⇔CRM連携の範囲 ／ ② 想定利用者数・同時利用数 ／ ③ AI利用の想定ボリューム。正式なお見積もりはKOKUより別途提示いたします。</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9.5 · MONTHLY VISUALIZED -->
+  <section class="slide">
+    <div class="inner">
+      <span class="eyebrow">04 · 費用（月額の可視化）</span>
+      <h2 class="title">月額はどれくらい？ ─ 機能ごとの毎月の料金</h2>
+      <div class="mviz-intro">
+        「月額」＝ システムを毎月動かし続けるための<b>“使い続け料”</b>。スマホ代や電気代と同じで、<b>たくさん使う機能ほど高く</b>なります。<b>棒が長いほど</b>毎月の料金が高い機能です。
+      </div>
+      <div class="mchart">
+        <div class="mgrp">
+          <div class="mgh"><span class="mdot hi"></span>高い：AIや外部サービス（LINE・SNS）を<b>たくさん使う</b>機能<span class="why">— AIは文章を作るたびにお金がかかる＝使うほど高い</span></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>⑤ LINE連携＋自動応答bot</b>（LINE配信＋AI応答）</span><span class="v">15,000円</span></div><div class="mbar"><i class="hi" style="width:100%"></i></div></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>⑥ AI提案書ジェネレーター</b>（AIで文章作成）</span><span class="v">8,000円</span></div><div class="mbar"><i class="hi" style="width:53%"></i></div></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>⑩ SNS影響力の自動集計</b>（SNSのデータ取得）</span><span class="v">8,000円</span></div><div class="mbar"><i class="hi" style="width:53%"></i></div></div>
+        </div>
+        <div class="mgrp">
+          <div class="mgh"><span class="mdot mid"></span>ふつう：データをたくさん<b>保管</b>したり、AIを<b>少し</b>使う機能</div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>① 統合データベース</b>（全データの置き場）</span><span class="v">5,000円</span></div><div class="mbar"><i class="mid" style="width:33%"></i></div></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>⑦ 実績ボード</b>（AI報告文＋常時表示）</span><span class="v">5,000円</span></div><div class="mbar"><i class="mid" style="width:33%"></i></div></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>⑧ 営業メール支援</b>（AIで下書き）</span><span class="v">5,000円</span></div><div class="mbar"><i class="mid" style="width:33%"></i></div></div>
+        </div>
+        <div class="mgrp">
+          <div class="mgh"><span class="mdot lo"></span>安い：おもに<b>保存・表示・通知</b>するだけの機能<span class="why">— 電気代くらい</span></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>3,000円の7機能</b>：②営業パイプライン・③スマホ音声タスク・④ダッシュボード・⑨契約更新アラート・⑪ROIレポート・⑬少額集金・⑮選手ポータル</span><span class="v">3,000円</span></div><div class="mbar"><i class="lo" style="width:20%"></i></div></div>
+          <div class="mrow"><div class="top"><span class="lbl"><b>2,000円の4機能</b>：⑫紹介管理・⑭特典配信・⑯カレンダー連携・⑰メディア連動</span><span class="v">2,000円</span></div><div class="mbar"><i class="lo" style="width:13%"></i></div></div>
+        </div>
+      </div>
+      <div class="mrecon">
+        <b>ぜんぶ足すと…</b>　17機能の月額合計 ＝ <b>約7.5万円 / 月</b>（LINE・AI・サーバーなど“サービスの実費”）　＋　KOKUの<b>お守り代</b>（毎月の保守・サポート）<b>3〜6万円</b>　<span class="eq">＝ プラン月額 10〜20万円</span>　　※⑬集金は別途 決済手数料（取引額×約3.6%）
       </div>
     </div>
   </section>
