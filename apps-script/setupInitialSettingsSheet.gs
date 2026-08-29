@@ -13,8 +13,8 @@
  * 【安全設計】
  *   - 既存シートは絶対に削除しません（deleteSheet は使いません）
  *   - clear() / clearContents() も使いません
- *   - サンプルデータは「シートが空のときだけ」入力します
- *     （すでにデータがある場合は、書式だけを整えます）
+ *   - 既定ではサンプルデータを入れず、ヘッダーと書式だけを用意します
+ *     （サンプルが必要なときは INSERT_SAMPLE_DATA を true にする）
  *
  * 色・列幅・行数などの設定値は、すべて下の「設定エリア」に
  * まとめてあります。変更したいときはここだけ書き換えてください。
@@ -92,7 +92,14 @@ var STATUS_OPTIONS = [
   { label: '不要',   background: '#EEEEEE', fontColor: '#666666' }
 ];
 
-/** 初期データ（サンプル）。シートが空のときだけ入力される */
+/**
+ * サンプルデータを入れるかどうか。
+ * false = ヘッダーと書式だけ用意する（中身は自分で書く場合はこちら）
+ * true  = 下の SAMPLE_DATA を、シートが空のときだけ入力する
+ */
+var INSERT_SAMPLE_DATA = false;
+
+/** サンプルデータ（INSERT_SAMPLE_DATA が true のときだけ使われる） */
 var SAMPLE_DATA = [
   [1, '店舗基本設定', '店舗名',   '店舗名を登録する',                     'レシートや帳票に店舗名を表示するため',    '後から変更可能',                 '完了'],
   [2, '店舗基本設定', '営業時間', '開店時間・閉店時間を設定する',         '売上集計の日付を正しく管理するため',      '深夜営業の場合は営業日の扱いに注意', '確認中'],
@@ -116,8 +123,8 @@ function setupInitialSettingsSheet() {
   // 500行・7列ぶんの入れ物を先に確保しておく
   ensureSheetSize_(sheet);
 
-  writeHeader_(sheet);          // 1. ヘッダーの文字を入れる
-  writeSampleDataIfEmpty_(sheet); // 2. 空のときだけサンプルを入れる
+  writeHeader_(sheet);            // 1. ヘッダーの文字を入れる
+  writeSampleDataIfEmpty_(sheet); // 2. サンプルを使う設定のときだけ入力
 
   var lastDataRow = getLastDataRow_(sheet); // 実際にデータが入っている最終行
 
@@ -191,11 +198,12 @@ function writeHeader_(sheet) {
 
 /**
  * サンプルデータを入力する。
- * ただし2行目以降にすでに何か入力されている場合は何もしない
- * （ユーザーが入力した内容を上書きしないため）。
+ * ただし次の場合は何もしない。
+ *   - INSERT_SAMPLE_DATA が false のとき（既定。中身は手入力する想定）
+ *   - 2行目以降にすでに何か入力されているとき（入力内容を上書きしないため）
  */
 function writeSampleDataIfEmpty_(sheet) {
-  if (!isDataAreaEmpty_(sheet)) {
+  if (!INSERT_SAMPLE_DATA || !isDataAreaEmpty_(sheet)) {
     return;
   }
   sheet.getRange(2, 1, SAMPLE_DATA.length, LAST_COL).setValues(SAMPLE_DATA);
