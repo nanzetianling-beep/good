@@ -1,0 +1,1469 @@
+<title>開店じたく</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap">
+
+<style>
+/* ══════════════════════════════════════════════════════════
+   開店じたく — ナイトワークPOS「ポッキリ.night」の初期設定
+   帳場（ちょうば）で台帳を1ページずつ埋めていく、という見立て。
+   済んだ章には朱の検印が押される。
+   ══════════════════════════════════════════════════════════ */
+
+:root{
+  /* 紙と墨 */
+  --paper:#eef1f6;
+  --card:#ffffff;
+  --card-2:#f6f8fc;
+  --ink:#16233d;
+  --ink-2:#4a5872;
+  --ink-3:#7b879e;
+  --rule:#d8dee9;
+  --rule-2:#e9edf4;
+  /* 藍・朱・緑・金 */
+  --ai:#2a4e86;
+  --ai-2:#1e3b68;
+  --ai-soft:#e3eaf6;
+  --shu:#b5372c;
+  --shu-soft:#fbebe8;
+  --midori:#17715a;
+  --midori-soft:#e4f1ec;
+  --kin:#9c7c33;
+  --on-ai:#ffffff;
+  --shadow:0 1px 2px rgba(22,35,61,.05), 0 8px 24px rgba(22,35,61,.06);
+  --shadow-lift:0 2px 4px rgba(22,35,61,.08), 0 18px 40px rgba(22,35,61,.12);
+  --mincho:"Shippori Mincho B1",'Hiragino Mincho ProN',"Yu Mincho",serif;
+  --gothic:"Zen Kaku Gothic New",-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',"Yu Gothic",sans-serif;
+  --mono:"Roboto Mono",ui-monospace,SFMono-Regular,monospace;
+  --r:12px;
+  --r-lg:18px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1626; --card:#172033; --card-2:#1c2740;
+    --ink:#e8edf7; --ink-2:#a9b5cc; --ink-3:#7c8aa6;
+    --rule:#2c3854; --rule-2:#222d46;
+    --ai:#7fa6dd; --ai-2:#9dbdea; --ai-soft:#1d2c49;
+    --shu:#ea8d7f; --shu-soft:#3a2320;
+    --midori:#63c3a1; --midori-soft:#123028;
+    --kin:#cba95d;
+    --on-ai:#0f1626;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-lift:0 2px 4px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1626; --card:#172033; --card-2:#1c2740;
+  --ink:#e8edf7; --ink-2:#a9b5cc; --ink-3:#7c8aa6;
+  --rule:#2c3854; --rule-2:#222d46;
+  --ai:#7fa6dd; --ai-2:#9dbdea; --ai-soft:#1d2c49;
+  --shu:#ea8d7f; --shu-soft:#3a2320;
+  --midori:#63c3a1; --midori-soft:#123028;
+  --kin:#cba95d;
+  --on-ai:#0f1626;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+  --shadow-lift:0 2px 4px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--gothic);font-size:16px;line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;text-wrap:balance;line-height:1.45}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ai);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ── 帳場バー（上の帯）───────────────────────────── */
+.bar{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:12px 24px;background:var(--card);
+  border-bottom:1px solid var(--rule);
+}
+.bar-mark{display:flex;align-items:baseline;gap:10px;min-width:0}
+.bar-mark b{font-family:var(--mincho);font-size:21px;font-weight:700;letter-spacing:.06em}
+.bar-mark span{font-size:12.5px;color:var(--ink-3);letter-spacing:.14em;font-family:var(--mono)}
+.modes{display:flex;gap:0;border:1.5px solid var(--rule);border-radius:999px;padding:3px;background:var(--card-2)}
+.modes button{
+  border:0;background:none;border-radius:999px;padding:7px 18px;
+  font-size:14.5px;font-weight:700;color:var(--ink-3);cursor:pointer;
+}
+.modes button[aria-pressed="true"]{background:var(--ai);color:var(--on-ai)}
+.bar-prog{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--ink-2)}
+.bar-prog .track{width:140px;height:8px;border-radius:999px;background:var(--rule-2);overflow:hidden}
+.bar-prog .track i{display:block;height:100%;background:linear-gradient(90deg,var(--ai),var(--kin));border-radius:999px;transition:width .3s ease}
+.bar-prog .num{font-family:var(--mono);font-weight:500;white-space:nowrap}
+
+/* ── 全体の枠 ───────────────────────────────── */
+.wrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;
+  max-width:1240px;margin:0 auto;padding:28px 24px 96px;align-items:start}
+
+/* ── 左：章インデックス ─────────────────────────── */
+.index{position:sticky;top:86px;background:var(--card);border:1px solid var(--rule);
+  border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.index-h{padding:18px 20px 12px;border-bottom:1px solid var(--rule-2)}
+.index-h h2{font-family:var(--mincho);font-size:17px;letter-spacing:.05em}
+.index-h p{font-size:13px;color:var(--ink-3);margin-top:2px}
+.chapters{padding:8px 10px 14px;max-height:calc(100vh - 220px);overflow-y:auto}
+.ch{padding:10px 8px 4px}
+.ch-h{display:flex;align-items:center;gap:8px;padding:0 8px 4px;position:relative}
+.ch-n{font-family:var(--mincho);font-size:12px;color:var(--kin);letter-spacing:.18em;flex:none}
+.ch-t{font-family:var(--mincho);font-size:15.5px;font-weight:700;letter-spacing:.04em}
+/* Signature：章がすべて埋まると朱の検印が押される */
+.seal{
+  margin-left:auto;flex:none;width:38px;height:38px;position:relative;
+  transform:rotate(-11deg);opacity:0;transition:opacity .35s ease, transform .35s ease;
+}
+.ch.sealed .seal{opacity:.92;transform:rotate(-11deg) scale(1)}
+.seal::before{content:"";position:absolute;inset:0;border:2.5px solid var(--shu);border-radius:6px}
+.seal::after{content:"済";position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--mincho);font-weight:700;font-size:19px;color:var(--shu);line-height:1}
+.ch-steps{display:flex;flex-direction:column;gap:1px;margin-top:2px}
+.si{display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+  border:0;background:none;padding:8px 9px;border-radius:10px;cursor:pointer;color:var(--ink-2);font-size:14.5px}
+.si:hover{background:var(--card-2);color:var(--ink)}
+.si-n{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--mono);font-size:11.5px;border:1.5px solid var(--rule);color:var(--ink-3);
+  background:var(--card);margin-top:3px}
+.si.done .si-n{background:var(--midori);border-color:var(--midori);color:var(--paper)}
+.si.todo .si-n{border-color:var(--shu);color:var(--shu);background:var(--shu-soft)}
+.si.now{background:var(--ai-soft);color:var(--ink);font-weight:700}
+.si.now .si-n{background:var(--ai);border-color:var(--ai);color:var(--on-ai)}
+.si-t{min-width:0;padding-top:1px}
+.si-req{display:inline-block;font-size:11px;font-weight:700;color:var(--shu);
+  border:1px solid currentColor;border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:2px;line-height:1.5}
+
+/* ── 右：本体 ──────────────────────────────── */
+.stage{min-width:0;display:flex;flex-direction:column;gap:20px}
+
+/* 見本データの帯 */
+.sample-note{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--card);border:1px dashed var(--kin);border-radius:var(--r);
+  padding:12px 16px;font-size:14.5px;color:var(--ink-2);
+}
+.sample-note b{color:var(--kin);font-family:var(--mincho);letter-spacing:.04em}
+
+/* ステップ見出し */
+.head{background:var(--card);border:1px solid var(--rule);border-radius:var(--r-lg);
+  padding:26px 30px;box-shadow:var(--shadow)}
+.eyebrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--ink-3);margin-bottom:10px}
+.eyebrow .ch-name{font-family:var(--mincho);color:var(--kin);letter-spacing:.1em;font-size:13.5px}
+.eyebrow .sep{width:1px;height:13px;background:var(--rule)}
+.eyebrow .count{font-family:var(--mono)}
+.head h1{font-family:var(--mincho);font-size:31px;letter-spacing:.02em;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tag{font-size:12.5px;font-weight:700;border-radius:999px;padding:2px 12px;letter-spacing:.04em;
+  font-family:var(--gothic);white-space:nowrap}
+.tag.req{background:var(--shu);color:var(--paper)}
+.tag.opt{background:var(--card-2);color:var(--ink-3);border:1px solid var(--rule)}
+.lead{font-size:17px;color:var(--ink-2);margin-top:8px;max-width:38em}
+/* 「どうして必要？」 */
+.why{margin-top:18px;background:var(--ai-soft);border-radius:var(--r);padding:14px 18px;
+  border-left:4px solid var(--ai)}
+.why h3{font-size:14px;color:var(--ai-2);letter-spacing:.04em;margin-bottom:2px}
+.why p{font-size:15px;color:var(--ink-2);max-width:40em}
+
+/* まとまり（グループ） */
+.group{background:var(--card);border:1px solid var(--rule);border-radius:var(--r-lg);
+  padding:24px 28px 26px;box-shadow:var(--shadow)}
+.group>h2{font-family:var(--mincho);font-size:20px;letter-spacing:.03em;
+  padding-bottom:10px;border-bottom:2px solid var(--rule-2)}
+.group>.gnote{font-size:14.5px;color:var(--ink-2);margin-top:10px;max-width:40em}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px}
+.field{grid-column:1/-1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.half{grid-column:span 1}
+@media (max-width:760px){.field.half{grid-column:1/-1}}
+
+.f-label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:17.5px;font-weight:700;line-height:1.5}
+.f-label .tag{font-size:11.5px;padding:1px 9px}
+.f-what{font-size:14.5px;color:var(--ink-2)}
+.f-use{font-size:13.5px;color:var(--ink-3);display:flex;gap:7px;align-items:flex-start}
+.f-use::before{content:"↳";color:var(--kin);flex:none;font-family:var(--mono)}
+.f-eg{font-size:13.5px;color:var(--ink-3)}
+.f-eg b{font-weight:700;color:var(--ink-2)}
+
+/* 入力欄 */
+.in{width:100%;background:var(--card);border:1.5px solid var(--rule);border-radius:10px;
+  padding:12px 14px;font-size:17px;color:var(--ink);transition:border-color .15s}
+.in:hover{border-color:var(--ink-3)}
+.in:focus{border-color:var(--ai);outline:none;box-shadow:0 0 0 3px var(--ai-soft)}
+select.in{cursor:pointer}
+input[type=number].in,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.unit{display:flex;align-items:center;gap:10px}
+.unit .in{flex:1;min-width:0}
+.unit .u{font-size:15px;color:var(--ink-2);white-space:nowrap;font-weight:500}
+
+/* はい／いいえのスイッチ */
+.sw{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:var(--card-2);border:1.5px solid var(--rule-2);border-radius:12px;padding:12px 16px;cursor:pointer}
+.sw:hover{border-color:var(--rule)}
+.sw-t{font-size:16px;font-weight:500}
+.sw-box{position:relative;width:56px;height:32px;flex:none}
+.sw-box input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.sw-box .knob{position:absolute;inset:0;background:var(--rule);border-radius:999px;transition:background .18s}
+.sw-box .knob::before{content:"";position:absolute;width:24px;height:24px;left:4px;top:4px;
+  background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s}
+.sw-box input:checked + .knob{background:var(--midori)}
+.sw-box input:checked + .knob::before{transform:translateX(24px)}
+.sw-box input:focus-visible + .knob{outline:3px solid var(--ai);outline-offset:2px}
+.sw-state{font-family:var(--mono);font-size:13px;color:var(--ink-3);min-width:5.5em;text-align:right}
+
+/* えらぶカード */
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.choice{text-align:left;background:var(--card);border:1.5px solid var(--rule);border-radius:12px;
+  padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.choice:hover{border-color:var(--ink-3)}
+.choice[aria-pressed="true"]{border-color:var(--ai);background:var(--ai-soft);box-shadow:inset 0 0 0 1.5px var(--ai)}
+.choice b{font-size:16.5px}
+.choice span{font-size:13px;color:var(--ink-2);line-height:1.7}
+.choice .pv{display:block;background:#fff;border-radius:6px;padding:5px;margin-bottom:8px;overflow:hidden;
+  border:1px solid var(--rule-2)}
+.choice .pv svg{display:block;width:100%;height:auto}
+
+/* くり返し入力（一覧） */
+.list-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.count-pill{font-family:var(--mono);font-size:13px;color:var(--ink-2);background:var(--card-2);
+  border:1px solid var(--rule-2);border-radius:999px;padding:3px 12px}
+.items{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.item{background:var(--card-2);border:1.5px solid var(--rule-2);border-radius:var(--r);overflow:hidden}
+.item-h{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--rule-2)}
+.item-n{font-family:var(--mono);font-size:12.5px;color:var(--on-ai);background:var(--ai);
+  border-radius:999px;padding:1px 11px;flex:none}
+.item-name{font-weight:700;font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-b{padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.item-b .sub-head{grid-column:1/-1;font-size:13px;font-weight:700;color:var(--kin);
+  letter-spacing:.08em;border-top:1px solid var(--rule-2);padding-top:12px;margin-top:2px}
+.item-b .sub-head:first-child{border-top:0;padding-top:0;margin-top:0}
+.lf{display:flex;flex-direction:column;gap:5px;min-width:0}
+.lf>span{font-size:13.5px;font-weight:700;color:var(--ink-2)}
+.lf>em{font-size:12.5px;color:var(--ink-3);font-style:normal}
+.lf .in{font-size:15.5px;padding:9px 12px}
+.lf.check{flex-direction:row;align-items:center;gap:9px}
+.lf.check input{width:22px;height:22px;accent-color:var(--midori);flex:none;cursor:pointer}
+.lf.check span{font-weight:500;font-size:14.5px}
+.locked-name{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15.5px;
+  background:var(--card);border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px}
+.locked-name em{font-style:normal;font-size:12px;color:var(--ink-3);font-weight:500}
+
+.empty{background:var(--card-2);border:1.5px dashed var(--rule);border-radius:var(--r);
+  padding:22px;text-align:center;color:var(--ink-3);font-size:14.5px;margin-top:14px}
+
+/* ボタン */
+.btn{background:var(--card);border:1.5px solid var(--rule);border-radius:10px;
+  padding:10px 18px;font-size:15px;font-weight:700;cursor:pointer;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn.add{border-color:var(--ai);color:var(--ai);background:var(--ai-soft)}
+.btn.add:hover{background:var(--ai);color:var(--on-ai)}
+.btn.sm{padding:6px 13px;font-size:13.5px;font-weight:500}
+.btn.del{margin-left:auto;flex:none;border-color:transparent;background:none;color:var(--ink-3);padding:4px 10px}
+.btn.del:hover{color:var(--shu);background:var(--shu-soft);border-color:transparent}
+.btn.primary{background:var(--ai);border-color:var(--ai);color:var(--on-ai);padding:13px 26px;font-size:16.5px}
+.btn.primary:hover{background:var(--ai-2);border-color:var(--ai-2)}
+.btn.primary[disabled]{background:var(--card-2);border-color:var(--rule);color:var(--ink-3);cursor:not-allowed}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn[disabled]:hover{border-color:var(--rule);color:var(--ink-3)}
+
+/* 用語チップ */
+.term{display:inline-flex;align-items:center;gap:3px;border:0;background:none;padding:0 1px;
+  color:inherit;font:inherit;cursor:pointer;border-bottom:1.5px dotted var(--kin)}
+.term i{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--on-ai);
+  background:var(--kin);border-radius:50%;width:14px;height:14px;display:inline-grid;place-items:center;
+  line-height:1;vertical-align:2px}
+.term:hover{color:var(--kin)}
+.term-note{margin-top:8px;background:var(--card-2);border-left:4px solid var(--kin);
+  border-radius:0 10px 10px 0;padding:12px 16px;font-size:14.5px;color:var(--ink-2)}
+.term-note b{font-family:var(--mincho);color:var(--ink);display:block;font-size:15.5px;margin-bottom:2px}
+
+/* 足りない印 */
+.check-line{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;
+  border-radius:var(--r);padding:13px 18px;margin-top:2px}
+.check-line.ok{background:var(--midori-soft);color:var(--midori)}
+.check-line.ng{background:var(--shu-soft);color:var(--shu)}
+.check-line .mk{font-family:var(--mono);font-size:17px}
+
+/* 進むボタンの帯 */
+.foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:var(--card);border:1px solid var(--rule);border-radius:var(--r-lg);
+  padding:16px 22px;box-shadow:var(--shadow)}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:46%}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--rule);display:block}
+.dots i.done{background:var(--midori)}
+.dots i.now{background:var(--ai);width:26px;border-radius:999px}
+
+/* 「ぜんぶ見る」モード */
+.all-ch{margin-top:14px}
+.all-ch-h{display:flex;align-items:baseline;gap:14px;padding:26px 4px 12px;border-bottom:2px solid var(--kin)}
+.all-ch-h .n{font-family:var(--mincho);font-size:13px;color:var(--kin);letter-spacing:.2em}
+.all-ch-h h2{font-family:var(--mincho);font-size:25px;letter-spacing:.05em}
+.all-ch-h .cnt{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.all-step{background:var(--card);border:1px solid var(--rule);border-radius:var(--r-lg);
+  padding:22px 26px;box-shadow:var(--shadow);margin-top:16px}
+.all-step>header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:12px;
+  border-bottom:2px solid var(--rule-2);margin-bottom:4px}
+.all-step>header .no{font-family:var(--mono);font-size:13px;color:var(--on-ai);background:var(--ink);
+  border-radius:999px;padding:2px 11px}
+.all-step>header h3{font-family:var(--mincho);font-size:21px;letter-spacing:.03em}
+.all-step>header .jump{margin-left:auto}
+.all-step .group{border:0;box-shadow:none;padding:14px 0 0;border-radius:0}
+.all-step .group>h2{font-size:16.5px;border-bottom-width:1px}
+.all-step .group + .group{border-top:1px solid var(--rule-2);margin-top:18px;padding-top:18px}
+
+/* 終わりの札 */
+.done-card{background:var(--card);border:2px solid var(--midori);border-radius:var(--r-lg);
+  padding:28px 30px;box-shadow:var(--shadow-lift);display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.done-card h2{font-family:var(--mincho);font-size:24px;letter-spacing:.04em;color:var(--midori)}
+.done-card p{font-size:15.5px;color:var(--ink-2);margin-top:6px;max-width:44em}
+
+/* スマホ */
+@media (max-width:940px){
+  .wrap{grid-template-columns:1fr;gap:18px;padding:16px 14px 90px}
+  .index{position:static;max-height:none}
+  .chapters{max-height:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .head{padding:20px 18px}
+  .head h1{font-size:25px}
+  .group{padding:18px 16px 20px}
+  .bar{padding:10px 14px;gap:12px}
+  .bar-prog{width:100%;margin-left:0}
+  .bar-prog .track{flex:1;width:auto}
+  .dots{display:none}
+  .item-b{grid-template-columns:1fr}
+}
+</style>
+
+<div class="bar">
+  <div class="bar-mark"><b>開店じたく</b><span>POKKIRI.NIGHT</span></div>
+  <div class="modes" role="group" aria-label="表示のしかた">
+    <button data-mode="step" aria-pressed="true">順番に進む</button>
+    <button data-mode="all" aria-pressed="false">ぜんぶ見る</button>
+  </div>
+  <div class="bar-prog">
+    <span>できたページ</span>
+    <span class="track"><i id="prog-bar" style="width:0%"></i></span>
+    <span class="num" id="prog-num">0 / 0</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="index" id="index" aria-label="章の目次"></nav>
+  <main class="stage" id="stage"></main>
+</div>
+
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════
+   1. 用語集 — 本文の【…】がここに載っていれば、押せる用語チップになる
+   ══════════════════════════════════════════════════════════ */
+const TERMS = {
+  "営業日の区切り":"「何時から次の日として数えるか」の線引きです。夜のお店は日付をまたいで営業するので、深夜2時の売上を前の日に入れるか当日に入れるかをここで決めます。ふつうは昼の12時にします。",
+  "風営法":"風俗営業等の規制及び業務の適正化等に関する法律のこと。接待をともなう飲食店は、この法律にもとづく許可を取って営業します。",
+  "業態":"お店の種類のこと。キャバクラ、ホストクラブ、ラウンジ、スナックなど。えらぶと、その種類でよく使う料金や指名の型が下書きとして入ります。",
+  "卓":"「たく」と読みます。お客様を案内するテーブル席のことです。1番テーブル、VIP席、カウンターなど、それぞれに名前をつけます。",
+  "カテゴリー":"商品のなかま分けです。「ビール」「ウイスキー」「フード」のように分けておくと、注文画面がタブで整理されて探しやすくなります。",
+  "時価":"値段を決めずに「そのときの値段」で出す商品のこと。お品書きには金額を出さず、会計のときに金額を入れます。",
+  "原価":"その商品を仕入れるのにかかったお金です。売った値段から原価を引いた残りが、お店のもうけ（粗利）になります。",
+  "サービス料":"飲んだ代金の合計に、決まった割合で上乗せするお金です。20％なら、1万円の会計に2千円が足されます。",
+  "ハウスチャージ":"席料・チャージともいいます。飲み食いの量に関係なく、来店したら必ずかかるお金です。",
+  "端数":"「はすう」と読みます。合計金額の細かい部分（1円・10円の位）のこと。100円単位で切り捨てるなど、最後にどう丸めるかを決めます。",
+  "深夜割増":"決まった時刻より後に始まった席に、1回だけ上乗せする料金です。使わないお店がほとんどです。",
+  "内税":"表示している値段のなかに、すでに消費税が入っている見せ方です。1,100円と書いてあれば、それが支払う金額そのもの。",
+  "外税":"表示している値段に消費税が入っていない見せ方です。1,000円と書いてあれば、会計では1,100円になります。",
+  "軽減税率":"食べ物など一部の商品にかかる、8％の低い消費税のこと。お店のなかで飲食するぶんは対象外なので、ふつうは10％のままです。",
+  "インボイス":"正式には「適格請求書」。消費税の計算に使える領収書のことで、お店の登録番号（Tではじまる13桁）を刷る必要があります。",
+  "指名":"お客様が「この人に付いてほしい」と選ぶことです。本指名・場内指名・同伴など、いくつかの種類に分けて数えます。",
+  "同伴":"開店前にキャストとお客様がいっしょに食事などをして、そのまま来店することです。指名の一種として数えます。",
+  "ヘルプ":"指名されたキャストの席に、応援として付くキャストのことです。ふつう指名料は0円にします。",
+  "バック":"売上の一部をキャストに返すお金です。ドリンク1杯につき何円、ボトル代の何％、というように決めます。",
+  "スライド":"1か月の売上が多いほど、バックの割合が上がっていくしくみです。段（だん）を作って、売上ごとの％を決めます。",
+  "源泉徴収":"お給料を渡すときに、税金のぶんをお店が先に差し引いて、代わりに国へ納めるしくみです。差し引く割合は働き方によって変わります。",
+  "福利厚生費":"お給料とは別に、働く人のために出すお金です。ここで決めた金額が、給与計算のときに自動で足されます。",
+  "流入経路":"お客様が「どこでお店を知って来たか」の区分です。新規・リピート・紹介・キャッチなど。売上の計算には一切影響しません。",
+  "釣銭準備金":"レジを開けるときに、最初から入れておくお釣り用の現金です。ふつう5万円ほど用意します。",
+  "現金過不足":"営業が終わってレジを数えたとき、あるべき金額とのズレのことです。ズレが大きいと知らせが出ます。",
+  "採番":"領収書に印字する通し番号の振り方のことです。手書きの領収書と番号がぶつからないように、頭に記号を付けたり、開始番号をずらしたりします。",
+  "収入印紙":"金額の大きい領収書に貼る、税金の切手のようなものです。決まった金額を超えたときだけ必要になります。",
+  "キッチン伝票":"注文が入ったとき、厨房のプリンターに出る紙のことです。何を作るかを台所に伝えます。",
+  "日報":"その日の営業の成績をまとめた紙です。売上・客数・レジの過不足などが1枚にまとまります."
+};
+
+/* ══════════════════════════════════════════════════════════
+   2. 見本のデータ（開いた瞬間に「何をする画面か」が分かるように）
+   ══════════════════════════════════════════════════════════ */
+const SAMPLE = () => ({
+  sample:1,
+  store:{name:"CLUB ポッキリ",zip:"220-0011",tel:"045-000-0000",
+    addr:"神奈川県横浜市西区高島2-1-1",biz:"株式会社ポッキリ",station:"横浜",
+    cutoff:"12",openTime:"20:00",closeTime:"02:00"},
+  permits:[{type:"風営法（第1号）",number:"神奈川県公安委員会 第000000号",expires:"2029-03-31"}],
+  genre:"cabaret",
+  tables:[{name:"1番テーブル",seats:"4"},{name:"2番テーブル",seats:"4"},{name:"VIP1",seats:"6"},{name:"カウンター",seats:"3"}],
+  cols:"4",
+  cats:[{name:"ビール",kind:"drink"},{name:"ウイスキー",kind:"drink"},{name:"シャンパン",kind:"champagne"},{name:"フード",kind:"food"}],
+  items:[
+    {name:"瓶ビール",cat:"ビール",price:"1000",cost:"400",tax:"standard",mask:0},
+    {name:"ハイボール",cat:"ウイスキー",price:"1000",cost:"250",tax:"standard",mask:0},
+    {name:"モエ・アンペリアル",cat:"シャンパン",price:"25000",cost:"9000",tax:"standard",mask:0},
+    {name:"本日のおつまみ",cat:"フード",price:"",cost:"",tax:"standard",mask:1}
+  ],
+  sets:[{name:"60分セット",min:"60",fee:"8000",em:"30",ef:"4000"}],
+  ext:[{name:"＋30分",min:"30",fee:"4000",on:1}],
+  extAlert:"10",
+  svc:"20",house:"1000",setPer:"yes",housePer:"no",rUnit:"100",rMode:"floor",
+  lns:{on:"no",from:"1",yen:"2000"},
+  tax:{tnum:"T9011001145428",mode:"in",std:"10",red:"8"},
+  pays:[{name:"現金",kind:"cash",fee:""},{name:"カード",kind:"card",fee:"3.5"}],
+  cardFee:"3.5",
+  casts:[
+    {name:"あや",honmei:"山田 綾",birthday:"2001-05-14",addr:"東京都目黒区…",tel:"090-1234-5678",
+     emergency:"母 山田 幸子 090-0000-0000",idStatus:"done",idNote:"運転免許証・事務所の金庫",
+     bank:"みずほ銀行 渋谷支店 普通 1234567 ヤマダ アヤ",st:"中目黒",fare:"480",rt:1,
+     kind:"在籍",wage:"2500",rank:"A",wh:"hostess"},
+    {name:"ゆい",honmei:"",birthday:"",addr:"",tel:"",emergency:"",idStatus:"none",idNote:"",
+     bank:"",st:"",fare:"",rt:1,kind:"体入",wage:"2000",rank:"",wh:"reward"}
+  ],
+  staffs:[{name:"山田",role:"boy",wage:"1500",wh:"salary",birthday:"",addr:"",tel:"",emergency:"",
+    idStatus:"none",idNote:"",bank:"",st:"",fare:"",rt:1}],
+  noms:[
+    {name:"本指名",fee:"3000",unit:"per_session",dh:"no",role:"main",color:"red"},
+    {name:"場内指名",fee:"2000",unit:"per_session",dh:"no",role:"main",color:"blue"},
+    {name:"同伴",fee:"3000",unit:"per_session",dh:"yes",role:"main",color:"black"},
+    {name:"ヘルプ",fee:"0",unit:"per_session",dh:"no",role:"help",color:"neutral"}
+  ],
+  helpSales:"yes",
+  drinkBacks:[{target:"__cd__",yen:"500",on:1}],
+  bandBacks:[{from:"0",to:"5000",yen:"500",on:1},{from:"5000",to:"20000",yen:"1500",on:1}],
+  pctBacks:[{target:"シャンパン",rate:"10",split:"equal",help:1,on:1}],
+  backRound:"100",
+  slide:[{min:"0",rate:"30"},{min:"1000000",rate:"35"},{min:"2000000",rate:"40"}],
+  wage:{from:"",warn:"100",welfare:"1000",wUnit:"per_period",
+    reward:"10.21",hostess:"10.21",hDaily:"5000",salary:"0"},
+  tags:[],
+  exp:[],
+  reg:{floatYen:"50000",minYen:"-1000",maxYen:"1000"},
+  push:"off",
+  pr:{tpl:"classic-frame",paper:"80",addr:"yes",biz:"no",inv:"yes",
+    stamp:"50000",basis:"tax_excluded",prefix:"A",start:"1",reset:"none",
+    bill:1,settle:1,receipt:1,kitchen:0}
+});
+const EMPTY = () => {
+  const s = SAMPLE();
+  const blank = o => { for(const k in o){
+    const v = o[k];
+    if(Array.isArray(v)) o[k] = [];
+    else if(v && typeof v === "object") blank(v);
+    else if(typeof v === "string") o[k] = "";
+  }};
+  blank(s);
+  s.sample = 0;
+  s.store.cutoff = "12"; s.tax.mode = "in"; s.tax.std = "10"; s.tax.red = "8";
+  s.setPer = "yes"; s.housePer = "no"; s.rUnit = "1"; s.rMode = "floor"; s.lns.on = "no";
+  s.helpSales = "yes"; s.backRound = "100"; s.wage.wUnit = "per_period";
+  s.cols = "4"; s.push = "off";
+  s.pays = [{name:"現金",kind:"cash",fee:""},{name:"カード",kind:"card",fee:""}];
+  s.pr = {tpl:"classic-frame",paper:"80",addr:"yes",biz:"no",inv:"yes",stamp:"50000",
+    basis:"tax_excluded",prefix:"",start:"1",reset:"none",bill:1,settle:1,receipt:1,kitchen:0};
+  s.reg = {floatYen:"",minYen:"",maxYen:""};
+  return s;
+};
+
+/* ══════════════════════════════════════════════════════════
+   3. 領収書の見本（実際に刷られる紙をそのまま縮小して見せる）
+   ══════════════════════════════════════════════════════════ */
+const RC_CORNERS = [[0,0,1,1],[1,0,-1,1],[0,1,1,-1],[1,1,-1,-1]];
+const rcAtCorners = (w,h,inset,draw) => RC_CORNERS.map(([x,y,sx,sy])=>{
+  const tx = x===0?inset:w-inset, ty = y===0?inset:h-inset;
+  return `<g transform="translate(${tx} ${ty}) scale(${sx} ${sy})">${draw}</g>`;
+}).join("");
+const rcDoubleRect = (w,h,o,i,ow=5,iw=2) =>
+  `<rect x="${o}" y="${o}" width="${w-o*2}" height="${h-o*2}" fill="none" stroke="#000" stroke-width="${ow}"/>`
++ `<rect x="${i}" y="${i}" width="${w-i*2}" height="${h-i*2}" fill="none" stroke="#000" stroke-width="${iw}"/>`;
+function rcClassic(w,h){
+  const o = {x:16,y:16,w:w-32,h:h-32};
+  const cs = [[o.x,o.y,1,1],[o.x+o.w,o.y,-1,1],[o.x,o.y+o.h,1,-1],[o.x+o.w,o.y+o.h,-1,-1]];
+  const orn = cs.map(([cx,cy,sx,sy])=>
+    `<path d="M ${cx+sx*46} ${cy} L ${cx} ${cy+sy*46}" fill="none" stroke="#000" stroke-width="3"/>`
+  + `<circle cx="${cx+sx*19}" cy="${cy+sy*19}" r="4" fill="#000"/>`).join("");
+  return rcDoubleRect(w,h,16,30) + orn;
+}
+function rcSeigaiha(w,h){
+  const R=30, arcs=[R,R*0.5], CW=92, CH=46;
+  const cols = Math.ceil(CW/R)+2, rows = Math.ceil(CH/(R*0.55))+2, waves=[];
+  for(let j=0;j<rows;j++){
+    const cy = j*R*0.55, off = j%2===0?0:R/2;
+    for(let i=-1;i<cols;i++){
+      const cx = i*R+off;
+      for(const r of arcs) waves.push(`<path d="M ${(cx-r).toFixed(1)} ${cy.toFixed(1)} A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx+r).toFixed(1)} ${cy.toFixed(1)}" fill="none" stroke="#000" stroke-width="2"/>`);
+    }
+  }
+  const block = `<rect x="0" y="0" width="${CW}" height="${CH}" fill="#fff"/><g clip-path="url(#sg-clip)">${waves.join("")}</g>`;
+  return `<defs><clipPath id="sg-clip"><rect x="0" y="0" width="${CW}" height="${CH}"/></clipPath></defs>`
+    + rcDoubleRect(w,h,16,30,4,3) + rcAtCorners(w,h,14,block);
+}
+function rcKikka(w,h){
+  const R=46, petals=9, parts=[`<rect x="0" y="0" width="${R+12}" height="${R+12}" fill="#fff"/>`];
+  const p = (a,r)=>`${(Math.cos(a)*r).toFixed(1)} ${(Math.sin(a)*r).toFixed(1)}`;
+  for(let k=0;k<petals;k++){
+    const s=(Math.PI/2)*k/petals, e=(Math.PI/2)*(k+1)/petals, m=(s+e)/2;
+    parts.push(`<path d="M ${p(m,10)} L ${p(s,R)} A ${R} ${R} 0 0 1 ${p(e,R)} Z" fill="none" stroke="#000" stroke-width="2"/>`);
+  }
+  parts.push(`<circle cx="0" cy="0" r="10" fill="none" stroke="#000" stroke-width="3"/>`);
+  return rcDoubleRect(w,h,14,26,4,2) + rcAtCorners(w,h,22,parts.join(""));
+}
+const RC_FRAMES = {"classic-frame":rcClassic,"seigaiha-frame":rcSeigaiha,"kikka-frame":rcKikka};
+const RC_NOTES = {
+  "classic-frame":"二重の線の枠に、角を斜めに切った飾り。どんなお店にも合う、いちばん標準の形です。",
+  "seigaiha-frame":"四すみに青海波（せいがいは＝重なる半円）。落ち着いた和のお店に。",
+  "kikka-frame":"四すみに菊の扇。細い二重線と合わせた、格のある見た目です。"
+};
+const rcUnits = s => { let n=0; for(const c of s) n += /[ -~｡-ﾟ]/.test(c)?0.55:1; return n; };
+function receiptSVG(kind){
+  const W=1248, H=576, frame = RC_FRAMES[kind] || rcClassic;
+  const BC=W/2, BL=BC-240, BR=BC+240, LL=56, IR=W-48, IL=845, IC=(IL+IR)/2;
+  const store = {name:S.store.name || "見本店", address:S.store.addr || "東京都渋谷区道玄坂2-17-3",
+    tel:S.store.tel || "03-0000-0000", biz:S.store.biz, inv:S.tax.tnum || "T9011001145428"};
+  const rule = (x1,x2,y,w) => `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#000" stroke-width="${w||3}"/>`;
+  const P = [frame(W,H)];
+  P.push(`<text x="${BC}" y="132" font-size="72" font-weight="700" text-anchor="middle" letter-spacing="28">領収書</text>`);
+  P.push(`<text x="${LL}" y="80" font-size="24">No. ${esc((S.pr.prefix||"")+"000123")}</text>`);
+  P.push(`<text x="${BR}" y="218" font-size="38" text-anchor="end">様</text>`);
+  P.push(rule(BL,BR-52,232));
+  P.push(`<text x="${BL+16}" y="220" font-size="38">株式会社ポッキリ</text>`);
+  P.push(`<text x="${BC}" y="322" font-size="66" font-weight="700" text-anchor="middle" letter-spacing="2">¥ 10,000－</text>`);
+  P.push(rule(BL,BR,342));
+  P.push(`<text x="${BC}" y="396" font-size="27" text-anchor="middle">但　御飲食代として</text>`);
+  P.push(`<text x="${BC}" y="438" font-size="27" text-anchor="middle">2026年　8月　19日</text>`);
+  P.push(`<text x="${BC}" y="480" font-size="24" text-anchor="middle">上記正に領収いたしました。</text>`);
+  const fit = (t,base,min) => Math.max(min, Math.min(base, Math.floor((IR-IL)/rcUnits(t)*10)/10));
+  const det = [];
+  if(S.pr.addr==="yes" && store.address) det.push(store.address);
+  if(store.tel) det.push(`電話番号：${store.tel}`);
+  if(S.pr.biz==="yes" && store.biz) det.push(`事業者名：${store.biz}`);
+  if(S.pr.inv==="yes" && store.inv) det.push(`登録番号：${store.inv}`);
+  const ds = det.reduce((n,t)=>Math.min(n,fit(t,19,13)),19);
+  let iy = 396;
+  P.push(`<text x="${IC}" y="${iy}" font-size="${fit(store.name,30,16)}" text-anchor="middle" font-weight="700">${esc(store.name)}</text>`);
+  iy += 36;
+  for(const t of det){ P.push(`<text x="${IC}" y="${iy}" font-size="${ds}" text-anchor="middle">${esc(t)}</text>`); iy += 32; }
+  const b = {x:96,y:232,w:176,h:208}, cx = b.x+b.w/2;
+  P.push(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="4" fill="none" stroke="#000" stroke-width="2"/>`
+    + `<text x="${cx}" y="${b.y+b.h/2-14}" font-size="40" text-anchor="middle" letter-spacing="6">収入</text>`
+    + `<text x="${cx}" y="${b.y+b.h/2+40}" font-size="40" text-anchor="middle" letter-spacing="6">印紙</text>`);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="領収書の見本">`
+    + `<style>text{font-family:"Shippori Mincho B1",serif;fill:#000;stroke:#000;stroke-width:.9;paint-order:stroke}</style>`
+    + `<rect width="${W}" height="${H}" fill="#fff"/>${P.join("")}</svg>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. 画面の中身 — 5章 19ステップ
+   ══════════════════════════════════════════════════════════ */
+const HOURS = Array.from({length:24},(_,i)=>[String(i), i+"時"]);
+const catOpts = () => [["","すべての商品"],["__cd__","キャストドリンクだけ"]]
+  .concat(S.cats.map(c=>c.name).filter(Boolean).map(n=>[n,n]));
+
+const CHAPTERS = [
+  {n:"第一章", t:"お店のこと",   sub:"お店そのものの情報"},
+  {n:"第二章", t:"席と商品",     sub:"どこで、何を出すか"},
+  {n:"第三章", t:"お金のこと",   sub:"いくらもらうか"},
+  {n:"第四章", t:"人のこと",     sub:"働く人と、その報酬"},
+  {n:"第五章", t:"日々の運営",   sub:"毎日まわすためのしくみ"}
+];
+
+const STEPS = [
+/* ───────── 第一章 お店のこと ───────── */
+{ ch:0, title:"お店の名前と連絡先",
+  lead:"お客様に見せる名前と、連絡がつく場所を入れます。",
+  why:"ここで入れた4つは、そのまま領収書のいちばん下に印刷されます。空のままだと、お客様に渡す領収書の発行者の欄が白紙になってしまいます。",
+  groups:[{ t:"お店の情報", fields:[
+    {k:"store.name", label:"お店の名前", req:1, type:"text", ph:"CLUB ポッキリ",
+      what:"お客様に見せる、お店の正式な名前です。",
+      eg:"CLUB ポッキリ ／ Lounge 月 ／ スナックひまわり",
+      use:"領収書の右下と、この画面の左上に出ます。"},
+    {k:"store.tel", label:"電話番号", req:1, type:"text", ph:"045-000-0000", half:1,
+      what:"お店にかかってくる電話の番号です。",
+      use:"領収書に必ず印刷されます（消せません）。"},
+    {k:"store.zip", label:"郵便番号", type:"text", ph:"220-0011", half:1,
+      what:"お店の住所の郵便番号です。"},
+    {k:"store.addr", label:"住所", type:"text", ph:"神奈川県横浜市西区高島2-1-1",
+      what:"ビル名・階・部屋番号まで入れてください。",
+      use:"領収書に刷るかどうかは、いちばん最後のステップで選べます。"},
+    {k:"store.biz", label:"事業者名（会社の名前）", type:"text", ph:"株式会社ポッキリ", half:1,
+      what:"お店を運営している会社の名前です。",
+      eg:"お店の名前と同じなら、空のままで大丈夫です。"},
+    {k:"store.station", label:"いちばん近い駅", type:"text", ph:"横浜", half:1,
+      what:"お店から歩いていける駅の名前です。",
+      use:"キャストの家の最寄り駅からここまでの片道の運賃を、自動で調べるのに使います。"}
+  ]}]},
+
+{ ch:0, title:"営業時間と、日付の区切り",
+  lead:"何時から何時まで開けるか、そして「何時から次の日と数えるか」を決めます。",
+  why:"夜のお店は日付をまたいで営業します。深夜2時の売上を前の日に入れるか当日に入れるかがずれると、日報の数字がまるごと変わってしまいます。",
+  groups:[{ t:"営業の時間", fields:[
+    {k:"store.openTime", label:"開店の時刻", type:"time", half:1,
+      what:"お店を開ける時刻です。", eg:"20:00"},
+    {k:"store.closeTime", label:"閉店の時刻", type:"time", half:1,
+      what:"お店を閉める時刻です。",
+      eg:"02:00（次の日の朝2時なら、そのまま 02:00 と入れてください）"},
+    {k:"store.cutoff", label:"日付の区切り", type:"select", opts:HOURS,
+      what:"【営業日の区切り】をここで決めます。この時刻より前の売上は、前の日のぶんとして数えます。",
+      eg:"12時にしておけば、深夜2時の会計は「前の日の営業」になります。ふつうは12時のままで大丈夫です。",
+      use:"日報・売上・シフトのすべての「1日」が、この線で切られます。"}
+  ]}]},
+
+{ ch:0, title:"許可証と届出",
+  optional:1,
+  lead:"風営法などの許可証の番号と、有効期限を記録しておきます。",
+  why:"期限が近づくと、この一覧に「もうすぐ切れます」と出ます。更新のうっかり忘れを防ぐためのメモ欄です。金額の計算には一切関係ありません。",
+  groups:[{ t:"持っている許可証", note:"【風営法】の許可、古物商の許可などを、持っているぶんだけ入れてください。まだ無ければ空のままで進めます。", fields:[
+    {k:"permits", type:"list", itemName:"許可証", addLabel:"許可証を追加", nameField:"type",
+      what:"許可の種類・番号・有効期限をひと組にして記録します。",
+      sub:[
+        {k:"type", label:"許可の種類", type:"text", ph:"風営法（第1号）"},
+        {k:"number", label:"許可番号", type:"text", ph:"神奈川県公安委員会 第000000号"},
+        {k:"expires", label:"有効期限", type:"date", hint:"この日の30日前から知らせます"}
+      ]}
+  ]}]},
+
+{ ch:0, title:"お店の種類をえらぶ",
+  optional:1,
+  lead:"近いものを1つえらぶと、料金や指名の型が下書きとして入ります。",
+  why:"ゼロから全部を考えるのは大変です。【業態】をえらぶと、そのお店でよく使われる料金セット・指名の区分・バックの決まりが、あとのステップに下書きとして入ります。もちろん、あとから自由に書きかえられます。",
+  groups:[{ t:"いちばん近いものを1つ", fields:[
+    {k:"genre", type:"choice", label:"お店の種類", cards:[
+      {v:"cabaret", l:"キャバクラ", d:"時間制のセット料金と、指名料が中心のお店"},
+      {v:"host", l:"ホストクラブ", d:"お客様に担当が付き、ボトルの売上が大きいお店"},
+      {v:"lounge", l:"ラウンジ", d:"落ち着いた接客で、会話を中心にするお店"},
+      {v:"snack", l:"スナック", d:"ママを中心にした、小さめのカウンターのお店"},
+      {v:"girls_bar", l:"ガールズバー", d:"カウンター越しの接客で、指名が少なめのお店"},
+      {v:"bar", l:"バー", d:"接客より、お酒そのものを楽しむお店"},
+      {v:"other", l:"その他", d:"上のどれにも当てはまらないとき"}
+    ], what:"えらんだ種類にあわせて、あとのステップに下書きが入ります。",
+      use:"すでに設定を公開したことがあるお店では、下書きの上書きはできません。"}
+  ]}]},
+
+/* ───────── 第二章 席と商品 ───────── */
+{ ch:1, title:"席（テーブル）をつくる",
+  lead:"お客様を案内する席に、1つずつ名前をつけます。",
+  why:"注文も会計も「どの席のものか」で管理します。席の名前が1つも無いと、お客様を案内できず、営業を始められません。",
+  groups:[
+    { t:"席の一覧", note:"【卓】＝テーブル席のことです。お店にある席のぶんだけ作ってください。", fields:[
+      {k:"tables", type:"list", req:1, itemName:"席", addLabel:"席を追加", nameField:"name",
+        what:"席の名前と、すわれる人数を決めます。",
+        eg:"1番テーブル ／ VIP1 ／ カウンター ／ 個室A",
+        use:"注文画面と会計画面で、この名前のボタンが並びます。",
+        sub:[
+          {k:"name", label:"席の名前", type:"text", ph:"1番テーブル"},
+          {k:"seats", label:"すわれる人数", type:"num", unit:"人", ph:"4"}
+        ]}
+    ]},
+    { t:"フロアの並べかた", note:"お店の見取り図のように、席を並べて表示できます。", fields:[
+      {k:"cols", label:"1列に並べる席の数", type:"select",
+        opts:Array.from({length:8},(_,i)=>[String(i+1),(i+1)+"席"]),
+        what:"見取り図の横幅です。実際の位置は、あとから席をつまんで動かせます。",
+        use:"いま決めなくても、営業を始めてから直せます。"}
+    ]}
+  ]},
+
+{ ch:1, title:"商品のなかま分け",
+  lead:"商品を入れる前に、「ビール」「フード」などの箱を先に作ります。",
+  why:"【カテゴリー】が1つも無いと、商品を1つも登録できません。ここで作った名前が、そのまま注文画面のタブになります。",
+  groups:[{ t:"カテゴリーの一覧", fields:[
+    {k:"cats", type:"list", req:1, itemName:"カテゴリー", addLabel:"カテゴリーを追加", nameField:"name",
+      what:"商品のなかま分けと、その大きな種別を決めます。",
+      eg:"ビール ／ ウイスキー ／ 焼酎 ／ シャンパン ／ フード",
+      use:"注文画面の上にならぶタブになります。並べた順にタブが出ます。",
+      sub:[
+        {k:"name", label:"なかま分けの名前", type:"text", ph:"ビール"},
+        {k:"kind", label:"大きな種別", type:"select", opts:[
+          ["drink","ドリンク"],["food","フード"],["bottle","ボトル"],
+          ["champagne","シャンパン"],["other","その他"]],
+          hint:"バックの計算で使い分けます"}
+      ]}
+  ]}]},
+
+{ ch:1, title:"商品を登録する",
+  lead:"お品書きに出すものを、値段といっしょに入れます。",
+  why:"ここに入れたものだけが注文画面に出ます。1つも無いと、注文を取ることができません。",
+  groups:[{ t:"商品の一覧", note:"値段を空にすると【時価】として扱われ、会計のときに金額を手で入れる形になります。", fields:[
+    {k:"items", type:"list", req:1, itemName:"商品", addLabel:"商品を追加", nameField:"name", big:1,
+      what:"商品の名前・なかま分け・値段・仕入れ値を入れます。",
+      eg:"瓶ビール ／ ハイボール ／ モエ・アンペリアル",
+      use:"注文画面のボタンになり、そのまま売上として記録されます。",
+      sub:[
+        {k:"name", label:"商品の名前", type:"text", ph:"瓶ビール"},
+        {k:"cat", label:"なかま分け", type:"select", optsFn:()=>[["",""]].concat(S.cats.map(c=>c.name).filter(Boolean).map(n=>[n,n]))},
+        {k:"price", label:"売る値段", type:"num", unit:"円", ph:"1000", hint:"空にすると時価になります"},
+        {k:"cost", label:"仕入れた値段", type:"num", unit:"円", ph:"400", hint:"入れるともうけが出せます。空でも可"},
+        {k:"tax", label:"消費税", type:"select", opts:[["standard","10％（ふつう）"],["reduced","8％（軽減）"]]},
+        {k:"mask", label:"値段を出さない（時価）", type:"check"}
+      ]}
+  ]}]},
+
+/* ───────── 第三章 お金のこと ───────── */
+{ ch:2, title:"料金セットと延長",
+  lead:"席についてもらうときの基本の料金と、時間を延ばすときの料金を決めます。",
+  why:"セットが1つも無いと、席を立ち上げること自体ができません。延長を作っておかないと、注文画面に延長のボタンが出ません。",
+  groups:[
+    { t:"セット（基本の料金）", note:"お客様を席に案内するとき、この中から1つをえらびます。", fields:[
+      {k:"sets", type:"list", req:1, itemName:"セット", addLabel:"セットを追加", nameField:"name", big:1,
+        what:"「何分で、いくら」という基本の料金です。",
+        eg:"60分セット ＝ 8,000円、そのあとは30分ごとに4,000円",
+        use:"席を立ち上げる画面に、この名前のボタンが並びます。",
+        sub:[
+          {k:"name", label:"セットの名前", type:"text", ph:"60分セット"},
+          {k:"min", label:"時間", type:"num", unit:"分", ph:"60"},
+          {k:"fee", label:"料金", type:"num", unit:"円", ph:"8000"},
+          {k:"em", label:"自動延長の時間", type:"num", unit:"分", ph:"30"},
+          {k:"ef", label:"自動延長の料金", type:"num", unit:"円", ph:"4000"}
+        ]}
+    ]},
+    { t:"延長のボタン", note:"営業中に「もう30分」と言われたとき、現場で押すボタンです。", fields:[
+      {k:"ext", type:"list", itemName:"延長", addLabel:"延長のボタンを追加", nameField:"name",
+        what:"注文画面に出る、延長のボタンを作ります。",
+        sub:[
+          {k:"name", label:"ボタンの名前", type:"text", ph:"＋30分"},
+          {k:"min", label:"のばす時間", type:"num", unit:"分", ph:"30"},
+          {k:"fee", label:"料金", type:"num", unit:"円", ph:"4000"},
+          {k:"on", label:"このボタンを使う", type:"check"}
+        ]},
+      {k:"extAlert", label:"終わりの何分前に知らせるか", type:"num", unit:"分前", ph:"10", half:1,
+        what:"セットの時間が終わりに近づいたとき、画面で知らせる早さです。",
+        eg:"10 と入れると、残り10分で知らせが出ます。"}
+    ]}
+  ]},
+
+{ ch:2, title:"上乗せするお金と、端数の処理",
+  lead:"飲み食いの合計に何を足すか、最後に金額をどう丸めるかを決めます。",
+  why:"ここは請求書の「いちばん下の行」を決める設定です。1か所まちがえると、毎回すべての会計がずれます。",
+  groups:[
+    { t:"合計に足すもの", fields:[
+      {k:"svc", label:"サービス料", type:"num", unit:"％", ph:"20", half:1,
+        what:"【サービス料】は、合計に決まった割合で上乗せするお金です。",
+        eg:"20 と入れると、1万円の会計に2,000円が足されます。"},
+      {k:"house", label:"ハウスチャージ（席料）", type:"num", unit:"円", ph:"1000", half:1,
+        what:"【ハウスチャージ】は、来店したら必ずかかるお金です。",
+        eg:"取らないお店は、空のままで大丈夫です。"},
+      {k:"setPer", label:"セット・延長は人数分にする？", type:"select",
+        opts:[["yes","人数分でかける（ふつうはこちら）"],["no","1つの席につき1回だけ"]], half:1,
+        what:"4人で来店したとき、8,000円のセットを4倍にするかどうかです。"},
+      {k:"housePer", label:"ハウスチャージは人数分にする？", type:"select",
+        opts:[["no","1つの席につき1回だけ（ふつうはこちら）"],["yes","人数分でかける"]], half:1,
+        what:"席料を、1組で1回にするか、1人ずつ取るかです。"}
+    ]},
+    { t:"最後の丸め", note:"上でぜんぶ足したあと、合計金額の【端数】をどう処理するかを決めます。", fields:[
+      {k:"rUnit", label:"いくらの単位で丸める？", type:"select", half:1,
+        opts:[["1","丸めない（1円まで請求する）"],["100","100円の単位にそろえる"],
+              ["500","500円の単位にそろえる"],["1000","1,000円の単位にそろえる"]],
+        what:"合計金額の細かい部分をどこまで残すかです。"},
+      {k:"rMode", label:"どちらに丸める？", type:"select", half:1,
+        opts:[["floor","切り捨て（お客様が得をする）"],["ceil","切り上げ（お店が得をする）"]],
+        what:"12,340円を100円単位にするとき、12,300円にするか12,400円にするかです。",
+        eg:"ほとんどのお店は「切り捨て」にしています。"}
+    ]},
+    { t:"深夜の割増（使うお店だけ）", note:"使わないお店がほとんどです。必要なときだけスイッチを入れてください。", fields:[
+      {k:"lns.on", label:"深夜の割増を使う", type:"toggle", on:"yes", off:"no",
+        what:"【深夜割増】は、決まった時刻より後に始まった席に、1回だけ上乗せする料金です。"},
+      {k:"lns.from", label:"何時から割増にする？", type:"select", opts:HOURS, half:1,
+        when:()=>S.lns.on==="yes",
+        what:"この時刻より後に席を立ち上げたときだけ、割増がかかります。"},
+      {k:"lns.yen", label:"割増の金額", type:"num", unit:"円", ph:"2000", half:1,
+        when:()=>S.lns.on==="yes",
+        what:"1つの席につき1回だけ足します。延長のたびには足しません。",
+        use:"サービス料はかかりません。キャストのバックの計算にも入りません。"}
+    ]}
+  ]},
+
+{ ch:2, title:"消費税とインボイス",
+  lead:"値段の見せ方（税込か税抜か）と、税率を決めます。",
+  why:"表示のしかたをまちがえると、お品書きの値段とお客様が支払う金額がずれます。ここは営業を始める前に必ず確かめてください。",
+  groups:[{ t:"税の決まり", fields:[
+    {k:"tax.mode", label:"値段の見せ方", type:"select",
+      opts:[["in","内税（表示している値段のまま払う）"],["out","外税（会計で消費税が足される）"]],
+      what:"【内税】と【外税】のどちらで、お品書きの値段を書くかです。",
+      eg:"内税なら「1,100円」と書いてあれば1,100円を払います。外税なら「1,000円」と書いてあっても、会計は1,100円です。"},
+    {k:"tax.std", label:"ふつうの税率", type:"num", unit:"％", ph:"10", half:1,
+      what:"お酒やサービスにかかる消費税です。いまは10％です。"},
+    {k:"tax.red", label:"軽い税率", type:"num", unit:"％", ph:"8", half:1,
+      what:"【軽減税率】は、食べ物などにかかる低い消費税です。お店のなかで飲食するぶんは対象外なので、ふつうは使いません。"},
+    {k:"tax.tnum", label:"インボイスの登録番号", type:"text", ph:"T1234567890123",
+      what:"【インボイス】の登録番号です。Tのあとに13桁の数字が続きます。",
+      eg:"まだ登録していないお店は、空のままで大丈夫です。",
+      use:"領収書に刷るかどうかは、いちばん最後のステップで選べます。"}
+  ]}]},
+
+{ ch:2, title:"支払いの方法",
+  lead:"会計のときにレジへ出す、支払い方法のボタンを決めます。",
+  why:"ここで作ったものが、そのまま会計画面のボタンになります。現金とカードは最初から用意されていて、消せません。",
+  groups:[{ t:"受け付ける支払い方法", note:"現金とカードは名前を変えられません。手数料だけ、お店ごとに決められます。", fields:[
+    {k:"pays", type:"list", itemName:"支払い方法", addLabel:"支払い方法を追加", nameField:"name", lockKinds:1,
+      what:"支払いの名前と、上乗せする手数料の割合です。",
+      use:"会計画面にこの名前のボタンが並びます。",
+      sub:[
+        {k:"name", label:"ボタンの名前", type:"text", ph:"電子マネー"},
+        {k:"fee", label:"上乗せする手数料", type:"num", unit:"％", ph:"0", hint:"取らないなら空のまま"}
+      ]},
+    {k:"cardFee", label:"カード手数料（お店ぜんたい）", type:"num", unit:"％", ph:"3.5", half:1,
+      what:"上の一覧で手数料を入れていないときだけ、この値が使われます。",
+      use:"手数料をお客様に払ってもらうやり方は、内税のときだけ使えます。カード会社との契約で禁じられていることがあるので、使うかどうかはお店で判断してください。"}
+  ]}]},
+
+/* ───────── 第四章 人のこと ───────── */
+{ ch:3, title:"キャストとスタッフを登録する",
+  lead:"働く人を1人ずつ登録します。個人情報をあつかうので、取り扱いに注意してください。",
+  why:"キャストが1人も登録されていないと、指名を付けることも、給与を計算することもできません。",
+  groups:[
+    { t:"キャスト", note:"名前だけ先に入れて、残りはあとから足しても大丈夫です。", fields:[
+      {k:"casts", type:"list", req:1, itemName:"キャスト", addLabel:"キャストを追加", nameField:"name", big:1,
+        what:"源氏名・本名・連絡先・働きかたの条件をまとめて持ちます。",
+        use:"指名、シフト、給与計算のすべてで、この人の情報が使われます。",
+        sub:[
+          {head:"お店で呼ぶ名前"},
+          {k:"name", label:"源氏名", type:"text", ph:"あや"},
+          {k:"honmei", label:"本名", type:"text", ph:"山田 綾"},
+          {head:"連絡先"},
+          {k:"birthday", label:"生年月日", type:"date"},
+          {k:"tel", label:"電話番号", type:"text", ph:"090-1234-5678"},
+          {k:"addr", label:"住所", type:"text", ph:"東京都目黒区…"},
+          {k:"emergency", label:"急ぎのときの連絡先", type:"text",
+            ph:"母 山田 幸子 090-0000-0000", hint:"続柄・名前・電話を1行で"},
+          {head:"身分証と口座"},
+          {k:"idStatus", label:"身分証の確認", type:"select",
+            opts:[["none","まだ出ていない"],["done","確認できた"],["expired","期限が切れている"]]},
+          {k:"idNote", label:"身分証の種類・しまい場所", type:"text",
+            ph:"運転免許証・事務所の金庫", hint:"写真はここには保存しません"},
+          {k:"bank", label:"給料の振込先", type:"text",
+            ph:"みずほ銀行 渋谷支店 普通 1234567 ヤマダ アヤ"},
+          {head:"送り迎えと交通費"},
+          {k:"st", label:"家のいちばん近い駅", type:"text", ph:"中目黒"},
+          {k:"fare", label:"片道の運賃", type:"num", unit:"円", ph:"480"},
+          {k:"rt", label:"往復で払う（外すと片道だけ）", type:"check"},
+          {head:"働きかたの条件"},
+          {k:"kind", label:"在籍のしかた", type:"select", opts:[["在籍","在籍"],["体入","体入"],["派遣","派遣"]]},
+          {k:"wage", label:"時給", type:"num", unit:"円", ph:"2500"},
+          {k:"rank", label:"ランク", type:"text", ph:"A"},
+          {k:"wh", label:"税の引きかた", type:"select",
+            opts:[["reward","報酬として引く"],["hostess","ホステスとして引く"],["salary","給与として引く"]],
+            hint:"【源泉徴収】の種類です"}
+        ]}
+    ]},
+    { t:"スタッフ", note:"ボーイ・キッチンなど、接客以外の人はこちらに登録します。", fields:[
+      {k:"staffs", type:"list", itemName:"スタッフ", addLabel:"スタッフを追加", nameField:"name", big:1,
+        what:"名前・役割・時給を持ちます。項目はキャストとほぼ同じです。",
+        sub:[
+          {head:"基本"},
+          {k:"name", label:"名前", type:"text", ph:"山田"},
+          {k:"role", label:"役割", type:"select",
+            opts:[["boy","ボーイ"],["kitchen","キッチン"],["other","その他"]]},
+          {k:"wage", label:"時給", type:"num", unit:"円", ph:"1500"},
+          {k:"wh", label:"税の引きかた", type:"select",
+            opts:[["reward","報酬として引く"],["salary","給与として引く"]]},
+          {head:"連絡先"},
+          {k:"birthday", label:"生年月日", type:"date"},
+          {k:"tel", label:"電話番号", type:"text", ph:"090-1234-5678"},
+          {k:"addr", label:"住所", type:"text"},
+          {k:"emergency", label:"急ぎのときの連絡先", type:"text"},
+          {head:"身分証・口座・交通費"},
+          {k:"idStatus", label:"身分証の確認", type:"select",
+            opts:[["none","まだ出ていない"],["done","確認できた"],["expired","期限が切れている"]]},
+          {k:"idNote", label:"身分証の種類・しまい場所", type:"text"},
+          {k:"bank", label:"給料の振込先", type:"text"},
+          {k:"st", label:"家のいちばん近い駅", type:"text"},
+          {k:"fare", label:"片道の運賃", type:"num", unit:"円"},
+          {k:"rt", label:"往復で払う", type:"check"}
+        ]}
+    ]}
+  ]},
+
+{ ch:3, title:"指名の区分",
+  lead:"「どんな付きかたを指名と呼ぶか」と、その料金を決めます。",
+  why:"1つも作らないと、現場で指名を付けられません。指名料は、キャスト個人ではなく、この区分が持ちます。",
+  groups:[{ t:"指名の種類", note:"【ヘルプ】は料金0円で作ります。色は、営業中の画面で席を見分けるための色です。", fields:[
+    {k:"noms", type:"list", req:1, itemName:"指名区分", addLabel:"指名の種類を追加", nameField:"name", big:1,
+      what:"名前・料金・数えかた・バックでの扱いを決めます。",
+      eg:"本指名（3,000円）／ 場内指名（2,000円）／ 同伴（3,000円）／ ヘルプ（0円）",
+      use:"公開したあとも名前は変えられますが、区分そのものは消せません（過去の売上がひもづくため）。",
+      sub:[
+        {k:"name", label:"区分の名前", type:"text", ph:"本指名"},
+        {k:"fee", label:"指名料", type:"num", unit:"円", ph:"3000"},
+        {k:"unit", label:"料金のかけかた", type:"select",
+          opts:[["per_session","1回の接客ごと"],["per_set","1セットごと"],["per_30min","30分ごと"]]},
+        {k:"dh", label:"同伴として数える", type:"select", opts:[["no","数えない"],["yes","【同伴】として数える"]]},
+        {k:"role", label:"バックでの扱い", type:"select",
+          opts:[["main","メイン（山分けの対象）"],["help","ヘルプ"],["neutral","対象にしない"]]},
+        {k:"color", label:"画面での色", type:"select",
+          opts:[["red","赤"],["blue","青"],["black","黒"],["green","緑"],["neutral","色なし"]]}
+      ]},
+    {k:"helpSales", label:"ヘルプで付いた人にも売上を付ける", type:"toggle", on:"yes", off:"no",
+      what:"付けないと、その席の売上が、そのキャストの成績の計算から外れます。",
+      use:"キャストごとの売上と、給料の割合（給率）の計算に影響します。"}
+  ]}]},
+
+{ ch:3, title:"バック（がんばりへの報酬）",
+  optional:1,
+  lead:"売れた商品にあわせて、キャストに返すお金の決まりを作ります。",
+  why:"【バック】は、キャストのやる気に直結する数字です。1円未満は切り捨てて計算します。あとから直せるので、まずは大まかに決めて構いません。",
+  groups:[
+    { t:"1杯につき、いくら", note:"ドリンク1点ごとに、決まった金額を出すやり方です。キャストドリンクはここで作ります。", fields:[
+      {k:"drinkBacks", type:"list", itemName:"決まり", addLabel:"決まりを追加", nameField:"target",
+        what:"対象の商品と、1点あたりに出す金額です。",
+        eg:"キャストドリンク1杯につき500円",
+        sub:[
+          {k:"target", label:"対象", type:"select", optsFn:catOpts},
+          {k:"yen", label:"1点あたり", type:"num", unit:"円", ph:"500"},
+          {k:"on", label:"この決まりを使う", type:"check"}
+        ]}
+    ]},
+    { t:"値段の帯ごとに、いくら", note:"上から順に見て、値段が最初に当てはまった帯の金額を出します。", fields:[
+      {k:"bandBacks", type:"list", itemName:"帯", addLabel:"値段の帯を追加", nameField:"from",
+        what:"「◯円以上◯円未満なら、バックは◯円」という決まりです。",
+        eg:"0円〜5,000円未満 → 500円 ／ 5,000円〜20,000円未満 → 1,500円",
+        sub:[
+          {k:"from", label:"この値段から", type:"num", unit:"円以上", ph:"0"},
+          {k:"to", label:"この値段まで", type:"num", unit:"円未満", ph:"5000"},
+          {k:"yen", label:"出すバック", type:"num", unit:"円", ph:"500"},
+          {k:"on", label:"この帯を使う", type:"check"}
+        ]}
+    ]},
+    { t:"売った金額の何％か", note:"ボトルやシャンパンのように高いものは、割合で出すのがふつうです。", fields:[
+      {k:"pctBacks", type:"list", itemName:"決まり", addLabel:"決まりを追加", nameField:"target",
+        what:"対象・割合・複数人で担当したときの分けかたを決めます。",
+        sub:[
+          {k:"target", label:"対象", type:"select", optsFn:catOpts},
+          {k:"rate", label:"割合", type:"num", unit:"％", ph:"10"},
+          {k:"split", label:"分けかた", type:"select",
+            opts:[["equal","人数で等しく分ける"],["weighted","比率を決めて分ける"],["main_only","メインの人だけ"]]},
+          {k:"help", label:"ヘルプの人も分け前に入れる", type:"check"},
+          {k:"on", label:"この決まりを使う", type:"check"}
+        ]},
+      {k:"backRound", label:"バックの端数のあつかい", type:"select", half:1,
+        opts:[["1","1円の単位で切り捨て"],["10","10円の単位で切り捨て"],["100","100円の単位で切り捨て"]],
+        what:"計算したバックの細かい部分を、どこで切るかです。"}
+    ]},
+    { t:"月の売上でバックの率が上がるしくみ", note:"【スライド】といいます。使わないお店は、空のままで大丈夫です。", fields:[
+      {k:"slide", type:"list", itemName:"段", addLabel:"段を追加", nameField:"min",
+        what:"1か月の売上がこの金額を超えたら、この割合にする、という段を作ります。",
+        eg:"0円から30％ ／ 100万円から35％ ／ 200万円から40％",
+        sub:[
+          {k:"min", label:"この売上から", type:"num", unit:"円", ph:"0"},
+          {k:"rate", label:"バックの割合", type:"num", unit:"％", ph:"30"}
+        ]}
+    ]}
+  ]},
+
+{ ch:3, title:"給与のきまり",
+  optional:1,
+  lead:"税の引きかた、福利厚生費、警告を出す線を決めます。",
+  why:"この設定は日付ごとに保存されるので、あとから変えても、すでに締めた月の給与は動きません。安心して直せます。",
+  groups:[
+    { t:"いつから使うか", fields:[
+      {k:"wage.from", label:"この設定を使いはじめる日", type:"date", half:1,
+        what:"空のままなら、今日からになります。",
+        use:"過去の日付にすると、締めたはずの月の給与にも影響します。"},
+      {k:"wage.warn", label:"給料の割合が高いときに知らせる線", type:"num", unit:"％", ph:"100", half:1,
+        what:"売上に対する給料の割合が、この数字を超えたら知らせます。",
+        eg:"0 と入れると、知らせません。"}
+    ]},
+    { t:"福利厚生費", fields:[
+      {k:"wage.welfare", label:"金額", type:"num", unit:"円", ph:"1000", half:1,
+        what:"【福利厚生費】は、給料とは別に、働く人のために出すお金です。"},
+      {k:"wage.wUnit", label:"出すタイミング", type:"select", half:1,
+        opts:[["per_period","給与の期間ごとに1回"],["per_workday","出勤した日ごと"]],
+        what:"上の金額を、月に1回出すか、出勤した日数分だけ出すかです。"}
+    ]},
+    { t:"税を引く割合", note:"どの割合を使うかは、キャスト・スタッフごとに前のステップで選びます。", fields:[
+      {k:"wage.reward", label:"報酬として引くとき", type:"num", unit:"％", ph:"10.21", half:1,
+        what:"【源泉徴収】の割合です。ふつうは10.21％です。"},
+      {k:"wage.hostess", label:"ホステスとして引くとき", type:"num", unit:"％", ph:"10.21", half:1,
+        what:"接客で働く人に使う割合です。"},
+      {k:"wage.hDaily", label:"ホステスの日額控除", type:"num", unit:"円／出勤日", ph:"5000", half:1,
+        what:"上の割合をかける前に、出勤1日につき差し引ける金額です。"},
+      {k:"wage.salary", label:"給与として引くとき", type:"num", unit:"％", ph:"0", half:1,
+        what:"月給や時給で働く人に使う割合です。"}
+    ]}
+  ]},
+
+/* ───────── 第五章 日々の運営 ───────── */
+{ ch:4, title:"お客様が来たきっかけ",
+  optional:1,
+  lead:"「どこでお店を知ったか」の区分を作ります。",
+  why:"【流入経路】は、どの宣伝が効いているかを知るための区分です。金額の計算にはまったく影響しないので、気軽に作って構いません。",
+  groups:[{ t:"きっかけの区分", note:"数えるのは組の数ではなく、のべ人数です。集計に残っているぶんは、区分を消しても過去の数字からは消えません。", fields:[
+    {k:"tags", type:"list", itemName:"区分", addLabel:"区分を追加", nameField:"name",
+      what:"席を立ち上げるときに、人数といっしょに選びます。",
+      eg:"新規 ／ リピート ／ 紹介 ／ キャッチ ／ SNS",
+      sub:[{k:"name", label:"区分の名前", type:"text", ph:"新規"}]}
+  ]}]},
+
+{ ch:4, title:"経費のなかま分け",
+  optional:1,
+  lead:"毎月の出ていくお金を、どの名前で記録するかを決めます。",
+  why:"「原価」に印を付けたものが、もうけの計算に使われます。売上から原価を引いた残りが、お店の粗利（あらり）です。",
+  groups:[{ t:"経費の一覧", note:"使わなくなった区分は、消さずに「使う」の印を外してください。過去の記録が残ります。", fields:[
+    {k:"exp", type:"list", itemName:"経費", addLabel:"経費の区分を追加", nameField:"name",
+      what:"名前と、【原価】に数えるかどうかを決めます。",
+      eg:"家賃 ／ 酒類仕入 ／ フード仕入 ／ 広告費 ／ 送迎",
+      use:"収支の画面に、この名前の入力欄が、この順番で並びます。",
+      sub:[
+        {k:"name", label:"区分の名前", type:"text", ph:"家賃"},
+        {k:"cost", label:"原価に数える", type:"check", hint:"お酒やフードの仕入れが当てはまります"},
+        {k:"on", label:"いま使っている", type:"check"}
+      ]}
+  ]}]},
+
+{ ch:4, title:"レジのお金と、日報",
+  lead:"レジに入れておく現金と、ズレを知らせる範囲を決めます。",
+  why:"レジのお金は毎日さわる数字です。ここを決めておくと、レジを開けるたびに入力しなくてよくなり、数え間違いにも気づけます。",
+  groups:[
+    { t:"レジのお金", note:"前の日に精算していれば、そこで決めた金額のほうが優先されます。", fields:[
+      {k:"reg.floatYen", label:"いつも入れておく現金", type:"num", unit:"円", ph:"50000",
+        what:"【釣銭準備金】です。レジを開けるとき、最初から入っている金額になります。",
+        eg:"5万円くらいのお店が多いです。"}
+    ]},
+    { t:"ズレを知らせる範囲", note:"【現金過不足】がこの範囲の外に出たときだけ、知らせが出ます。範囲を広げれば、知らせは減ります。", fields:[
+      {k:"reg.minYen", label:"足りない側の限界", type:"num", unit:"円", ph:"-1000", half:1,
+        what:"マイナスの数字で入れてください。",
+        eg:"-1000 と入れると、1,000円足りないところまでは知らせません。"},
+      {k:"reg.maxYen", label:"多い側の限界", type:"num", unit:"円", ph:"1000", half:1,
+        what:"レジのお金が多かったときの、許す範囲です。"}
+    ]},
+    { t:"日報の知らせ", note:"【日報】はPDFで出ます。形式は選べません。", fields:[
+      {k:"push", label:"日報ができたらスマホに知らせる", type:"toggle", on:"on", off:"off",
+        what:"その日の営業が締まったとき、スマホに知らせを送ります。"}
+    ]}
+  ]},
+
+{ ch:4, title:"領収書とプリンター",
+  lead:"領収書の見た目と、刷る内容、自動で出す伝票を決めます。",
+  why:"領収書はお客様の手もとに残る、お店の顔です。下の絵は、実際に紙へ刷られるものそのものです（お店の名前と電話番号は必ず刷られます）。",
+  groups:[
+    { t:"領収書のデザイン", note:"枠の模様だけが違います。書いてある内容と文字の位置は、3つとも同じです。", fields:[
+      {k:"pr.tpl", type:"choice", label:"枠のデザイン", req:1, receipts:1, cards:[
+        {v:"classic-frame", l:"1．すみ切り", d:RC_NOTES["classic-frame"]},
+        {v:"seigaiha-frame", l:"2．青海波", d:RC_NOTES["seigaiha-frame"]},
+        {v:"kikka-frame", l:"3．菊の扇", d:RC_NOTES["kikka-frame"]}
+      ], what:"下の絵は、いま入力した内容がそのまま入った本物の見本です。"},
+      {k:"pr.paper", label:"紙のはば", type:"select",
+        opts:[["80","80mm（全角でおよそ24文字）"],["58","58mm（全角でおよそ16文字）"]], half:1,
+        what:"レシートプリンターに入れている紙の幅です。"}
+    ]},
+    { t:"領収書に刷る内容", note:"お店の名前と電話番号は、必ず刷られます（外せません）。", fields:[
+      {k:"pr.addr", label:"住所を刷る", type:"toggle", on:"yes", off:"no"},
+      {k:"pr.biz", label:"事業者名（会社の名前）を刷る", type:"toggle", on:"yes", off:"no"},
+      {k:"pr.inv", label:"インボイスの登録番号を刷る", type:"toggle", on:"yes", off:"no",
+        what:"消費税の計算に使える領収書にするなら、入れておきます。"},
+      {k:"pr.stamp", label:"収入印紙が要る金額", type:"num", unit:"円から", ph:"50000", half:1,
+        what:"【収入印紙】の欄を出しはじめる金額です。"},
+      {k:"pr.basis", label:"その金額の数えかた", type:"select",
+        opts:[["tax_excluded","消費税を抜いた金額で数える"],["tax_included","消費税を入れた金額で数える"]], half:1,
+        what:"上の金額を超えたかどうかを、税抜と税込のどちらで判断するかです。"}
+    ]},
+    { t:"領収書の通し番号", note:"【採番】＝番号の振りかたのことです。手書きの領収書と番号がぶつからないようにします。", fields:[
+      {k:"pr.prefix", label:"番号の頭につける文字", type:"text", ph:"A", half:1,
+        what:"数字の前に付ける記号です。空でも大丈夫です。", eg:"A と入れると「A000123」になります。"},
+      {k:"pr.start", label:"番号のはじまり", type:"num", unit:"から", ph:"1", half:1,
+        what:"最初に発行する領収書の番号です。"},
+      {k:"pr.reset", label:"番号を1に戻すタイミング", type:"select",
+        opts:[["none","戻さない（ずっと続き番号）"],["year","年度が変わったら戻す"]], half:1,
+        what:"番号をリセットするかどうかです。ふつうは戻しません。"}
+    ]},
+    { t:"自動で刷る伝票", note:"それぞれ、そのタイミングで自動的に紙が出ます。", fields:[
+      {k:"pr.bill", label:"会計伝票（会計を確定したとき）", type:"toggle"},
+      {k:"pr.settle", label:"精算伝票（レジを締めたとき）", type:"toggle"},
+      {k:"pr.receipt", label:"領収書（発行したとき）", type:"toggle"},
+      {k:"pr.kitchen", label:"キッチン伝票（注文が入ったとき）", type:"toggle",
+        what:"【キッチン伝票】を出す商品は、なかま分けごとに選びます。"}
+    ]}
+  ]}
+];
+
+/* ══════════════════════════════════════════════════════════
+   5. 状態
+   ══════════════════════════════════════════════════════════ */
+const KEY = "pokkiri-kaiten-jitaku-v1";
+let S = SAMPLE(), step = 0, mode = "step", finished = false;
+try{
+  const raw = localStorage.getItem(KEY);
+  if(raw){
+    const p = JSON.parse(raw);
+    if(p.S) S = Object.assign(SAMPLE(), p.S);
+    if(typeof p.step === "number") step = Math.min(Math.max(0,p.step), STEPS.length-1);
+    if(p.mode) mode = p.mode;
+    if(p.finished) finished = true;
+  }
+}catch(e){}
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify({S,step,mode,finished})); }catch(e){} };
+
+/* ══ 小道具 ══ */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, c=>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+const get = p => p.split(".").reduce((o,k)=> o==null?o:o[k], S);
+function setVal(p,v){
+  const ks = p.split("."), last = ks.pop();
+  let o = S; for(const k of ks) o = o[k];
+  o[last] = v; S.sample = 0; save();
+}
+/** 本文の【用語】を、押せる用語チップに変える */
+function mark(t){
+  return esc(t).replace(/【([^】]+)】/g, (m,w)=>
+    TERMS[w] ? `<button class="term" data-term="${esc(w)}">${esc(w)}<i>?</i></button>` : esc(w));
+}
+
+/* ══ 埋まっているかの判定 ══ */
+function fieldFilled(f){
+  if(f.type === "list"){
+    const rows = get(f.k) || [];
+    const nf = f.nameField || (f.sub[0] && f.sub[0].k) || "name";
+    return rows.some(r => String(r[nf] ?? "").trim() !== "");
+  }
+  return String(get(f.k) ?? "").trim() !== "";
+}
+const stepFields = st => st.groups.flatMap(g => g.fields);
+const stepReq = st => stepFields(st).filter(f => f.req);
+const stepDone = st => stepReq(st).every(fieldFilled);
+const stepTouched = st => stepFields(st).some(fieldFilled);
+const reqTotal = () => STEPS.reduce((n,st)=> n + stepReq(st).length, 0);
+const reqDone = () => STEPS.reduce((n,st)=> n + stepReq(st).filter(fieldFilled).length, 0);
+const chapterSealed = ci => STEPS.filter(st=>st.ch===ci).every(st => stepDone(st) && stepTouched(st));
+
+/* ══════════════════════════════════════════════════════════
+   6. 描画
+   ══════════════════════════════════════════════════════════ */
+function fieldHTML(f, i){
+  if(f.when && !f.when()) return "";
+  const req = f.req ? `<span class="tag req">必須</span>` : "";
+  const label = f.label ? `<div class="f-label"><span>${esc(f.label)}</span>${req}</div>` : "";
+  const what = f.what ? `<p class="f-what">${mark(f.what)}</p>` : "";
+  const eg   = f.eg   ? `<p class="f-eg">たとえば　<b>${esc(f.eg)}</b></p>` : "";
+  const use  = f.use  ? `<p class="f-use"><span>${mark(f.use)}</span></p>` : "";
+  let control = "";
+
+  if(f.type === "list"){
+    control = listHTML(f);
+  } else if(f.type === "choice"){
+    control = `<div class="choices">${f.cards.map(c=>`
+      <button class="choice" data-choice="${esc(f.k)}" data-v="${esc(c.v)}"
+        aria-pressed="${get(f.k)===c.v}">
+        ${f.receipts ? `<span class="pv">${receiptSVG(c.v)}</span>` : ""}
+        <b>${esc(c.l)}</b><span>${esc(c.d)}</span>
+      </button>`).join("")}</div>`;
+  } else if(f.type === "toggle"){
+    const on = f.on !== undefined ? f.on : 1;
+    const off = f.off !== undefined ? f.off : 0;
+    const cur = get(f.k);
+    const checked = String(cur) === String(on);
+    control = `<label class="sw">
+      <span class="sw-t">${esc(f.label)}</span>
+      <span class="sw-state">${checked ? "する" : "しない"}</span>
+      <span class="sw-box"><input type="checkbox" data-toggle="${esc(f.k)}"
+        data-on="${esc(on)}" data-off="${esc(off)}"${checked?" checked":""}><span class="knob"></span></span>
+    </label>`;
+    // トグルはラベルをスイッチの中に持つので、上のラベル行は出さない
+    return `<div class="field${f.half?" half":""}">${control}${what}${eg}${use}</div>`;
+  } else if(f.type === "select"){
+    const opts = f.optsFn ? f.optsFn() : f.opts;
+    control = `<select class="in" data-k="${esc(f.k)}">${opts.map(([v,l])=>
+      `<option value="${esc(v)}"${String(v)===String(get(f.k))?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  } else if(f.type === "num"){
+    control = `<div class="unit"><input class="in" type="number" inputmode="decimal"
+      data-k="${esc(f.k)}" value="${esc(get(f.k))}" placeholder="${esc(f.ph||"")}">
+      <span class="u">${esc(f.unit||"")}</span></div>`;
+  } else {
+    const t = f.type === "time" ? "time" : f.type === "date" ? "date" : "text";
+    control = `<input class="in" type="${t}" data-k="${esc(f.k)}"
+      value="${esc(get(f.k))}" placeholder="${esc(f.ph||"")}">`;
+  }
+  return `<div class="field${f.half?" half":""}">${label}${what}${control}${eg}${use}</div>`;
+}
+
+function subFieldHTML(f, path, row){
+  if(f.head) return `<p class="sub-head">${esc(f.head)}</p>`;
+  const id = `${path}.${f.k}`;
+  const hint = f.hint ? `<em>${mark(f.hint)}</em>` : "";
+  if(f.type === "check"){
+    return `<label class="lf check"><input type="checkbox" data-k="${esc(id)}"${row[f.k]?" checked":""}>
+      <span>${esc(f.label)}</span></label>`;
+  }
+  let c;
+  if(f.type === "select"){
+    const opts = f.optsFn ? f.optsFn() : f.opts;
+    c = `<select class="in" data-k="${esc(id)}">${opts.map(([v,l])=>
+      `<option value="${esc(v)}"${String(v)===String(row[f.k])?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  } else if(f.type === "num"){
+    c = `<div class="unit"><input class="in" type="number" inputmode="decimal" data-k="${esc(id)}"
+      value="${esc(row[f.k])}" placeholder="${esc(f.ph||"")}"><span class="u">${esc(f.unit||"")}</span></div>`;
+  } else {
+    const t = f.type === "date" ? "date" : f.type === "time" ? "time" : "text";
+    c = `<input class="in" type="${t}" data-k="${esc(id)}" value="${esc(row[f.k])}" placeholder="${esc(f.ph||"")}">`;
+  }
+  return `<label class="lf"><span>${esc(f.label)}</span>${c}${hint}</label>`;
+}
+
+function listHTML(f){
+  const rows = get(f.k) || [];
+  const nf = f.nameField || "name";
+  const body = rows.length ? `<div class="items">${rows.map((row,i)=>{
+    const locked = f.lockKinds && (row.kind === "cash" || row.kind === "card");
+    const title = String(row[nf] ?? "").trim() || `（名前がまだです）`;
+    const subs = f.sub.map(sf=>{
+      if(locked && sf.k === "name"){
+        return `<label class="lf"><span>ボタンの名前</span>
+          <span class="locked-name">${esc(row.name)}<em>変えられません</em></span></label>`;
+      }
+      return subFieldHTML(sf, `${f.k}.${i}`, row);
+    }).join("");
+    return `<div class="item">
+      <div class="item-h">
+        <span class="item-n">${esc(f.itemName)} ${i+1}</span>
+        <span class="item-name">${esc(title)}</span>
+        ${locked ? "" : `<button class="btn del" data-del="${esc(f.k)}" data-i="${i}">削除</button>`}
+      </div>
+      <div class="item-b">${subs}</div>
+    </div>`;
+  }).join("")}</div>`
+  : `<p class="empty">まだ1つもありません。下のボタンから足してください。</p>`;
+
+  return `<div class="list-head">
+      <button class="btn add" data-add="${esc(f.k)}">＋ ${esc(f.addLabel)}</button>
+      <span class="count-pill">いま ${rows.length} 件</span>
+      ${f.req ? `<span class="tag req">1つ以上ないと先へ進めません</span>` : ""}
+    </div>${body}`;
+}
+
+function groupHTML(g){
+  const fields = g.fields.map(fieldHTML).join("");
+  return `<section class="group">
+    <h2>${esc(g.t)}</h2>
+    ${g.note ? `<p class="gnote">${mark(g.note)}</p>` : ""}
+    <div class="fields">${fields}</div>
+  </section>`;
+}
+
+function renderIndex(){
+  const html = CHAPTERS.map((c,ci)=>{
+    const items = STEPS.map((st,i)=>({st,i})).filter(x=>x.st.ch===ci);
+    return `<div class="ch${chapterSealed(ci)?" sealed":""}">
+      <div class="ch-h">
+        <span class="ch-n">${esc(c.n)}</span>
+        <span class="ch-t">${esc(c.t)}</span>
+        <span class="seal" aria-hidden="true"></span>
+      </div>
+      <div class="ch-steps">${items.map(({st,i})=>{
+        const done = stepDone(st) && stepTouched(st);
+        const need = stepReq(st).length > 0 && !stepDone(st);
+        const cls = (mode==="step" && i===step) ? "now" : done ? "done" : need ? "todo" : "";
+        return `<button class="si ${cls}" data-goto="${i}">
+          <span class="si-n">${done ? "✓" : need ? "!" : i+1}</span>
+          <span class="si-t">${esc(st.title)}${stepReq(st).length?`<span class="si-req">必須</span>`:""}</span>
+        </button>`;
+      }).join("")}</div>
+    </div>`;
+  }).join("");
+  $("#index").innerHTML = `<div class="index-h">
+      <h2>ぜんぶで5章・19ページ</h2>
+      <p>済んだ章には検印が押されます</p>
+    </div><div class="chapters">${html}</div>`;
+}
+
+function sampleNote(){
+  if(!S.sample) return "";
+  return `<div class="sample-note">
+    <b>見本</b>
+    <span>いまは、どんな画面かが分かるように<b>見本の数字</b>が入っています。上から書きかえてお使いください。</span>
+    <button class="btn sm" data-act="clear" style="margin-left:auto">見本を消して、空から始める</button>
+  </div>`;
+}
+
+function renderStepMode(){
+  const st = STEPS[step], ch = CHAPTERS[st.ch];
+  const inCh = STEPS.filter(s=>s.ch===st.ch);
+  const posInCh = inCh.indexOf(st) + 1;
+  const req = stepReq(st);
+  const ok = stepDone(st);
+  const missing = req.filter(f=>!fieldFilled(f));
+  const check = req.length === 0
+    ? `<div class="check-line ok"><span class="mk">✓</span>このページは、入れなくても先へ進めます</div>`
+    : ok
+      ? `<div class="check-line ok"><span class="mk">✓</span>このページの必須項目は、ぜんぶ入りました</div>`
+      : `<div class="check-line ng"><span class="mk">!</span>あと ${missing.length} つ、入れないと先へ進めません（${missing.map(f=>f.label||f.itemName).join("・")}）</div>`;
+
+  $("#stage").innerHTML = `
+    ${sampleNote()}
+    <header class="head">
+      <div class="eyebrow">
+        <span class="ch-name">${esc(ch.n)}　${esc(ch.t)}</span>
+        <span class="sep"></span>
+        <span class="count">この章の ${posInCh} / ${inCh.length}　・　ぜんたいの ${step+1} / ${STEPS.length}</span>
+      </div>
+      <h1>${esc(st.title)}
+        ${req.length ? `<span class="tag req">必須</span>` : `<span class="tag opt">あとでも大丈夫</span>`}</h1>
+      <p class="lead">${mark(st.lead)}</p>
+      <div class="why"><h3>どうして必要？</h3><p>${mark(st.why)}</p></div>
+    </header>
+    ${st.groups.map(groupHTML).join("")}
+    ${check}
+    <nav class="foot">
+      <button class="btn" data-act="prev"${step===0?" disabled":""}>← 前のページ</button>
+      <div class="dots">${STEPS.map((s,i)=>
+        `<i class="${i===step?"now":(stepDone(s)&&stepTouched(s))?"done":""}"></i>`).join("")}</div>
+      <button class="btn primary" data-act="next"${ok?"":" disabled"}>
+        ${step===STEPS.length-1 ? "じたく完了" : "できた、次へ →"}</button>
+    </nav>`;
+}
+
+function renderAllMode(){
+  const doneCard = finished ? `<div class="done-card">
+      <div><h2>開店じたく、完了です</h2>
+      <p>19ページぶんの設定がそろいました。このページは、あとから何度でも書きかえられます。
+      直したいところがあれば、下の一覧から探して、その場で直してください。</p></div>
+    </div>` : "";
+  const chs = CHAPTERS.map((c,ci)=>{
+    const items = STEPS.map((st,i)=>({st,i})).filter(x=>x.st.ch===ci);
+    const doneN = items.filter(x=>stepDone(x.st)&&stepTouched(x.st)).length;
+    return `<div class="all-ch">
+      <div class="all-ch-h">
+        <span class="n">${esc(c.n)}</span>
+        <h2>${esc(c.t)}</h2>
+        <span class="cnt">${doneN} / ${items.length} ページ完了</span>
+      </div>
+      ${items.map(({st,i})=>`<section class="all-step" id="s${i}">
+        <header>
+          <span class="no">${i+1}</span>
+          <h3>${esc(st.title)}</h3>
+          ${stepReq(st).length ? `<span class="tag req">必須</span>` : `<span class="tag opt">あとでも大丈夫</span>`}
+          <button class="btn sm jump" data-goto="${i}">このページだけ開く</button>
+        </header>
+        <p class="lead" style="font-size:15px">${mark(st.lead)}</p>
+        ${st.groups.map(groupHTML).join("")}
+      </section>`).join("")}
+    </div>`;
+  }).join("");
+  $("#stage").innerHTML = sampleNote() + doneCard + chs;
+}
+
+function renderProgress(){
+  const t = STEPS.length;
+  const d = STEPS.filter(st => stepDone(st) && stepTouched(st)).length;
+  $("#prog-bar").style.width = Math.round(d/t*100) + "%";
+  $("#prog-num").textContent = `${d} / ${t}`;
+  $("#prog-num").title = `必須項目 ${reqDone()} / ${reqTotal()}`;
+}
+
+function render(keepScroll){
+  const y = keepScroll ? window.scrollY : null;
+  renderIndex();
+  if(mode === "step") renderStepMode(); else renderAllMode();
+  renderProgress();
+  $$(".modes button").forEach(b=> b.setAttribute("aria-pressed", String(b.dataset.mode===mode)));
+  if(y !== null) window.scrollTo(0,y); else window.scrollTo(0,0);
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. 操作
+   ══════════════════════════════════════════════════════════ */
+function blankRow(path){
+  const f = STEPS.flatMap(s=>s.groups).flatMap(g=>g.fields).find(x=>x.k===path && x.type==="list");
+  const row = {};
+  if(f) for(const sf of f.sub){
+    if(sf.head) continue;
+    row[sf.k] = sf.type === "check" ? 1 : "";
+  }
+  if(path === "pays") row.kind = "other";
+  return row;
+}
+
+document.addEventListener("input", e=>{
+  const t = e.target;
+  if(!t.dataset || !t.dataset.k) return;
+  if(t.type === "checkbox" || t.tagName === "SELECT") return;
+  writeKey(t.dataset.k, t.value);
+  // 一覧カードの見出しだけ、その場で追従させる（全体の描き直しはしない）
+  const item = t.closest(".item");
+  if(item){
+    const nameEl = item.querySelector(".item-name");
+    const first = item.querySelector(".item-b .lf .in, .item-b .lf .locked-name");
+    if(nameEl && first === t) nameEl.textContent = t.value.trim() || "（名前がまだです）";
+  }
+  renderProgress();
+});
+
+document.addEventListener("change", e=>{
+  const t = e.target;
+  if(t.dataset && t.dataset.toggle){
+    writeKey(t.dataset.toggle, t.checked ? t.dataset.on : t.dataset.off);
+    render(true); return;
+  }
+  if(!t.dataset || !t.dataset.k) return;
+  if(t.type === "checkbox"){ writeKey(t.dataset.k, t.checked ? 1 : 0); render(true); return; }
+  if(t.tagName === "SELECT" || t.type === "date" || t.type === "time"){
+    writeKey(t.dataset.k, t.value); render(true); return;
+  }
+  render(true);
+});
+
+/** "casts.0.name" のような、配列を含むパスにも書ける */
+function writeKey(path, v){
+  const ks = path.split("."), last = ks.pop();
+  let o = S;
+  for(const k of ks) o = o[k];
+  if(o == null) return;
+  o[last] = v; S.sample = 0; save();
+}
+
+document.addEventListener("click", e=>{
+  const term = e.target.closest(".term");
+  if(term){
+    const host = term.closest(".f-what, .f-use, .gnote, .lead, .why p, .lf em, .f-eg") || term.parentElement;
+    const next = host.nextElementSibling;
+    if(next && next.classList.contains("term-note") && next.dataset.term === term.dataset.term){
+      next.remove(); return;
+    }
+    if(next && next.classList.contains("term-note")) next.remove();
+    const d = document.createElement("div");
+    d.className = "term-note";
+    d.dataset.term = term.dataset.term;
+    d.innerHTML = `<b>${esc(term.dataset.term)}とは</b>${esc(TERMS[term.dataset.term])}`;
+    host.after(d);
+    return;
+  }
+  const b = e.target.closest("button");
+  if(!b) return;
+
+  if(b.dataset.mode){ mode = b.dataset.mode; save(); render(); return; }
+  if(b.dataset.goto !== undefined){
+    step = Number(b.dataset.goto); mode = "step"; save(); render(); return;
+  }
+  if(b.dataset.choice){ writeKey(b.dataset.choice, b.dataset.v); render(true); return; }
+  if(b.dataset.add){
+    const a = get(b.dataset.add); a.push(blankRow(b.dataset.add)); S.sample = 0; save(); render(true);
+    // 追加した行のいちばん上の入力欄に、そのままカーソルを置く
+    const items = $$(`[data-add="${b.dataset.add}"]`)[0]?.closest(".field")?.querySelectorAll(".item");
+    if(items && items.length){
+      const inp = items[items.length-1].querySelector("input.in, select.in");
+      if(inp) inp.focus();
+    }
+    return;
+  }
+  if(b.dataset.del){
+    get(b.dataset.del).splice(Number(b.dataset.i),1); S.sample = 0; save(); render(true); return;
+  }
+  const act = b.dataset.act;
+  if(act === "next"){
+    if(!stepDone(STEPS[step])) return;
+    if(step === STEPS.length-1){ finished = true; mode = "all"; save(); render(); return; }
+    step++; save(); render(); return;
+  }
+  if(act === "prev"){ step = Math.max(0, step-1); save(); render(); return; }
+  if(act === "clear"){
+    S = EMPTY(); step = 0; finished = false; save(); render(); return;
+  }
+});
+
+render();
+</script>
