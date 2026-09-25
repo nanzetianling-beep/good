@@ -1,0 +1,17 @@
+# ポッキリ.Night 初期設定キット
+
+POS「ポッキリ.Night」の導入時に店舗情報を集めるキット。要件は `docs/requirements.md`、既存見本は `reference/survey_sample.html`。
+
+## ルール
+
+- `spec/items.yaml` が唯一の正。成果物のファイルを手で直さず、YAMLかテンプレートを直して再生成する
+- 個人情報・給与・ログイン情報の項目は、どの成果物にも作らない(要件定義書 6章)
+- 文章は要件定義書 6章のルールに従う(1行20〜35文字、読点は1文に1〜2個、用語は「キャスト」「スタッフ」「卓」「伝票」「バック」)
+- 変更後は `make all && pytest` を実行して結果を報告する
+
+## 構成
+
+- `spec/items.yaml` / `spec/items.schema.json` … 項目定義とスキーマ
+- `scripts/sample_sections.py` … 既存見本の SECTIONS から質問を抽出
+- `scripts/validate_items.py` … items.yaml の検証と route 別件数の報告
+- `tests/` … pytest

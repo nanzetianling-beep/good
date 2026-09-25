@@ -1,0 +1,1052 @@
+# ポッキリ.Night 初期設定キット 項目定義(唯一の正)
+#
+# ①導入アンケート・②記入テンプレート・③対面レクチャー資料は、すべてこのファイルから生成する。
+# 成果物のファイルを手で直さず、このファイルかテンプレートを直して再生成すること。
+#
+# route:
+#   form     … ① 導入アンケート(section: S1〜S11)
+#   template … ② 記入テンプレート(theme: 1〜6)
+#   onsite   … ③ 対面訪問で扱う(chapter: 0〜13、onsite_note に扱い方)
+#   fixed    … 質問しない。default の値で固定
+#
+# source:
+#   sample   … 既存見本 reference/survey_sample.html の SECTIONS の id
+#   question … 同じく質問の l(ラベル)をそのまま
+#   doc      … 見本になく、要件定義書で追加した項目の出典(例:3章 S1)
+
+version: 1
+
+sections:
+  - {id: S1, title: はじめに}
+  - {id: S2, title: 店舗の基本情報}
+  - {id: S3, title: 料金のルール}
+  - {id: S4, title: 指名・バック}
+  - {id: S5, title: 税・インボイス}
+  - {id: S6, title: 決済方法}
+  - {id: S7, title: レジ・日報}
+  - {id: S8, title: プリンター・伝票}
+  - {id: S9, title: 集計・経費}
+  - {id: S10, title: 給与のルール}
+  - {id: S11, title: 訪問日の調整}
+
+themes:
+  - {id: 1, title: 料金セット・延長メニュー, photo_ok: true}
+  - {id: 2, title: 指名区分, photo_ok: false}
+  - {id: 3, title: 商品メニュー, photo_ok: true}
+  - {id: 4, title: 卓, photo_ok: true}
+  - {id: 5, title: キャスト・スタッフ名簿, photo_ok: true}
+  - {id: 6, title: 送り・繁忙時間帯, photo_ok: false}
+
+chapters:
+  - {id: 0, title: 本日の流れ, minutes: 3}
+  - {id: 1, title: 最初の準備, minutes: 10}
+  - {id: 2, title: 卓の配置, minutes: 5}
+  - {id: 3, title: 接客の基本の流れ, minutes: 15}
+  - {id: 4, title: キャストの付け方, minutes: 10}
+  - {id: 5, title: バックの決め方, minutes: 15}
+  - {id: 6, title: テスト会計, minutes: 10}
+  - {id: 7, title: 訂正と取消, minutes: 5}
+  - {id: 8, title: プリンター, minutes: 10}
+  - {id: 9, title: キッチン伝票, minutes: 5}
+  - {id: 10, title: レジ, minutes: 10}
+  - {id: 11, title: メンバー登録, minutes: 15}
+  - {id: 12, title: 出退勤と遅刻, minutes: 5}
+  - {id: 13, title: 困ったとき, minutes: 5}
+
+items:
+
+  # ── 既存見本 ① 店舗情報 ─────────────────────────────
+
+  - id: store_name
+    route: form
+    section: S1
+    label: 店舗名
+    type: short
+    required: true
+    placeholder: 例:クラブ ポッキリ
+    source: {sample: store, question: 店舗名}
+
+  - id: respondent
+    route: form
+    section: S1
+    label: 回答者のお名前・役職
+    type: short
+    placeholder: 例:山田(店長)
+    source: {doc: 3章 S1}
+
+  - id: business_type
+    route: form
+    section: S1
+    label: 業態
+    type: radio
+    required: true
+    options: [キャバクラ・ラウンジ, ガールズバー・バー・スナック, ホスト, その他]
+    unknown_option: false   # 必須項目のため「わからない」は付けない
+    hint: 料金セットやバックのひな形を、業態に合わせて用意します
+    source: {sample: store, question: 業態}
+
+  - id: postal_code
+    route: form
+    section: S2
+    label: 郵便番号
+    type: short
+    placeholder: 例:220-0011
+    hint: 領収書に印字します
+    validation: {kind: regex, pattern: '^\d{3}-?\d{4}$', message: 例:220-0011 の形で入力してください}
+    source: {sample: store, question: 郵便番号 ／ 電話番号}
+
+  - id: phone
+    route: form
+    section: S2
+    label: 電話番号
+    type: short
+    required: true
+    placeholder: 例:045-000-0000
+    validation: {kind: regex, pattern: '^0\d{1,4}-?\d{1,4}-?\d{3,4}$', message: 例:045-000-0000 の形で入力してください}
+    source: {sample: store, question: 郵便番号 ／ 電話番号}
+
+  - id: address
+    route: form
+    section: S2
+    label: 住所
+    type: short
+    placeholder: 例:神奈川県横浜市西区高島2-1-1
+    hint: 領収書に印字します
+    source: {sample: store, question: 住所}
+
+  - id: business_name
+    route: form
+    section: S2
+    label: 事業者名(法人名)
+    type: short
+    hint: 店名と同じなら空欄でOKです
+    source: {sample: store, question: 事業者名（法人名）}
+
+  - id: nearest_station
+    route: form
+    section: S2
+    label: 最寄り駅
+    type: short
+    placeholder: 例:横浜
+    hint: キャストの交通費の計算に使います
+    source: {sample: store, question: 最寄り駅}
+
+  - id: shift_split
+    route: form
+    section: S2
+    label: 一部・二部(深夜)の区別
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    source: {sample: store, question: 一部（通常）／二部（深夜）の切り替え時刻}
+
+  - id: shift_split_start
+    route: form
+    section: S2
+    label: 二部の開始(時)
+    type: dropdown
+    options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    unknown_option: true
+    show_if: {item: shift_split, equals: 使う}
+    source: {sample: store, question: 一部（通常）／二部（深夜）の切り替え時刻}
+
+  - id: shift_split_end
+    route: form
+    section: S2
+    label: 二部の終了(時)
+    type: dropdown
+    options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    unknown_option: true
+    hint: 翌朝の場合は、そのままの時刻を選びます(例:5時(翌朝)なら5)
+    show_if: {item: shift_split, equals: 使う}
+    source: {sample: store, question: 一部（通常）／二部（深夜）の切り替え時刻}
+
+  - id: licenses
+    route: onsite
+    chapter: 1
+    label: 許可証・届出
+    type: table
+    columns: [種類, 番号(任意), 有効期限(任意)]
+    onsite_note: 訪問時に撮影する。LINEでの送付は求めない
+    source: {sample: store, question: 許可証・届出}
+
+  # ── 既存見本 ② 料金セット ─────────────────────────────
+
+  - id: price_sets
+    route: template
+    theme: 1
+    label: セット
+    type: table
+    columns: [セット名, 時間(分), 料金(円), 延長(分), 延長料金(円)]
+    examples:
+      - [セット1, 60, 8000, 30, 4000]
+      - [VIPセット, 60, 15000, 30, 8000]
+    source: {sample: pricing, question: セット（基本の料金）}
+
+  - id: extension_menu
+    route: template
+    theme: 1
+    label: 延長メニュー
+    type: table
+    columns: [名前, 時間(分), 料金(円), 現場に出す]
+    examples:
+      - [延長30分, 30, 4000, ○]
+      - [延長60分, 60, 8000, ○]
+    source: {sample: pricing, question: 延長メニュー}
+
+  - id: service_charge
+    route: form
+    section: S3
+    label: サービス料
+    type: radio
+    options: [なし, 10%, 15%, 20%, その他]
+    other: {type: number, unit: "%", min: 0, max: 100}
+    unknown_option: true
+    hint: 会計の小計にかける割合です
+    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+
+  - id: house_charge
+    route: form
+    section: S3
+    label: ハウスチャージ
+    type: number
+    unit: 円
+    hint: なければ0を入れてください
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+
+  - id: per_person_charge
+    route: form
+    section: S3
+    label: 人数分で課金するもの
+    type: checkbox
+    options: [セット・延長を人数分, ハウスチャージを人数分]
+    unknown_option: true
+    source: {sample: pricing, question: 人数分で課金するもの}
+
+  - id: total_rounding_unit
+    route: form
+    section: S3
+    label: 総額の端数処理(単位)
+    type: dropdown
+    options: [なし, 10円, 100円, 500円, 1000円]
+    unknown_option: true
+    source: {sample: pricing, question: 総額の端数処理}
+
+  - id: total_rounding_mode
+    route: form
+    section: S3
+    label: 総額の端数処理(方法)
+    type: dropdown
+    options: [切り捨て, 切り上げ]
+    unknown_option: true
+    source: {sample: pricing, question: 総額の端数処理}
+
+  - id: extension_alert
+    route: form
+    section: S3
+    label: 延長アラート
+    type: dropdown
+    options: [終了の5分前, 終了の10分前, 終了の15分前]
+    unknown_option: true
+    hint: この時刻になると、卓の色が変わってお知らせします
+    source: {sample: pricing, question: 延長アラート（終了の何分前に卓の色を変えるか）}
+
+  - id: auto_extension
+    route: form
+    section: S3
+    label: 自動延長
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    hint: 主にバー・スナック向けの機能です
+    source: {sample: pricing, question: 自動延長を使うか}
+
+  - id: auto_extension_interval
+    route: form
+    section: S3
+    label: 自動延長の間隔
+    type: number
+    unit: 分ごと
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: auto_extension, equals: 使う}
+    source: {sample: pricing, question: 自動延長の内容}
+
+  - id: auto_extension_price
+    route: form
+    section: S3
+    label: 自動延長の金額
+    type: number
+    unit: 円
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: auto_extension, equals: 使う}
+    source: {sample: pricing, question: 自動延長の内容}
+
+  - id: late_night_surcharge
+    route: form
+    section: S3
+    label: 深夜割増
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    hint: 卓を開いた時刻が基準時刻以降なら、会計に定額を1回だけ加えます
+    source: {sample: pricing, question: 深夜割増を使うか}
+
+  - id: late_night_surcharge_from
+    route: form
+    section: S3
+    label: 深夜割増の基準時刻(時)
+    type: dropdown
+    options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    unknown_option: true
+    show_if: {item: late_night_surcharge, equals: 使う}
+    source: {sample: pricing, question: 深夜割増の内容}
+
+  - id: late_night_surcharge_amount
+    route: form
+    section: S3
+    label: 深夜割増の金額(1セットあたり)
+    type: number
+    unit: 円
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: late_night_surcharge, equals: 使う}
+    source: {sample: pricing, question: 深夜割増の内容}
+
+  - id: sales_target
+    route: form
+    section: S3
+    label: 売上目標の表示と達成時インセンティブ
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    hint: 本日の売上目標をフロアに表示し、達成したら黒服にインセンティブを付けます
+    source: {sample: pricing, question: 本日の売上目標をフロアに表示するか}
+
+  - id: incentive_per_person
+    route: form
+    section: S3
+    label: 達成時インセンティブ(1人あたり)
+    type: number
+    unit: 円
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: sales_target, equals: 使う}
+    source: {sample: pricing, question: 達成時インセンティブ}
+
+  - id: incentive_headcount
+    route: form
+    section: S3
+    label: 達成時インセンティブの対象人数
+    type: number
+    unit: 人
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: sales_target, equals: 使う}
+    source: {sample: pricing, question: 達成時インセンティブ}
+
+  # ── 既存見本 ③ 指名・バック設定 ───────────────────────────
+
+  - id: nomination_types
+    route: template
+    theme: 2
+    label: 指名区分
+    type: table
+    columns: [名称, 指名料(円), 課金単位, バックの決め方(円/%), 金額または率]
+    examples:
+      - [本指名, 3000, 1接客ごと, 円, 1000]
+      - [場内指名, 2000, 1接客ごと, "%", 50]
+      - [同伴, 3000, 1接客ごと, 円, 1000]
+      - [ヘルプ, 0, 1接客ごと, なし, ""]
+    source: {sample: nomination, question: 指名区分}
+
+  - id: help_sales
+    route: form
+    section: S4
+    label: ヘルプのキャストにも売上を付けるか
+    type: radio
+    options: [付ける(標準), 付けない]
+    unknown_option: true
+    source: {sample: nomination, question: ヘルプで付いたキャストにも売上を付けるか}
+
+  - id: sales_split
+    route: form
+    section: S4
+    label: 複数キャストでの売上折半
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    source: {doc: 3章 S4}
+
+  - id: back_rounding
+    route: form
+    section: S4
+    label: バック端数の丸め
+    type: dropdown
+    options: [1円, 10円, 100円]
+    unknown_option: true
+    source: {sample: nomination, question: バック端数の丸め単位}
+
+  - id: back_rules_notice
+    route: form
+    section: S4
+    label: バックの決め方
+    type: note
+    body: バックの決め方は、10パターンから訪問時に一緒に決めます
+    source: {sample: nomination, question: バックルール}
+
+  - id: back_rules
+    route: onsite
+    chapter: 5
+    label: バックルール(10パターン)・ボトル折半
+    type: table
+    columns: [ルール名, 対象の指名区分, 決め方, 金額 / 率]
+    onsite_note: 10パターンから店舗のルールを選び、その場で設定する
+    source: {sample: nomination, question: バックルール}
+
+  - id: back_rule_examples
+    route: onsite
+    chapter: 5
+    label: 指名バックの決め方(記入例)
+    type: table
+    columns: [ルール名, 対象の指名区分, 決め方, 金額 / 率]
+    onsite_note: バックルール設定時の例として使う
+    source: {sample: nomination, question: （記入例）指名バックの決め方}
+
+  # ── 既存見本 ④ 税・インボイス ─────────────────────────────
+
+  - id: invoice_registered
+    route: form
+    section: S5
+    label: インボイス登録
+    type: radio
+    options: [登録している, 登録していない]
+    unknown_option: true
+    source: {sample: tax, question: 適格請求書 登録番号}
+
+  - id: invoice_number
+    route: form
+    section: S5
+    label: インボイス登録番号
+    type: short
+    placeholder: 例:T1234567890123
+    validation: {kind: regex, pattern: '^T\d{13}$', message: 「T」から始まる14文字で入力してください(例:T1234567890123)}
+    show_if: {item: invoice_registered, equals: 登録している}
+    source: {sample: tax, question: 適格請求書 登録番号}
+
+  - id: tax_rate_notice
+    route: form
+    section: S5
+    label: 税率
+    type: note
+    body: 税率は10%(軽減8%)で設定します
+    source: {sample: tax, question: 税率}
+
+  - id: tax_rate_standard
+    route: fixed
+    label: 標準税率
+    type: number
+    unit: "%"
+    default: 10
+    source: {sample: tax, question: 税率}
+
+  - id: tax_rate_reduced
+    route: fixed
+    label: 軽減税率
+    type: number
+    unit: "%"
+    default: 8
+    source: {sample: tax, question: 税率}
+
+  - id: price_display
+    route: form
+    section: S5
+    label: 価格の表示方法
+    type: radio
+    options: [内税(税込表示), 外税(税抜表示)]
+    unknown_option: true
+    source: {sample: tax, question: 表示価格}
+
+  # ── 既存見本 ⑤ 決済方法 ─────────────────────────────────
+
+  - id: cash_surcharge
+    route: fixed
+    label: 現金の上乗せ手数料
+    type: number
+    unit: "%"
+    default: 0
+    source: {sample: payments, question: 決済方法ごとの上乗せ手数料}
+
+  - id: card_surcharge
+    route: form
+    section: S6
+    label: カード払いの上乗せ手数料
+    type: radio
+    options: [なし, あり]
+    other: {type: number, unit: "%", min: 0, max: 100}
+    unknown_option: true
+    hint: カード会社の規約で、手数料の上乗せが禁止されている場合があります
+    source: {sample: payments, question: 決済方法ごとの上乗せ手数料}
+
+  - id: credit_surcharge
+    route: form
+    section: S6
+    label: 売掛の上乗せ手数料
+    type: radio
+    options: [なし, あり]
+    other: {type: number, unit: "%", min: 0, max: 100}
+    unknown_option: true
+    source: {sample: payments, question: 決済方法ごとの上乗せ手数料}
+
+  - id: card_fee
+    route: form
+    section: S6
+    label: カード決済手数料(店舗負担)
+    type: number
+    unit: "%"
+    hint: 内税(税込表示)のときだけ、自動で適用されます
+    validation: {kind: number, min: 0, max: 100, message: 0〜100の数字で入力してください}
+    source: {sample: payments, question: カード決済手数料（店舗共通）}
+
+  # ── 既存見本 ⑥ 商品メニュー ─────────────────────────────
+
+  - id: product_categories
+    route: template
+    theme: 3
+    label: カテゴリー
+    type: table
+    columns: [カテゴリー, 種別]
+    examples:
+      - [シャンパン, ボトル]
+      - [ソフトドリンク, ドリンク]
+    source: {sample: products, question: カテゴリー}
+
+  - id: products
+    route: template
+    theme: 3
+    label: 商品
+    type: table
+    columns: [カテゴリー, 種別, 商品名, 価格(円), 原価(任意), キャストドリンク, ボトルキープ, 税区分]
+    examples:
+      - [シャンパン, ボトル, ヴーヴクリコ, 28000, 18000, "", ○, 標準10%]
+      - [ソフトドリンク, ドリンク, ウーロン茶, 800, "", ○, "", 標準10%]
+    source: {sample: products, question: 商品}
+
+  - id: product_variants
+    route: onsite
+    label: 商品ごとの種類・時価
+    type: note
+    onsite_note: 商品をPOSへ転記したあと、訪問時に確認する
+    source: {sample: products, question: 商品ごとの「種類」（例：ヴーヴクリコ→イエロー/ホワイト）や「時価」設定は、商品を登録したあと個別に伺います。}
+
+  # ── 既存見本 ⑦ 卓とフロアマップ ───────────────────────────
+
+  - id: tables
+    route: template
+    theme: 4
+    label: 卓の一覧
+    type: table
+    columns: [卓名, 席数(任意)]
+    examples:
+      - [VIP1, ""]
+      - [カウンター, ""]
+      - [個室A, ""]
+    source: {sample: tables, question: 卓の一覧}
+
+  - id: floor_map
+    route: onsite
+    chapter: 2
+    label: フロアマップの配置
+    type: note
+    onsite_note: フロアマップ上で卓をドラッグして配置する
+    source: {sample: tables, question: フロアマップ上の配置（どの位置に置くか）は、導入日にPOS画面上でドラッグして決めます。ここでは卓の名前と数だけ伺います。}
+
+  # ── 既存見本 ⑧ 流入経路 ─────────────────────────────────
+
+  - id: referral_tags
+    route: form
+    section: S9
+    label: 来店きっかけの集計タグ
+    type: checkbox
+    options: [新規, リピーター, 紹介, SNS, ビラ, 看板]
+    other: {type: short}
+    unknown_option: true
+    hint: 金額の計算には影響しません。あとから追加できます
+    source: {sample: referral, question: 集計タグ}
+
+  # ── 既存見本 ⑨ 経費カテゴリ ─────────────────────────────
+
+  - id: expense_categories
+    route: form
+    section: S9
+    label: 使う経費カテゴリ
+    type: checkbox
+    options: [仕入, 広告宣伝費, 送迎費, 人件費(時給以外)]
+    other: {type: short}
+    unknown_option: true
+    source: {sample: expenses, question: 経費カテゴリ}
+
+  - id: cost_categories
+    route: form
+    section: S9
+    label: 原価に含めるカテゴリ
+    type: checkbox
+    options: [仕入, 広告宣伝費, 送迎費, 人件費(時給以外)]
+    other: {type: short}
+    unknown_option: true
+    hint: 粗利の計算に使います
+    source: {sample: expenses, question: 経費カテゴリ}
+
+  # ── 既存見本 ⑩ レジ・日報 ───────────────────────────────
+
+  - id: register_float
+    route: form
+    section: S7
+    label: いつものレジ金(釣銭準備額)
+    type: number
+    unit: 円
+    placeholder: 例:50000
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: register, question: いつものレジ金（釣銭準備額）}
+
+  - id: cash_diff_lower
+    route: form
+    section: S7
+    label: 現金過不足の許容範囲(下限・マイナス)
+    type: number
+    unit: 円
+    placeholder: 例:1000
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: register, question: 現金過不足の許す範囲}
+
+  - id: cash_diff_upper
+    route: form
+    section: S7
+    label: 現金過不足の許容範囲(上限・プラス)
+    type: number
+    unit: 円
+    placeholder: 例:1000
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: register, question: 現金過不足の許す範囲}
+
+  - id: daily_report_pdf
+    route: form
+    section: S7
+    label: 日報をPDFで出力するか
+    type: radio
+    options: [する, しない]
+    unknown_option: true
+    source: {sample: register, question: 日報の出力形式}
+
+  # ── 既存見本 ⑪ プリンター・領収書 ─────────────────────────
+
+  - id: receipt_printer
+    route: form
+    section: S8
+    label: レシートプリンター
+    type: radio
+    options: [ある, これから用意, 使わない]
+    unknown_option: true
+    skip_to_on: {使わない: S9}
+    source: {doc: 3章 S8}
+
+  - id: printer_device
+    route: onsite
+    chapter: 8
+    label: プリンター名・機器名
+    type: note
+    onsite_note: 現物で確認する
+    source: {sample: printer, question: プリンター本体}
+
+  - id: paper_width
+    route: form
+    section: S8
+    label: 用紙幅
+    type: radio
+    options: [58mm, 80mm]
+    unknown_option: true
+    source: {sample: printer, question: 使用する用紙幅}
+
+  - id: cloudprnt
+    route: form
+    section: S8
+    label: 自動印字(CloudPRNT)
+    type: radio
+    options: [使う, 使わない]
+    unknown_option: true
+    hint: CloudPRNT=注文を自動で印刷する仕組みです
+    source: {sample: printer, question: 自動印字（CloudPRNT）を使うか}
+
+  - id: receipt_design
+    route: form
+    section: S8
+    label: 領収書のデザイン
+    type: radio
+    options: [シンプル, 二重罫, タイトル帯付き]
+    unknown_option: true
+    option_images: true   # 各選択肢の直前に見本画像を置く(9章 未決事項)
+    source: {sample: printer, question: 領収書のデザイン}
+
+  - id: receipt_fields
+    route: form
+    section: S8
+    label: 領収書に刷る内容
+    type: checkbox
+    options: [住所, 事業者名, インボイス登録番号]
+    unknown_option: true
+    hint: 店舗名・電話番号は必ず印字します
+    source: {sample: printer, question: 領収書に刷る内容}
+
+  - id: stamp_threshold
+    route: form
+    section: S8
+    label: 収入印紙の案内(この金額以上で表示)
+    type: number
+    unit: 円
+    default: 50000
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: printer, question: 収入印紙}
+
+  - id: stamp_basis
+    route: form
+    section: S8
+    label: 収入印紙の判定に使う金額
+    type: radio
+    options: [お預かり金額, お会計金額]
+    unknown_option: true
+    source: {sample: printer, question: 収入印紙}
+
+  - id: slip_numbering
+    route: form
+    section: S8
+    label: 伝票番号の採番
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    source: {sample: printer, question: 伝票番号の採番}
+
+  - id: slip_prefix
+    route: form
+    section: S8
+    label: 伝票番号の接頭辞(任意)
+    type: short
+    placeholder: 例:A
+    show_if: {item: slip_numbering, equals: 使う}
+    source: {sample: printer, question: 伝票番号の採番}
+
+  - id: slip_start
+    route: form
+    section: S8
+    label: 伝票番号の開始番号
+    type: number
+    placeholder: 例:1
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: slip_numbering, equals: 使う}
+    source: {sample: printer, question: 伝票番号の採番}
+
+  - id: slip_reset
+    route: form
+    section: S8
+    label: 採番のリセット単位
+    type: dropdown
+    options: [リセットしない, 営業日ごと, 月初にリセット]
+    unknown_option: true
+    show_if: {item: slip_numbering, equals: 使う}
+    source: {sample: printer, question: 採番のリセット単位}
+
+  - id: print_targets
+    route: form
+    section: S8
+    label: 印刷するもの
+    type: checkbox
+    options: [概算伝票, 会計伝票, 精算伝票, 領収書]
+    unknown_option: true
+    source: {sample: printer, question: 印刷するもの}
+
+  - id: kitchen_slip
+    route: form
+    section: S8
+    label: キッチン伝票
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    source: {sample: printer, question: キッチン伝票に印刷するカテゴリ}
+
+  - id: kitchen_categories
+    route: form
+    section: S8
+    label: キッチン伝票に印刷するカテゴリ
+    type: checkbox
+    options: [ドリンク, ボトル, フード, その他]
+    unknown_option: true
+    show_if: {item: kitchen_slip, equals: 使う}
+    source: {sample: printer, question: キッチン伝票に印刷するカテゴリ}
+
+  # ── 既存見本 ⑫ メンバー台帳 ─────────────────────────────
+
+  - id: cast_roster
+    route: template
+    theme: 5
+    label: キャスト
+    type: table
+    columns: [源氏名, ランク(あれば), 区分]
+    examples:
+      - [ココ, レギュラー, 在籍]
+      - [りん, なし, 体験入店]
+    source: {sample: roster, question: キャスト}
+
+  - id: staff_roster
+    route: template
+    theme: 5
+    label: スタッフ
+    type: table
+    columns: [名前, 職種]
+    examples:
+      - [山田, ボーイ]
+      - [田中, キッチン]
+    source: {sample: roster, question: スタッフ}
+
+  - id: member_pay
+    route: onsite
+    chapter: 11
+    label: 時給・ランク(キャスト・スタッフごと)
+    type: note
+    onsite_note: 店舗がPOSへ直接入力する(最初の1〜2人は一緒に)
+    source: {sample: roster, question: キャスト}
+
+  - id: member_personal_info
+    route: onsite
+    chapter: 11
+    label: 個人情報(本名・生年月日・電話・住所・口座・緊急連絡先・身分証)
+    type: note
+    onsite_note: キャスト本人が端末で入力し、身分証を提示する
+    source: {sample: roster, question: 個人情報（本名・生年月日・電話・住所・給与振込口座・緊急連絡先・身分証明書の提出状況）は、すべて任意項目です。オーナー・店長だけが見られる欄に、あとからメンバーごとに個別入力します。}
+
+  - id: member_withholding
+    route: onsite
+    chapter: 11
+    label: 源泉区分(キャストごと)
+    type: note
+    onsite_note: 店舗がPOSへ直接入力する
+    source: {sample: roster, question: （キャストごとに）源泉区分}
+
+  - id: member_commute
+    route: onsite
+    chapter: 11
+    label: 交通費(キャストごとの最寄り駅・送りエリア)
+    type: note
+    onsite_note: 店舗がPOSへ直接入力する
+    source: {sample: roster, question: （キャストごとに）交通費}
+
+  # ── 既存見本 ⑬ 給与運用設定 ─────────────────────────────
+
+  - id: closing_day
+    route: form
+    section: S10
+    label: 締め日
+    type: dropdown
+    options: [5日, 10日, 15日, 20日, 25日, 末日]
+    unknown_option: true
+    source: {sample: payroll, question: 締め日 ／ 支払日}
+
+  - id: pay_day
+    route: form
+    section: S10
+    label: 支払日
+    type: dropdown
+    options: [5日, 10日, 15日, 20日, 25日, 末日]
+    unknown_option: true
+    source: {sample: payroll, question: 締め日 ／ 支払日}
+
+  - id: wage_rounding_unit
+    route: form
+    section: S10
+    label: 時給の丸め(単位)
+    type: dropdown
+    options: [1分, 5分, 10分, 15分, 30分]
+    unknown_option: true
+    source: {sample: payroll, question: 時給の丸め}
+
+  - id: wage_rounding_mode
+    route: form
+    section: S10
+    label: 時給の丸め(方法)
+    type: dropdown
+    options: [切り捨て, 切り上げ]
+    unknown_option: true
+    source: {sample: payroll, question: 時給の丸め}
+
+  - id: main_withholding_type
+    route: form
+    section: S10
+    label: 主に使う源泉区分
+    type: radio
+    options: [報酬源泉10.21%, ホステス源泉(日額5,000円控除), 給与源泉]
+    unknown_option: true
+    hint: 率は初期値で設定します。キャストごとの区分は訪問時に入力します
+    source: {sample: payroll, question: 源泉率}
+
+  - id: withholding_rates
+    route: fixed
+    label: 源泉率
+    type: table
+    columns: [区分, 率 / 控除額]
+    default:
+      - [報酬源泉, 10.21%]
+      - [ホステス源泉, 10.21%(日額控除 5,000円)]
+      - [給与源泉, 0%]
+    source: {sample: payroll, question: 源泉率}
+
+  - id: commute_min_hours
+    route: form
+    section: S10
+    label: 交通費の対象になる最低勤務時間
+    type: number
+    unit: 時間
+    validation: {kind: number, min: 0, max: 24, message: 0〜24の数字で入力してください}
+    source: {sample: payroll, question: 交通費の対象条件}
+
+  - id: commute_full_day_hours
+    route: form
+    section: S10
+    label: フル日とみなす勤務時間
+    type: number
+    unit: 時間
+    validation: {kind: number, min: 0, max: 24, message: 0〜24の数字で入力してください}
+    source: {sample: payroll, question: 交通費の対象条件}
+
+  - id: welfare_amount
+    route: form
+    section: S10
+    label: 福利厚生費
+    type: number
+    unit: 円
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: payroll, question: 福利厚生費}
+
+  - id: welfare_unit
+    route: form
+    section: S10
+    label: 福利厚生費の単位
+    type: radio
+    options: [期間ごと, 出勤日ごと]
+    unknown_option: true
+    source: {sample: payroll, question: 福利厚生費}
+
+  - id: late_deduction
+    route: form
+    section: S10
+    label: 遅刻控除
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    source: {sample: payroll, question: 遅刻控除を使うか}
+
+  - id: late_deduction_per_minute
+    route: form
+    section: S10
+    label: 遅刻控除(1分あたり)
+    type: number
+    unit: 円
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: late_deduction, equals: 使う}
+    source: {sample: payroll, question: 遅刻控除の内容}
+
+  - id: late_penalty_points
+    route: onsite
+    chapter: 12
+    label: 遅刻の減点(1分あたり・pt)
+    type: note
+    onsite_note: 3章のフォームでは聞かない。ポイント時給を使う店舗だけ、訪問時に設定する
+    source: {sample: payroll, question: 遅刻控除の内容}
+
+  - id: late_grace_minutes
+    route: form
+    section: S10
+    label: 遅刻の猶予
+    type: number
+    unit: 分
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: late_deduction, equals: 使う}
+    source: {sample: payroll, question: 遅刻の猶予・上限}
+
+  - id: late_daily_cap
+    route: form
+    section: S10
+    label: 遅刻控除の1日の上限
+    type: number
+    unit: 円
+    hint: 空欄なら上限なし
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: late_deduction, equals: 使う}
+    source: {sample: payroll, question: 遅刻の猶予・上限}
+
+  - id: daily_advance_cap
+    route: form
+    section: S10
+    label: 日払いの上限
+    type: number
+    unit: 円
+    hint: 空欄なら上限なし
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    source: {sample: payroll, question: 日払いの上限}
+
+  - id: pay_ratio_alert
+    route: form
+    section: S10
+    label: 給率の警告しきい値(任意)
+    type: number
+    unit: "%"
+    hint: 担当売上に対するバック率がこれを超えたら、画面でお知らせします
+    validation: {kind: number, min: 0, max: 100, message: 0〜100の数字で入力してください}
+    source: {sample: payroll, question: 給率の警告しきい値}
+
+  - id: send_areas
+    route: template
+    theme: 6
+    label: 送りエリアごとの送り代
+    type: table
+    columns: [エリア名, 送り代(円)]
+    examples:
+      - [みなとみらい, 1500]
+      - [関内, 1000]
+    source: {sample: payroll, question: 送りエリア別の金額}
+
+  - id: busy_hours
+    route: template
+    theme: 6
+    label: 時給を上げる時間帯
+    type: table
+    columns: [開始, 終了, 倍率または加算額]
+    examples:
+      - ["22:00", "24:00", 1.2倍]
+    source: {sample: payroll, question: 繁忙時間帯の時給（期間限定）}
+
+  # ── 要件定義書で追加(見本にない項目) ─────────────────────
+
+  - id: visit_date_1
+    route: form
+    section: S11
+    label: 訪問の希望日時(第1希望)
+    type: datetime
+    source: {doc: 3章 S11}
+
+  - id: visit_date_2
+    route: form
+    section: S11
+    label: 訪問の希望日時(第2希望)
+    type: datetime
+    source: {doc: 3章 S11}
+
+  - id: visit_attendees
+    route: form
+    section: S11
+    label: 当日同席できる人
+    type: checkbox
+    options: [オーナー, 店長, スタッフ, 厨房, キャスト]
+    unknown_option: true
+    source: {doc: 3章 S11}
+
+  - id: visit_concerns
+    route: form
+    section: S11
+    label: 気になっていること
+    type: paragraph
+    source: {doc: 3章 S11}
