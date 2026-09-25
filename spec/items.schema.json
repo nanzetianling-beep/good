@@ -290,7 +290,10 @@
           "description": "「未定」を付けるか"
         },
         "option_images": {
-          "type": "boolean"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "skip_to_on": {
           "type": "object",

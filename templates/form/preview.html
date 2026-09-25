@@ -78,7 +78,10 @@
   .errmsg::before{content:"!";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--error);color:#fff;font-size:11px;font-weight:700}
   .samples{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .samples figure{margin:0;display:flex;flex-direction:column;gap:4px;align-items:center;font-size:12px;color:var(--muted)}
-  .samples svg{width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+  .samples img{width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+  .samples .sample-missing{width:100%;aspect-ratio:4/5;border:1px dashed var(--line-2);border-radius:4px;display:grid;place-items:center;
+    color:var(--faint);font-size:12px;text-align:center;padding:8px}
+  .samples figcaption{font-size:14px;color:var(--ink);font-weight:500}
   .nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:4px}
   .btn{font:inherit;font-size:14px;font-weight:500;border-radius:4px;min-height:44px;padding:0 24px;cursor:pointer;border:1px solid var(--line-2);background:var(--card);color:var(--accent)}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -130,21 +133,15 @@ const el = (tag, attrs = {}, ...kids) => {
 const visible = (it) => !it.show_if || answers[it.show_if.item] === String(it.show_if.equals);
 const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
 
-function receiptSamples() {
-  const r = (title, body) => el("figure", {}, (() => {
-    const w = document.createElement("div");
-    w.innerHTML = `<svg viewBox="0 0 120 150" role="img" aria-label="${title}の見本">${body}
-      <text x="60" y="${title === "タイトル帯付き" ? 21 : 26}" text-anchor="middle" font-size="11" font-weight="700" fill="${title === "タイトル帯付き" ? "#fff" : "#202124"}">領 収 書</text>
-      <rect x="18" y="48" width="84" height="6" rx="2" fill="#dadce0"/><rect x="18" y="68" width="60" height="10" rx="2" fill="#bdc1c6"/>
-      <rect x="18" y="92" width="84" height="4" rx="2" fill="#e8eaed"/><rect x="18" y="102" width="70" height="4" rx="2" fill="#e8eaed"/>
-      <rect x="18" y="124" width="50" height="4" rx="2" fill="#e8eaed"/></svg>`;
-    return w.firstElementChild;
-  })(), el("figcaption", { text: title }));
-  return el("div", { class: "samples" },
-    r("シンプル", `<rect x="8" y="8" width="104" height="134" fill="none" stroke="#5f6368" stroke-width="1"/>`),
-    r("二重罫", `<rect x="8" y="8" width="104" height="134" fill="none" stroke="#5f6368" stroke-width="1"/><rect x="12" y="12" width="96" height="126" fill="none" stroke="#5f6368" stroke-width="0.8"/>`),
-    r("タイトル帯付き", `<rect x="8" y="8" width="104" height="134" fill="none" stroke="#5f6368" stroke-width="1"/><rect x="8" y="8" width="104" height="20" fill="#673ab7"/>`)
-  );
+function optionSamples(it) {
+  // 選択肢ごとの見本画像(ポッキリ.Night の実際の領収書)。画像が無い番号は枠だけ出す
+  return el("div", { class: "samples" }, it.options.map((o, i) => {
+    const src = it.option_images[i];
+    return el("figure", {},
+      src ? el("img", { src, alt: `${it.label} ${o}の見本` })
+          : el("div", { class: "sample-missing", text: "見本画像を準備中" }),
+      el("figcaption", { text: String(o) }));
+  }));
 }
 
 function renderInput(it) {
@@ -297,7 +294,7 @@ function questionCard(it) {
     el("h3", { class: "q-title" }, it.label, it.required ? el("span", { class: "star", text: "*", "aria-label": "必須" }) : null));
   if (it.type === "note") { card.append(el("div", { class: "q-body", text: it.body || "" })); return card; }
   if (it.hint) card.append(el("p", { class: "q-hint", text: it.hint }));
-  if (it.option_images) card.append(receiptSamples());
+  if (it.option_images) card.append(optionSamples(it));
   card.append(renderInput(it));
   if (errors[it.id]) card.append(el("div", { class: "errmsg", text: errors[it.id] }));
   return card;

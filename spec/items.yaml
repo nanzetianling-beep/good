@@ -643,9 +643,11 @@ items:
     section: S8
     label: 領収書のデザイン
     type: radio
-    options: [シンプル, 二重罫, タイトル帯付き]
+    options: ["1", "2", "3"]
     unknown_option: true
-    option_images: true   # 各選択肢の直前に見本画像を置く(9章 未決事項)
+    hint: 下の見本から、刷りたいデザインの番号を選んでください
+    # 各選択肢の見本画像(ポッキリ.Night の実際の領収書)。ファイルが無い番号は「見本画像を準備中」と表示する
+    option_images: [form/images/receipt-1.png, form/images/receipt-2.png, form/images/receipt-3.png]
     source: {sample: printer, question: 領収書のデザイン}
 
   - id: receipt_fields
