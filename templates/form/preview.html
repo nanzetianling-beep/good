@@ -28,7 +28,7 @@
   .sec p{margin:0;color:var(--ink)}
   .q{display:flex;flex-direction:column;gap:12px;transition:border-color .15s}
   .q.err{border-color:var(--error)}
-  .q-title{font-size:16px;font-weight:400;line-height:1.5;margin:0}
+  .q-title{font-size:16px;font-weight:400;line-height:1.5;margin:0;white-space:pre-line}
   .q-title .star{color:var(--error);margin-left:4px}
   .q-hint{font-size:13px;color:var(--muted);margin:-6px 0 0;white-space:pre-line}
   .q.note .q-title{font-size:18px}
@@ -48,6 +48,14 @@
   .opt .other{flex:1;min-width:120px;width:auto}
   select.text-in{width:auto;min-width:200px;border:1px solid var(--line-2);border-radius:4px;padding:8px 12px}
   select.text-in:focus{border:2px solid var(--accent);padding:7px 11px}
+  .hours{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .hour{flex:none;width:48px;height:48px;border-radius:50%;border:1px solid var(--line-2);background:var(--card);color:var(--ink);
+    font:inherit;font-size:16px;font-variant-numeric:tabular-nums;cursor:pointer;scroll-snap-align:start;display:grid;place-items:center}
+  .hour:hover{border-color:var(--accent);color:var(--accent)}
+  .hour[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+  .hour:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .hour-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+  .hour-foot b{color:var(--accent);font-size:15px}
   .dt{display:flex;gap:24px;flex-wrap:wrap}
   .dt label{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
   .dt input{width:180px;min-width:0}
@@ -107,7 +115,7 @@ const el = (tag, attrs = {}, ...kids) => {
 };
 
 const visible = (it) => !it.show_if || answers[it.show_if.item] === String(it.show_if.equals);
-const otherHost = (it) => it.other && (it.options.includes("その他") ? "その他" : it.options.includes("あり") ? "あり" : null);
+const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
 
 function receiptSamples() {
   const r = (title, body) => el("figure", {}, (() => {
@@ -147,6 +155,25 @@ function renderInput(it) {
       el("label", {}, "日付", el("input", { class: "text-in", id: id + "_d", type: "date", value: cur.d || "", onchange: upd("d") })),
       el("label", {}, "時刻", el("input", { class: "text-in", id: id + "_t", type: "time", value: cur.t || "", onchange: upd("t") })));
   }
+  if (it.type === "hour") {
+    // 時計の数字のように、0〜23時を横に並べて選ぶ
+    const cur = answers[it.id];
+    const row = el("div", { class: "hours", role: "radiogroup", "aria-label": it.label });
+    it.options.map(String).forEach((h) => row.append(el("button", {
+      class: "hour", type: "button", role: "radio", "aria-checked": String(cur === h), "aria-label": h + "時", text: h,
+      onclick: () => { set(h); render(); } })));
+    const foot = el("div", { class: "hour-foot" },
+      el("span", {}, cur && cur !== UNKNOWN ? el("b", { text: cur + "時" }) : "左右にスクロールして選べます"));
+    if (it.unknown_option) foot.append(el("label", { class: "opt unknown" },
+      el("input", { type: "checkbox", id: id + "_unk", checked: cur === UNKNOWN,
+        onchange: (e) => { if (e.target.checked) set(UNKNOWN); else delete answers[it.id]; render(); } }),
+      el("span", { class: "lbl", text: UNKNOWN })));
+    queueMicrotask(() => {           // 選んだ時刻が見える位置までスクロール
+      const on = row.querySelector('[aria-checked="true"]');
+      if (on) row.scrollLeft = on.offsetLeft - row.clientWidth / 2 + 24;
+    });
+    return el("div", {}, row, foot);
+  }
   if (it.type === "dropdown") {
     const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);
     return el("select", { class: "text-in", id, "aria-label": it.label, onchange: (e) => { set(e.target.value); render(); } },
@@ -174,7 +201,7 @@ function renderInput(it) {
           render();
         } });
       const row = el("label", { class: "opt" + (o === UNKNOWN ? " unknown" : ""), for: oid }, input,
-        el("span", { class: "lbl", text: (o === "その他" && it.other) ? "その他:" : o }));
+        el("span", { class: "lbl", text: ((o === "その他" || o === "記入") && it.other) ? o + ":" : o }));
       if (it.other && (o === host || (extraOther && o === "その他")) && checked) {
         row.append(el("input", { class: "text-in other", id: oid + "_other", type: "text",
           inputmode: it.other.type === "number" ? "decimal" : "text", value: others[it.id] || "",

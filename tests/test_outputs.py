@@ -28,23 +28,23 @@ def spec():
 # ── ① 導入アンケート ─────────────────────────────
 
 
-def test_form_has_11_sections_with_questions(spec):
+def test_form_has_9_sections_with_questions(spec):
     fs = build_form.form_spec(spec)
-    assert len(fs["sections"]) == 11
+    assert len(fs["sections"]) == 9
     assert all(sec["items"] for sec in fs["sections"])
 
 
 def test_form_choices_offer_unknown(spec):
     for sec in build_form.form_spec(spec)["sections"]:
         for it in sec["items"]:
-            if it["type"] in ("radio", "checkbox", "dropdown") and not it.get("required"):
+            if it["type"] in ("radio", "checkbox", "dropdown", "hour") and not it.get("required"):
                 assert it.get("unknown_option"), it["id"]
 
 
 def test_form_validation_rules_present(spec):
     rules = {it["id"]: it.get("validation") for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
     assert rules["invoice_number"]["pattern"] == r"^T\d{13}$"
-    assert rules["house_charge"]["kind"] == "integer"
+    assert rules["house_charge_amount"]["kind"] == "integer"
     assert rules["card_fee"]["max"] == 100
 
 
@@ -199,3 +199,13 @@ def test_checklist_fits_one_page(lecture):
     assert len(text.splitlines()) <= 40
     for c in build_slides.FINAL_CHECKS:
         assert f"□ {c}" in text
+
+
+def test_form_options_are_not_split_by_commas(spec):
+    # YAML のフロー記法でカンマを含む選択肢が分割されないこと
+    by_id = {it["id"]: it for it in spec["items"]}
+    assert "ホステス源泉(日額5,000円控除)" in by_id["main_withholding_type"]["options"]
+    for it in spec["items"]:
+        for o in it.get("options", []):
+            s = str(o)
+            assert s.count("(") == s.count(")"), (it["id"], s)

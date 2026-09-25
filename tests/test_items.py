@@ -27,10 +27,10 @@ def test_every_item_has_route(spec):
     assert all(it.get("route") for it in spec["items"])
 
 
-def test_form_has_11_sections(spec):
+def test_form_has_9_sections(spec):
     used = {it["section"] for it in spec["items"] if it["route"] == "form"}
     assert used == {s["id"] for s in spec["sections"]}
-    assert len(used) == 11
+    assert len(used) == 9
 
 
 def test_template_has_6_themes(spec):
