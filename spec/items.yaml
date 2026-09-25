@@ -3,6 +3,8 @@
 # ①導入アンケート・②記入テンプレート・③対面レクチャー資料は、すべてこのファイルから生成する。
 # 成果物のファイルを手で直さず、このファイルかテンプレートを直して再生成すること。
 #
+# excluded … 見本にあるが扱わない質問(reason に理由)
+#
 # route:
 #   form     … ① 導入アンケート(section: S1〜S11)
 #   template … ② 記入テンプレート(theme: 1〜6)
@@ -53,18 +55,18 @@ chapters:
   - {id: 12, title: 出退勤と遅刻, minutes: 5}
   - {id: 13, title: 困ったとき, minutes: 5}
 
+# 見本にあるが、キットでは扱わないと決めた質問(どの成果物にも出さない)
+excluded:
+  - {sample: store, question: 店舗名, reason: 不要と判断}
+  - {sample: store, question: 業態, reason: 不要と判断}
+  - {sample: store, question: 郵便番号 ／ 電話番号, reason: 不要と判断}
+  - {sample: store, question: 住所, reason: 不要と判断}
+  - {sample: store, question: 事業者名（法人名）, reason: 不要と判断}
+  - {sample: store, question: 最寄り駅, reason: 不要と判断}
+
 items:
 
   # ── 既存見本 ① 店舗情報 ─────────────────────────────
-
-  - id: store_name
-    route: form
-    section: S1
-    label: 店舗名
-    type: short
-    required: true
-    placeholder: 例:クラブ ポッキリ
-    source: {sample: store, question: 店舗名}
 
   - id: respondent
     route: form
@@ -73,63 +75,6 @@ items:
     type: short
     placeholder: 例:山田(店長)
     source: {doc: 3章 S1}
-
-  - id: business_type
-    route: form
-    section: S1
-    label: 業態
-    type: radio
-    required: true
-    options: [キャバクラ・ラウンジ, ガールズバー・バー・スナック, ホスト, その他]
-    unknown_option: false   # 必須項目のため「わからない」は付けない
-    hint: 料金セットやバックのひな形を、業態に合わせて用意します
-    source: {sample: store, question: 業態}
-
-  - id: postal_code
-    route: form
-    section: S2
-    label: 郵便番号
-    type: short
-    placeholder: 例:220-0011
-    hint: 領収書に印字します
-    validation: {kind: regex, pattern: '^\d{3}-?\d{4}$', message: 例:220-0011 の形で入力してください}
-    source: {sample: store, question: 郵便番号 ／ 電話番号}
-
-  - id: phone
-    route: form
-    section: S2
-    label: 電話番号
-    type: short
-    required: true
-    placeholder: 例:045-000-0000
-    validation: {kind: regex, pattern: '^0\d{1,4}-?\d{1,4}-?\d{3,4}$', message: 例:045-000-0000 の形で入力してください}
-    source: {sample: store, question: 郵便番号 ／ 電話番号}
-
-  - id: address
-    route: form
-    section: S2
-    label: 住所
-    type: short
-    placeholder: 例:神奈川県横浜市西区高島2-1-1
-    hint: 領収書に印字します
-    source: {sample: store, question: 住所}
-
-  - id: business_name
-    route: form
-    section: S2
-    label: 事業者名(法人名)
-    type: short
-    hint: 店名と同じなら空欄でOKです
-    source: {sample: store, question: 事業者名（法人名）}
-
-  - id: nearest_station
-    route: form
-    section: S2
-    label: 最寄り駅
-    type: short
-    placeholder: 例:横浜
-    hint: キャストの交通費の計算に使います
-    source: {sample: store, question: 最寄り駅}
 
   - id: shift_split
     route: form

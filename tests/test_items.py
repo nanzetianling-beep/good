@@ -38,9 +38,16 @@ def test_template_has_6_themes(spec):
     assert used == {1, 2, 3, 4, 5, 6}
 
 
-def test_only_three_required_questions(spec):
-    required = {it["id"] for it in spec["items"] if it.get("required")}
-    assert required == {"store_name", "phone", "business_type"}
+def test_no_required_questions(spec):
+    # 店舗名・電話番号・業態は聞かないことにしたため、必須の質問はない
+    assert [it["id"] for it in spec["items"] if it.get("required")] == []
+
+
+def test_excluded_store_info_is_not_asked(spec):
+    # 店舗の情報として①②で聞かない(③のキャスト個人情報・交通費は別物)
+    labels = [it["label"] for it in spec["items"] if it["route"] in ("form", "template")]
+    for word in ["店舗名", "業態", "郵便番号", "電話番号", "住所", "事業者名", "最寄り駅"]:
+        assert not any(word in label for label in labels), word
 
 
 # 6章: 個人情報・給与・ログイン情報の項目は ①② に作らない
@@ -51,7 +58,7 @@ FORBIDDEN = ["時給", "本名", "生年月日", "口座", "緊急連絡先", "�
 def test_no_sensitive_items_in_form_or_template(spec, word):
     # 店舗全体のルール(交通費の条件・時給の丸め・主に使う源泉区分・繁忙時間帯の時給)は対象外
     allowed = {
-        "nearest_station", "commute_min_hours", "wage_rounding_unit", "wage_rounding_mode",
+        "commute_min_hours", "wage_rounding_unit", "wage_rounding_mode",
         "main_withholding_type", "busy_hours",
     }
     offenders = [

@@ -4,18 +4,35 @@
   "title": "ポッキリ.Night 初期設定キット 項目定義",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "sections", "themes", "chapters", "items"],
+  "required": [
+    "version",
+    "sections",
+    "themes",
+    "chapters",
+    "items"
+  ],
   "properties": {
-    "version": {"const": 1},
+    "version": {
+      "const": 1
+    },
     "sections": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title"],
+        "required": [
+          "id",
+          "title"
+        ],
         "properties": {
-          "id": {"type": "string", "pattern": "^S([1-9]|1[01])$"},
-          "title": {"type": "string", "minLength": 1}
+          "id": {
+            "type": "string",
+            "pattern": "^S([1-9]|1[01])$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -24,11 +41,24 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title", "photo_ok"],
+        "required": [
+          "id",
+          "title",
+          "photo_ok"
+        ],
         "properties": {
-          "id": {"type": "integer", "minimum": 1, "maximum": 6},
-          "title": {"type": "string", "minLength": 1},
-          "photo_ok": {"type": "boolean"}
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "photo_ok": {
+            "type": "boolean"
+          }
         }
       }
     },
@@ -37,116 +67,405 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title", "minutes"],
+        "required": [
+          "id",
+          "title",
+          "minutes"
+        ],
         "properties": {
-          "id": {"type": "integer", "minimum": 0, "maximum": 13},
-          "title": {"type": "string", "minLength": 1},
-          "minutes": {"type": "integer", "minimum": 1}
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 13
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1
+          }
         }
       }
     },
     "items": {
       "type": "array",
       "minItems": 1,
-      "items": {"$ref": "#/$defs/item"}
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sample",
+          "question",
+          "reason"
+        ],
+        "properties": {
+          "sample": {
+            "$ref": "#/$defs/sample_id"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   },
   "$defs": {
-    "scalar": {"type": ["string", "number"]},
+    "scalar": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
     "item": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "route", "label", "type", "source"],
+      "required": [
+        "id",
+        "route",
+        "label",
+        "type",
+        "source"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
-        "route": {"enum": ["form", "template", "onsite", "fixed"]},
-        "section": {"type": "string", "pattern": "^S([1-9]|1[01])$"},
-        "theme": {"type": "integer", "minimum": 1, "maximum": 6},
-        "chapter": {"type": "integer", "minimum": 0, "maximum": 13},
-        "label": {"type": "string", "minLength": 1},
-        "type": {
-          "enum": ["short", "paragraph", "number", "radio", "checkbox", "dropdown", "datetime", "note", "table"]
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
         },
-        "required": {"type": "boolean"},
-        "options": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scalar"}},
+        "route": {
+          "enum": [
+            "form",
+            "template",
+            "onsite",
+            "fixed"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "pattern": "^S([1-9]|1[01])$"
+        },
+        "theme": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "chapter": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "short",
+            "paragraph",
+            "number",
+            "radio",
+            "checkbox",
+            "dropdown",
+            "datetime",
+            "note",
+            "table"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/scalar"
+          }
+        },
         "other": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
-            "type": {"enum": ["short", "number"]},
-            "unit": {"type": "string"},
-            "min": {"type": "number"},
-            "max": {"type": "number"}
+            "type": {
+              "enum": [
+                "short",
+                "number"
+              ]
+            },
+            "unit": {
+              "type": "string"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
           }
         },
-        "unknown_option": {"type": "boolean", "description": "「わからない・訪問時に相談」を付けるか"},
-        "option_images": {"type": "boolean"},
+        "unknown_option": {
+          "type": "boolean",
+          "description": "「わからない・訪問時に相談」を付けるか"
+        },
+        "option_images": {
+          "type": "boolean"
+        },
         "skip_to_on": {
           "type": "object",
-          "additionalProperties": {"type": "string", "pattern": "^S([1-9]|1[01])$"}
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^S([1-9]|1[01])$"
+          }
         },
         "show_if": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["item", "equals"],
+          "required": [
+            "item",
+            "equals"
+          ],
           "properties": {
-            "item": {"type": "string"},
-            "equals": {"$ref": "#/$defs/scalar"}
+            "item": {
+              "type": "string"
+            },
+            "equals": {
+              "$ref": "#/$defs/scalar"
+            }
           }
         },
-        "unit": {"type": "string"},
-        "placeholder": {"type": "string"},
-        "hint": {"type": "string"},
-        "body": {"type": "string"},
+        "unit": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
         "default": {},
         "validation": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "message"],
+          "required": [
+            "kind",
+            "message"
+          ],
           "properties": {
-            "kind": {"enum": ["regex", "integer", "number"]},
-            "pattern": {"type": "string", "format": "regex"},
-            "min": {"type": "number"},
-            "max": {"type": "number"},
-            "message": {"type": "string", "minLength": 1}
+            "kind": {
+              "enum": [
+                "regex",
+                "integer",
+                "number"
+              ]
+            },
+            "pattern": {
+              "type": "string",
+              "format": "regex"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            }
           },
-          "if": {"properties": {"kind": {"const": "regex"}}},
-          "then": {"required": ["pattern"]}
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "regex"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "pattern"
+            ]
+          }
         },
-        "columns": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-        "examples": {"type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/scalar"}}},
-        "onsite_note": {"type": "string", "minLength": 1},
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/scalar"
+            }
+          }
+        },
+        "onsite_note": {
+          "type": "string",
+          "minLength": 1
+        },
         "source": {
           "oneOf": [
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["sample", "question"],
+              "required": [
+                "sample",
+                "question"
+              ],
               "properties": {
                 "sample": {
-                  "enum": ["store", "pricing", "nomination", "tax", "payments", "products", "tables",
-                           "referral", "expenses", "register", "printer", "roster", "payroll"]
+                  "$ref": "#/$defs/sample_id"
                 },
-                "question": {"type": "string", "minLength": 1}
+                "question": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             },
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["doc"],
-              "properties": {"doc": {"type": "string", "minLength": 1}}
+              "required": [
+                "doc"
+              ],
+              "properties": {
+                "doc": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           ]
         }
       },
       "allOf": [
-        {"if": {"properties": {"route": {"const": "form"}}}, "then": {"required": ["section"]}},
-        {"if": {"properties": {"route": {"const": "template"}}}, "then": {"required": ["theme", "columns", "examples"]}},
-        {"if": {"properties": {"route": {"const": "onsite"}}}, "then": {"required": ["onsite_note"]}},
-        {"if": {"properties": {"route": {"const": "fixed"}}}, "then": {"required": ["default"]}},
-        {"if": {"properties": {"type": {"enum": ["radio", "checkbox", "dropdown"]}}}, "then": {"required": ["options"]}},
-        {"if": {"properties": {"type": {"const": "table"}}}, "then": {"required": ["columns"]}}
+        {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "form"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "section"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "template"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "theme",
+              "columns",
+              "examples"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "onsite"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "onsite_note"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "fixed"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "default"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "radio",
+                  "checkbox",
+                  "dropdown"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "options"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "table"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "columns"
+            ]
+          }
+        }
+      ]
+    },
+    "sample_id": {
+      "enum": [
+        "store",
+        "pricing",
+        "nomination",
+        "tax",
+        "payments",
+        "products",
+        "tables",
+        "referral",
+        "expenses",
+        "register",
+        "printer",
+        "roster",
+        "payroll"
       ]
     }
   }

@@ -66,10 +66,14 @@ def check(spec: dict) -> list[str]:
                 errors.append(f"{it['id']}: 選択式なのに unknown_option がありません")
 
     covered = {(it["source"]["sample"], it["source"]["question"]) for it in items if "sample" in it["source"]}
+    excluded = {(ex["sample"], ex["question"]) for ex in spec.get("excluded", [])}
+    for key in sorted(covered & excluded):
+        errors.append(f"excluded の質問が items にも残っています: {key[0]} / {key[1]}")
+    covered |= excluded
     for sec in load_sample_sections():
         for q in sec["questions"]:
             if (sec["id"], q["label"]) not in covered:
-                errors.append(f"見本の項目が items.yaml にありません: {sec['title']} / {q['label']}")
+                errors.append(f"見本の項目が items.yaml にも excluded にもありません: {sec['title']} / {q['label']}")
     known = {(s["id"], q["label"]) for s in load_sample_sections() for q in s["questions"]}
     for key in sorted(covered - known):
         errors.append(f"source が見本に存在しません: {key[0]} / {key[1]}")
@@ -82,7 +86,7 @@ def report(spec: dict) -> str:
     from_sample = Counter(it["route"] for it in items if "sample" in it["source"])
     questions = sum(len(s["questions"]) for s in load_sample_sections())
     lines = [
-        f"見本の質問数: {questions}",
+        f"見本の質問数: {questions}(うち扱わない {len(spec.get('excluded', []))})",
         f"items.yaml の項目数: {len(items)}(見本由来 {sum(from_sample.values())}・要件定義書で追加 "
         f"{len(items) - sum(from_sample.values())})",
         "",
