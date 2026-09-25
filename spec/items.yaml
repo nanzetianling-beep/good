@@ -173,11 +173,11 @@ items:
     theme: 1
     label: セット
     type: table
-    columns: [セット名, 時間(分), 料金(円), 延長(分), 延長料金(円)]
-    cells: [text, int, int, int, int]
+    columns: [セット名, 時間(分), 料金(円), 延長(分)]
+    cells: [text, int, int, int]
     examples:
-      - [セット1, 60, 8000, 30, 4000]
-      - [VIPセット, 60, 15000, 30, 8000]
+      - [セット1, 60, 8000, 30]
+      - [VIPセット, 60, 15000, 30]
     line: {format: [セット名, 時間(分), 料金], examples: [[セット1, 60, 8000], [VIPセット, 60, 15000]]}
     source: {sample: pricing, question: セット（基本の料金）}
 
@@ -186,11 +186,11 @@ items:
     theme: 1
     label: 延長
     type: table
-    columns: [名前, 時間(分), 料金(円), 現場に出す]
-    cells: [text, int, int, [○, ×]]
+    columns: [名前, 時間(分), 料金(円)]
+    cells: [text, int, int]
     examples:
-      - [延長30分, 30, 4000, ○]
-      - [延長60分, 60, 8000, ○]
+      - [延長30分, 30, 4000]
+      - [延長60分, 60, 8000]
     line: {format: [延長名, 時間(分), 料金], examples: [[延長30分, 30, 4000], [延長60分, 60, 8000]]}
     source: {sample: pricing, question: 延長メニュー}
 
@@ -522,11 +522,11 @@ items:
     theme: 3
     label: 商品
     type: table
-    columns: [カテゴリー, 種別, 商品名, 価格(円), 原価(円・任意), キャストドリンク, ボトルキープ, 税区分]
-    cells: [text, [ドリンク, ボトル, フード, その他], text, int, int, [○], [○], [標準10%, 軽減8%]]
+    columns: [カテゴリー, 種別, 商品名, 価格(円), キャストドリンク, ボトルキープ]
+    cells: [text, [ドリンク, ボトル, フード, その他], text, int, [○], [○]]
     examples:
-      - [シャンパン, ボトル, ヴーヴクリコ, 28000, 18000, "", ○, 標準10%]
-      - [ソフトドリンク, ドリンク, ウーロン茶, 800, "", ○, "", 標準10%]
+      - [シャンパン, ボトル, ヴーヴクリコ, 28000, "", ○]
+      - [ソフトドリンク, ドリンク, ウーロン茶, 800, ○, ""]
     line: {format: [カテゴリー, 商品名, 金額], examples: [[シャンパン, ヴーヴクリコ, 28000], [ソフトドリンク, ウーロン茶, 800]]}
     source: {sample: products, question: 商品}
 
