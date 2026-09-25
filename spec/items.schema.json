@@ -248,7 +248,8 @@
             "datetime",
             "note",
             "table",
-            "time"
+            "time",
+            "rate"
           ]
         },
         "required": {
@@ -288,6 +289,14 @@
         "unknown_option": {
           "type": "boolean",
           "description": "「未定」を付けるか"
+        },
+        "units": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "rate の単位(例: %・円)"
         },
         "option_images": {
           "type": "array",

@@ -45,7 +45,7 @@ sections:
   - {id: S2, title: 営業時間の区分, desc: 一部・二部で料金や時給を分けている場合に使います。}
   - {id: S3, title: 料金のルール, desc: セット料金以外にかかる料金と、端数の扱いです。}
   - {id: S11, title: 卓, desc: お店にある卓(テーブル・カウンター・個室など)です。}
-  - {id: S4, title: 指名・バック, desc: 指名の売上の付け方と、バックの端数の扱いです。}
+  - {id: S4, title: 指名・バック, desc: 指名区分・ドリンク・ボトルのバックと、端数の扱いです。}
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
   - {id: S6, title: 決済方法, desc: カード払いと売掛の手数料について伺います。}
   - {id: S7, title: レジ, desc: レジを開けるときと、締めるときの設定です。}
@@ -83,7 +83,7 @@ themes:
       - 「キャストドリンク」は、お客様がキャストにごちそうするドリンクです
       - ○を付けた商品は、注文が入るとキャストにバックが付きます
       - 例)800円のウーロン茶なら、その○%がキャストのバックになります
-      - バックの%や金額はキャストごとに違うので、訪問時に一緒に決めます
+      - 一律のバックはアンケートで、キャストごとの場合は訪問時に伺います
   - id: 5
     title: キャスト・スタッフ名簿
     sheet: 名簿
@@ -351,6 +351,16 @@ items:
       examples: [[本指名, 3000, 60分, 1000円], [場内指名, 2000, 60分, 50%], [同伴, 3000, 60分, 1000円], [ヘルプ, 0, "-", なし]]
     source: {sample: nomination, question: 指名区分}
 
+  - id: nomination_back_note
+    route: form
+    section: S4
+    label: 指名区分のバック
+    type: note
+    body: |-
+      指名料のバックは、「指名区分」の記入シートに書いてください。
+      区分ごとに、円か指名料の%で決められます。
+    source: {doc: 追加要望 S4 指名区分のバック}
+
   - id: sales_split
     route: form
     section: S4
@@ -380,6 +390,68 @@ items:
     unknown_option: true
     show_if: {item: back_rounding, equals: 使う}
     source: {sample: nomination, question: バック端数の丸め単位}
+
+  - id: drink_back_mode
+    route: form
+    section: S4
+    label: ドリンクバック(全キャスト)
+    type: radio
+    options: [店舗一律, キャストごとに違う]
+    unknown_option: true
+    hint: |-
+      キャストドリンクが1杯入るごとに、キャストに付くバックです。
+      「店舗一律」にすると、全キャストが同じバックになります。
+    source: {doc: 追加要望 S4 ドリンクバック}
+
+  - id: drink_back_rate
+    route: form
+    section: S4
+    label: ドリンクバックの金額・率(店舗一律)
+    type: rate
+    units: ["%", 円]
+    show_if: {item: drink_back_mode, equals: 店舗一律}
+    hint: 1杯あたりの金額か、キャストドリンクの料金の%を入力してください
+    source: {doc: 追加要望 S4 ドリンクバック}
+
+  - id: drink_back_later
+    route: form
+    section: S4
+    label: ドリンクバックは、あとで登録します
+    type: note
+    show_if: {item: drink_back_mode, equals: キャストごとに違う}
+    body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
+    source: {doc: 追加要望 S4 ドリンクバック}
+
+  - id: bottle_back_mode
+    route: form
+    section: S4
+    label: ボトルバック(全キャスト)
+    type: radio
+    options: [店舗一律, キャストごとに違う]
+    unknown_option: true
+    hint: |-
+      ボトルが1本入るごとに、キャストに付くバックです。
+      「店舗一律」にすると、全キャストが同じバックになります。
+    source: {doc: 追加要望 S4 ボトルバック}
+
+  - id: bottle_back_rate
+    route: form
+    section: S4
+    label: ボトルバックの金額・率(店舗一律)
+    type: rate
+    units: ["%", 円]
+    show_if: {item: bottle_back_mode, equals: 店舗一律}
+    hint: 1本あたりの金額か、ボトルの料金の%を入力してください
+    source: {doc: 追加要望 S4 ボトルバック}
+
+  - id: bottle_back_later
+    route: form
+    section: S4
+    label: ボトルバックは、あとで登録します
+    type: note
+    show_if: {item: bottle_back_mode, equals: キャストごとに違う}
+    body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
+    source: {doc: 追加要望 S4 ボトルバック}
 
   - id: back_rules
     route: onsite

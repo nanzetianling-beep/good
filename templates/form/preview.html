@@ -55,6 +55,9 @@
   .opt input[type=checkbox]::before{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);margin-top:-2px}
   .opt input[type=checkbox]:checked::before{transform:rotate(45deg) scale(1)}
   .opt input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .rate{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .rate .text-in{width:140px;min-width:0}
+  .seg{display:flex;gap:16px}
   .clock{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
   .clock label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
   .clock select.text-in{min-width:110px;width:auto}
@@ -217,6 +220,17 @@ function renderInput(it) {
       el("span", { class: "lbl", text: UNKNOWN })) : null;
     return el("div", {}, clock, unk);
   }
+  if (it.type === "rate") {
+    // 金額か率を、数字と単位(%・円)の組で書く
+    const cur = answers[it.id] || { v: "", u: it.units[0] };
+    const upd = (k) => (e) => { answers[it.id] = { ...cur, ...(answers[it.id] || {}), [k]: e.target.value }; clearError(it.id); if (k === "u") render(); };
+    return el("div", { class: "rate" },
+      el("input", { class: "text-in", id, type: "text", inputmode: "decimal", placeholder: "数字", value: cur.v,
+        "aria-label": it.label, oninput: upd("v") }),
+      el("div", { class: "seg", role: "radiogroup", "aria-label": "単位" }, it.units.map((u, i) =>
+        el("label", { class: "opt" }, el("input", { type: "radio", name: id + "_u", id: `${id}_u${i}`, checked: cur.u === u, onchange: upd("u") , value: u }),
+          el("span", { class: "lbl", text: u })))));
+  }
   if (it.type === "dropdown") {
     const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);
     return el("select", { class: "text-in", id, "aria-label": it.label, onchange: (e) => { set(e.target.value); render(); } },
@@ -272,6 +286,11 @@ function checkItem(it) {
       if (x && t === "int" && !/^\d+$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字のみで入力してください(カンマ不要)`;
       if (x && t === "num" && !/^\d+(\.\d+)?$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字で入力してください`;
     }
+  }
+  if (it.type === "rate" && v && String(v.v).trim()) {
+    const x = String(v.v).trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+    if (!/^\d+(\.\d+)?$/.test(x)) return "数字で入力してください";
+    if (v.u === "%" && +x > 100) return "%は0〜100で入力してください";
   }
   const val = it.validation;
   if (val && !empty && typeof v === "string") {
@@ -347,6 +366,7 @@ function fmt(it) {
   const v = answers[it.id];
   if (v == null || v === "" || (Array.isArray(v) && !v.length)) return null;
   if (it.type === "datetime") return [v.d, v.t].filter(Boolean).join(" ");
+  if (it.type === "rate") return String(v.v ?? "").trim() ? `${v.v}${v.u}` : null;
   if (it.type === "table") {
     const filled = v.filter((row) => row.some((x) => String(x ?? "").trim()));
     return filled.length ? filled.map((row) => it.columns.map((_, c) => row[c] || "-").join("/")).join("、") : null;

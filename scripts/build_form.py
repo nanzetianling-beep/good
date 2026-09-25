@@ -21,7 +21,7 @@ OUT = ROOT / "form" / "preview" / "index.html"
 # プレビューで使うキーだけを渡す
 KEYS = ["id", "label", "type", "required", "options", "other", "unknown_option", "option_images",
         "skip_to_on", "show_if", "unit", "placeholder", "default", "hint", "body", "validation",
-        "columns", "cells", "examples"]
+        "columns", "cells", "examples", "units"]
 
 
 def _image_uri(path: str) -> str | None:
