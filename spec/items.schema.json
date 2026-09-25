@@ -287,7 +287,7 @@
         },
         "unknown_option": {
           "type": "boolean",
-          "description": "「わからない・訪問時に相談」を付けるか"
+          "description": "「未定」を付けるか"
         },
         "option_images": {
           "type": "boolean"

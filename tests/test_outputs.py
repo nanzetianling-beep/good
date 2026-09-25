@@ -15,7 +15,7 @@ import build_slides  # noqa: E402
 import build_templates  # noqa: E402
 from validate_items import load_spec  # noqa: E402
 
-UNKNOWN = "わからない・訪問時に相談"
+UNKNOWN = "未定"
 # 個人ごとの個人情報・給与・ログイン情報(6章)
 SENSITIVE = ["本名", "生年月日", "口座", "緊急連絡先", "身分証", "パスワード", "ログインID"]
 

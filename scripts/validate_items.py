@@ -72,7 +72,7 @@ def check(spec: dict) -> list[str]:
                 errors.append(f"{it['id']}: show_if の参照先 {cond['item']} がありません")
             elif cond["equals"] not in parent.get("options", []):
                 errors.append(f"{it['id']}: show_if の値 {cond['equals']} が {parent['id']} の選択肢にありません")
-        # 3章: すべての選択式に「わからない・訪問時に相談」(必須項目を除く)
+        # 3章: すべての選択式に「未定」(必須項目を除く)
         if it["route"] == "form" and it["type"] in ("radio", "checkbox", "dropdown", "hour"):
             if not it.get("required") and not it.get("unknown_option"):
                 errors.append(f"{it['id']}: 選択式なのに unknown_option がありません")
