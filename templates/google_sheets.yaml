@@ -2,4 +2,4 @@
 # templates/excel/初期設定_記入シート.xlsx を Google ドライブで変換して作る。
 # 店舗に渡すときは、共有を「リンクを知っている全員(閲覧者)」にして、URL末尾の /edit を /copy に変えて送る。
 folder: https://drive.google.com/drive/folders/1y40jol42K-afiwcHNNeyDnwOd0isqhpC
-spreadsheet: https://docs.google.com/spreadsheets/d/1Y4bOiGOoF7kqMJwJbF_hMe1z9IduS-Lbf0i-HLVStmU/edit
+spreadsheet: https://docs.google.com/spreadsheets/d/1TlGmEKA68j5YXR1R9yIMnM5vkibDRTxaXCB7x-8ah24/edit
