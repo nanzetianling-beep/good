@@ -28,9 +28,9 @@ def spec():
 # ── ① 導入アンケート ─────────────────────────────
 
 
-def test_form_has_9_sections_with_questions(spec):
+def test_form_has_10_sections_with_questions(spec):
     fs = build_form.form_spec(spec)
-    assert len(fs["sections"]) == 9
+    assert len(fs["sections"]) == 10
     assert all(sec["items"] for sec in fs["sections"])
 
 
@@ -67,7 +67,7 @@ def test_form_has_no_sensitive_questions(spec):
 def test_line_has_guide_six_themes_and_closing(spec):
     names = [n for n, _ in build_templates.line_messages(spec)]
     assert names[0] == "00_案内" and names[-1] == "99_最後に"
-    assert len(names) == 8
+    assert len(names) == 6
 
 
 def test_line_lines_fit_phone_width(spec):
@@ -89,8 +89,8 @@ def test_line_asks_no_sensitive_data(spec):
 
 
 def test_line_skip_theme(spec):
-    names = [n for n, _ in build_templates.line_messages(spec, skip={6})]
-    assert not any(n.startswith("06_") for n in names)
+    names = [n for n, _ in build_templates.line_messages(spec, skip={5})]
+    assert not any(n.startswith("05_") for n in names)
 
 
 @pytest.fixture(scope="module")
@@ -218,3 +218,12 @@ def test_theme_workbooks_are_one_sheet_each(spec):
         ws = wb[t["sheet"]]
         assert ws["A2"].value == "店舗名"
         assert any("LINEで送って" in str(c.value) for row in ws.iter_rows(max_row=8) for c in row if c.value)
+
+
+def test_tables_and_send_rules_are_in_form(spec):
+    by_id = {it["id"]: it for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
+    for i in ["tables", "send_areas", "busy_hours"]:
+        assert by_id[i]["type"] == "table" and by_id[i]["columns"] and by_id[i]["cells"]
+    assert by_id["send_areas"]["show_if"] == {"item": "send_areas_use", "equals": "あり"}
+    names = [n for n, _ in build_templates.line_messages(spec)]
+    assert not any("卓" in n or "送り" in n for n in names)

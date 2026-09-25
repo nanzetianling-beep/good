@@ -56,6 +56,19 @@
   .hour:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .hour-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
   .hour-foot b{color:var(--accent);font-size:15px}
+  .rows{overflow-x:auto}
+  .rows table{border-collapse:collapse;width:100%;min-width:320px;font-size:14px}
+  .rows th{text-align:left;font-weight:500;color:var(--muted);font-size:13px;padding:6px 8px 6px 0;white-space:nowrap}
+  .rows td{padding:2px 8px 2px 0;vertical-align:bottom}
+  .rows td.no{color:var(--faint);font-size:12px;width:1.5em;font-variant-numeric:tabular-nums}
+  .rows .text-in{width:100%;min-width:90px}
+  .rows select.text-in{min-width:90px;width:100%}
+  .rows .del{background:none;border:none;color:var(--faint);font-size:18px;cursor:pointer;min-width:44px;min-height:44px;border-radius:50%}
+  .rows .del:hover{background:#f1f3f4;color:var(--ink)}
+  .add-row{align-self:flex-start;background:none;border:1px dashed var(--line-2);color:var(--accent);font:inherit;font-size:14px;font-weight:500;
+    min-height:44px;padding:0 16px;border-radius:4px;cursor:pointer}
+  .add-row:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .add-row:focus-visible,.rows .del:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .dt{display:flex;gap:24px;flex-wrap:wrap}
   .dt label{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
   .dt input{width:180px;min-width:0}
@@ -155,6 +168,30 @@ function renderInput(it) {
       el("label", {}, "日付", el("input", { class: "text-in", id: id + "_d", type: "date", value: cur.d || "", onchange: upd("d") })),
       el("label", {}, "時刻", el("input", { class: "text-in", id: id + "_t", type: "time", value: cur.t || "", onchange: upd("t") })));
   }
+  if (it.type === "table") {
+    // 表の形で、行を足しながら書く(1行目のうすい文字は記入例)
+    if (!Array.isArray(answers[it.id])) answers[it.id] = [[], [], []];
+    const rows = answers[it.id];
+    const cellInput = (r, c) => {
+      const t = it.cells[c], v = rows[r][c] ?? "", ex = it.examples?.[0]?.[c];
+      const upd = (e) => { rows[r][c] = e.target.value; clearError(it.id); };
+      const aria = `${it.label} ${r + 1}行目 ${it.columns[c]}`;
+      if (Array.isArray(t)) return el("select", { class: "text-in", "aria-label": aria, onchange: upd },
+        el("option", { value: "", text: "選択" }), t.map((o) => el("option", { value: o, text: o, selected: v === o })));
+      return el("input", { class: "text-in", type: t === "time" ? "time" : "text", inputmode: t === "int" || t === "num" ? "numeric" : "text",
+        value: v, placeholder: r === 0 && ex != null && ex !== "" ? "例:" + ex : "", "aria-label": aria, oninput: upd });
+    };
+    const table = el("table", {},
+      el("thead", {}, el("tr", {}, el("th", {}), it.columns.map((c) => el("th", { text: c })), el("th", {}))),
+      el("tbody", {}, rows.map((_, r) => el("tr", {},
+        el("td", { class: "no", text: String(r + 1) }),
+        it.columns.map((_, c) => el("td", {}, cellInput(r, c))),
+        el("td", {}, rows.length > 1 ? el("button", { class: "del", type: "button", text: "×", "aria-label": `${r + 1}行目を削除`,
+          onclick: () => { rows.splice(r, 1); render(); } }) : null)))));
+    return el("div", { class: "opts" }, el("div", { class: "rows" }, table),
+      rows.length < 50 ? el("button", { class: "add-row", type: "button", text: "＋ 行を追加",
+        onclick: () => { rows.push([]); render(); } }) : null);
+  }
   if (it.type === "hour") {
     // 時計の数字のように、0〜23時を横に並べて選ぶ
     const cur = answers[it.id];
@@ -223,6 +260,13 @@ function checkItem(it) {
   const v = answers[it.id];
   const empty = v == null || v === "" || (Array.isArray(v) && !v.length);
   if (it.required && empty) return "この質問は必須です";
+  if (it.type === "table" && Array.isArray(v)) {
+    for (const [r, row] of v.entries()) for (const [c, t] of (it.cells || []).entries()) {
+      const x = String(row[c] ?? "").trim().replace(/[,，]/g, "");
+      if (x && t === "int" && !/^\d+$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字のみで入力してください(カンマ不要)`;
+      if (x && t === "num" && !/^\d+(\.\d+)?$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字で入力してください`;
+    }
+  }
   const val = it.validation;
   if (val && !empty && typeof v === "string") {
     const s = v.trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
@@ -297,6 +341,10 @@ function fmt(it) {
   const v = answers[it.id];
   if (v == null || v === "" || (Array.isArray(v) && !v.length)) return null;
   if (it.type === "datetime") return [v.d, v.t].filter(Boolean).join(" ");
+  if (it.type === "table") {
+    const filled = v.filter((row) => row.some((x) => String(x ?? "").trim()));
+    return filled.length ? filled.map((row) => it.columns.map((_, c) => row[c] || "-").join("/")).join("、") : null;
+  }
   let s = Array.isArray(v) ? v.join("、") : String(v);
   if (others[it.id]) s += `(${others[it.id]}${it.other?.unit || ""})`;
   return it.unit && it.type === "number" ? `${s} ${it.unit}` : s;

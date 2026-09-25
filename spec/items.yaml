@@ -44,13 +44,14 @@ form:
 sections:
   - {id: S2, title: 営業時間の区分, desc: 一部・二部で料金や時給を分けている場合に使います。}
   - {id: S3, title: 料金のルール, desc: セット料金以外にかかる料金と、端数の扱いです。}
+  - {id: S11, title: 卓, desc: お店にある卓(テーブル・カウンター・個室など)です。}
   - {id: S4, title: 指名・バック, desc: 指名の売上の付け方と、バックの端数の扱いです。}
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
   - {id: S6, title: 決済方法, desc: カード払いと売掛の手数料について伺います。}
   - {id: S7, title: レジ・日報, desc: レジを開けるときと、締めるときの設定です。}
   - {id: S8, title: プリンター・伝票, desc: レシートプリンターと、伝票・領収書の設定です。}
   - {id: S9, title: 来店のきっかけ, desc: 新規やリピーターなど、来店のきっかけを集計します。}
-  - {id: S10, title: 給与のルール, desc: お店全体の給与のルールです。キャストごとの時給は訪問時に伺います。}
+  - {id: S10, title: 給与のルール, desc: お店全体の給与・送り代のルールです。キャストごとの時給は訪問時に伺います。}
 
 # ② 記入テンプレート(LINE・Excel)
 #   line_notes … LINEの【テーマ名】の直後に入れる注意書き
@@ -78,12 +79,6 @@ themes:
       - ・例)ウーロン茶、ハイボール
       - ■ボトルキープできる商品
       - ・例)鏡月、ヴーヴクリコ
-  - id: 4
-    title: 卓
-    sheet: 卓
-    photo_ok: true
-    line_notes: [お店の配置がわかる写真や、手書きの図でもOKです]
-    excel_notes: [配置は、訪問時にPOSの画面で一緒に決めます]
   - id: 5
     title: キャスト・スタッフ名簿
     sheet: 名簿
@@ -93,12 +88,6 @@ themes:
       - 時給や本名・住所などの個人情報は送らないでください
       - 時給は訪問時に、お店の方がPOSへ入力します
     excel_notes: [時給や本名・住所などの個人情報は書かないでください]
-  - id: 6
-    title: 送り・繁忙時間帯
-    sheet: 送り・繁忙
-    photo_ok: false
-    optional: true   # 該当する店舗のみ
-    line_notes: [送りや時給アップがないお店は、送らなくて大丈夫です]
 
 # ③ 対面レクチャーの章(スライドの中身は templates/slides/lecture.yaml)
 chapters:
@@ -567,8 +556,8 @@ items:
   # ── 既存見本 ⑦ 卓とフロアマップ ───────────────────────────
 
   - id: tables
-    route: template
-    theme: 4
+    route: form
+    section: S11
     label: 卓の一覧
     type: table
     columns: [卓名, 席数(任意)]
@@ -576,7 +565,9 @@ items:
     examples:
       - [VIP1, 6]
       - [カウンター, 8]
-    line: {format: [卓名を1行に1つ], examples: [[VIP1], [カウンター], [個室A]]}
+    hint: |-
+      お店にある卓を、1行に1つ書いてください。
+      配置は、訪問時にPOSの画面で一緒に決めます。
     source: {sample: tables, question: 卓の一覧}
 
   - id: floor_map
@@ -968,9 +959,19 @@ items:
     validation: {kind: number, min: 0, max: 100, message: 0〜100の数字で入力してください}
     source: {sample: payroll, question: 給率の警告しきい値}
 
+  - id: send_areas_use
+    route: form
+    section: S10
+    label: 送り代
+    type: radio
+    options: [なし, あり]
+    unknown_option: true
+    hint: キャストの送りに、エリアごとの送り代を決めている場合は「あり」です
+    source: {doc: 2026-09-25 記入テンプレートからアンケートへ移動}
+
   - id: send_areas
-    route: template
-    theme: 6
+    route: form
+    section: S10
     label: 送りエリアごとの送り代
     type: table
     columns: [エリア名, 送り代(円)]
@@ -978,17 +979,28 @@ items:
     examples:
       - [みなとみらい, 1500]
       - [関内, 1000]
-    line: {format: [エリア名, 送り代], examples: [[みなとみらい, 1500], [関内, 1000]]}
+    show_if: {item: send_areas_use, equals: あり}
     source: {sample: payroll, question: 送りエリア別の金額}
 
+  - id: busy_hours_use
+    route: form
+    section: S10
+    label: 時給を上げる時間帯
+    type: radio
+    options: [なし, あり]
+    unknown_option: true
+    hint: 忙しい時間帯だけ、時給を上げている場合は「あり」です
+    source: {doc: 2026-09-25 記入テンプレートからアンケートへ移動}
+
   - id: busy_hours
-    route: template
-    theme: 6
-    label: 時給を上げる時間帯(ある場合のみ)
+    route: form
+    section: S10
+    label: 時給を上げる時間帯と、上げ方
     type: table
     columns: [開始, 終了, 倍率または加算額]
     cells: [time, time, text]
     examples:
       - ["22:00", "24:00", 1.2倍]
-    line: {format: [開始, 終了, 倍率または加算額], examples: [["22:00", "24:00", 1.2倍]]}
+    hint: 例:22時〜24時は時給を1.2倍、または+300円
+    show_if: {item: busy_hours_use, equals: あり}
     source: {sample: payroll, question: 繁忙時間帯の時給（期間限定）}

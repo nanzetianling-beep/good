@@ -29,7 +29,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^S([1-9]|1[01])$"
+            "pattern": "^S[1-9][0-9]?$"
           },
           "title": {
             "type": "string",
@@ -221,7 +221,7 @@
         },
         "section": {
           "type": "string",
-          "pattern": "^S([1-9]|1[01])$"
+          "pattern": "^S[1-9][0-9]?$"
         },
         "theme": {
           "type": "integer",
@@ -296,7 +296,7 @@
           "type": "object",
           "additionalProperties": {
             "type": "string",
-            "pattern": "^S([1-9]|1[01])$"
+            "pattern": "^S[1-9][0-9]?$"
           }
         },
         "show_if": {
@@ -565,6 +565,23 @@
           "then": {
             "required": [
               "columns"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "form"
+              },
+              "type": {
+                "const": "table"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "cells"
             ]
           }
         }

@@ -27,15 +27,15 @@ def test_every_item_has_route(spec):
     assert all(it.get("route") for it in spec["items"])
 
 
-def test_form_has_9_sections(spec):
+def test_form_has_10_sections(spec):
     used = {it["section"] for it in spec["items"] if it["route"] == "form"}
     assert used == {s["id"] for s in spec["sections"]}
-    assert len(used) == 9
+    assert len(used) == 10
 
 
-def test_template_has_6_themes(spec):
+def test_template_has_4_themes(spec):
     used = {it["theme"] for it in spec["items"] if it["route"] == "template"}
-    assert used == {1, 2, 3, 4, 5, 6}
+    assert used == {1, 2, 3, 5}
 
 
 def test_no_required_questions(spec):
@@ -59,7 +59,7 @@ def test_no_sensitive_items_in_form_or_template(spec, word):
     # 店舗全体のルール(交通費の条件・時給の丸め・主に使う源泉区分・繁忙時間帯の時給)は対象外
     allowed = {
         "commute_min_hours", "wage_rounding_unit", "wage_rounding_mode",
-        "main_withholding_type", "busy_hours",
+        "main_withholding_type", "busy_hours", "busy_hours_use",
     }
     offenders = [
         it["id"]
