@@ -74,7 +74,8 @@ def check(spec: dict) -> list[str]:
                 errors.append(f"{it['id']}: show_if の値 {cond['equals']} が {parent['id']} の選択肢にありません")
         # 3章: すべての選択式に「未定」(必須項目を除く)
         if it["route"] == "form" and it["type"] in ("radio", "checkbox", "dropdown"):
-            if not it.get("required") and not it.get("unknown_option"):
+            # 「未定」を付けないと明記した質問(unknown_option: false)は除く
+            if not it.get("required") and "unknown_option" not in it:
                 errors.append(f"{it['id']}: 選択式なのに unknown_option がありません")
 
     covered = {(it["source"]["sample"], it["source"]["question"]) for it in items if "sample" in it["source"]}

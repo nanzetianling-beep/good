@@ -122,6 +122,7 @@ excluded:
   - {sample: printer, question: 印刷するもの, reason: 不要と判断}
   - {sample: expenses, question: 経費カテゴリ, reason: 不要と判断}
   - {sample: nomination, question: ヘルプで付いたキャストにも売上を付けるか, reason: 不要と判断}
+  - {sample: pricing, question: 人数分で課金するもの, reason: 不要と判断}
 
 items:
 
@@ -222,19 +223,6 @@ items:
     validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
     show_if: {item: house_charge, equals: あり}
     source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
-
-  - id: per_person_charge
-    route: form
-    section: S3
-    label: 人数分で課金するもの
-    type: checkbox
-    options: [セット・延長を人数分, ハウスチャージを人数分]
-    unknown_option: true
-    hint: |-
-      お客様の人数に合わせて、料金を人数分かけるかどうかです。
-      例:セット料金5,000円で3名の場合、
-      人数分にすると15,000円(5,000円×3名)になります。
-    source: {sample: pricing, question: 人数分で課金するもの}
 
   - id: rounding_example
     route: form
@@ -642,7 +630,7 @@ items:
     label: 領収書のデザイン
     type: radio
     options: ["1", "2", "3"]
-    unknown_option: true
+    unknown_option: false   # 見本から必ず1つ選んでもらうため「未定」は付けない
     hint: 下の見本から、刷りたいデザインの番号を選んでください
     # 各選択肢の見本画像。ポッキリ.Night の領収書プレビュー(nightwork-pos.vercel.app/api/receipt/preview)の
     # classic-frame・seigaiha-frame・kikka-frame をそのまま保存したもの。ファイルが無い番号は「見本画像を準備中」
