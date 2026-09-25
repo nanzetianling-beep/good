@@ -48,7 +48,7 @@ sections:
   - {id: S4, title: 指名・バック, desc: 指名の売上の付け方と、バックの端数の扱いです。}
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
   - {id: S6, title: 決済方法, desc: カード払いと売掛の手数料について伺います。}
-  - {id: S7, title: レジ・日報, desc: レジを開けるときと、締めるときの設定です。}
+  - {id: S7, title: レジ, desc: レジを開けるときと、締めるときの設定です。}
   - {id: S8, title: プリンター・伝票, desc: レシートプリンターと、伝票・領収書の設定です。}
   - {id: S9, title: 来店のきっかけ, desc: 新規やリピーターなど、来店のきっかけを集計します。}
   - {id: S10, title: 給与のルール, desc: お店全体の給与・送り代のルールです。キャストごとの時給は訪問時に伺います。}
@@ -121,6 +121,7 @@ excluded:
   - {sample: printer, question: 収入印紙, reason: 不要と判断}
   - {sample: printer, question: 印刷するもの, reason: 不要と判断}
   - {sample: expenses, question: 経費カテゴリ, reason: 不要と判断}
+  - {sample: nomination, question: ヘルプで付いたキャストにも売上を付けるか, reason: 不要と判断}
 
 items:
 
@@ -359,19 +360,10 @@ items:
       examples: [[本指名, 3000, 60分, 1000円], [場内指名, 2000, 60分, 50%], [同伴, 3000, 60分, 1000円], [ヘルプ, 0, "-", なし]]
     source: {sample: nomination, question: 指名区分}
 
-  - id: help_sales
-    route: form
-    section: S4
-    label: ヘルプのキャストにも売上を付けるか
-    type: radio
-    options: [付ける(標準), 付けない]
-    unknown_option: true
-    source: {sample: nomination, question: ヘルプで付いたキャストにも売上を付けるか}
-
   - id: sales_split
     route: form
     section: S4
-    label: 複数キャストでの売上折半
+    label: 複数キャストでの売上折半(指名された方のみ)
     type: radio
     options: [使わない, 使う]
     unknown_option: true
@@ -397,14 +389,6 @@ items:
     unknown_option: true
     show_if: {item: back_rounding, equals: 使う}
     source: {sample: nomination, question: バック端数の丸め単位}
-
-  - id: back_rules_notice
-    route: form
-    section: S4
-    label: バックの決め方
-    type: note
-    body: バックの決め方は、10パターンから訪問時に一緒に決めます
-    source: {sample: nomination, question: バックルール}
 
   - id: back_rules
     route: onsite
