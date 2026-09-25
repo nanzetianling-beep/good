@@ -55,17 +55,10 @@
   .opt input[type=checkbox]::before{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);margin-top:-2px}
   .opt input[type=checkbox]:checked::before{transform:rotate(45deg) scale(1)}
   .opt input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  .clock{display:flex;flex-direction:column;gap:14px}
-  .clock-group{display:flex;flex-direction:column;gap:6px}
-  .clock-group>span{font-size:13px;color:var(--muted)}
-  .clock-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;max-width:420px}
-  .clock-grid button{height:44px;border:1px solid var(--line-2);border-radius:8px;background:#fff;color:var(--ink);font:inherit;
-    font-size:16px;font-variant-numeric:tabular-nums;cursor:pointer}
-  .clock-grid button:hover{border-color:var(--accent);color:var(--accent)}
-  .clock-grid button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
-  .clock-grid button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  .clock-val{font-size:13px;color:var(--muted)}
-  .clock-val b{font-size:20px;color:var(--accent);font-variant-numeric:tabular-nums;margin-left:6px}
+  .clock{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+  .clock label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+  .clock select.text-in{min-width:110px;width:auto}
+  .clock-sep{font-size:18px;color:var(--muted);padding-bottom:10px}
   .opt .lbl{font-size:14px}
   .opt.unknown .lbl{color:var(--muted)}
   .opt .other{flex:1;min-width:120px;width:auto}
@@ -205,23 +198,19 @@ function renderInput(it) {
         onclick: () => { rows.push([]); render(); } }) : null);
   }
   if (it.type === "time") {
-    // 何時何分を、「時」「分」のボタンを押して選ぶ(分は5分きざみ)
+    // 何時何分を、「時」「分」のプルダウンを横に並べて選ぶ
     const cur = answers[it.id];
-    const [ch, cm] = cur && cur !== UNKNOWN ? cur.split(":") : [null, null];
+    const [ch, cm] = cur && cur !== UNKNOWN ? cur.split(":") : ["", ""];
     const pad = (n) => String(n).padStart(2, "0");
-    const pick = (h, m) => { set(`${h ?? "00"}:${m ?? "00"}`); render(); };
-    const grid = (label, values, selected, onPick, fmt) => el("div", { class: "clock-group" },
-      el("span", { text: label }),
-      el("div", { class: "clock-grid", role: "group", "aria-label": `${it.label}の${label}` },
-        values.map((v) => el("button", { type: "button", "aria-pressed": String(selected === v), text: fmt(v),
-          onclick: () => onPick(v) }))));
-    const hours = Array.from({ length: 24 }, (_, i) => pad(i));
-    const mins = Array.from({ length: 12 }, (_, i) => pad(i * 5));
+    const upd = (h, m) => { if (h === "" && m === "") delete answers[it.id]; else set(`${h || "00"}:${m || "00"}`); render(); };
+    const sel = (label, n, value, onChange, suffix) => el("label", {}, label,
+      el("select", { class: "text-in", "aria-label": `${it.label}の${label}`, onchange: (e) => onChange(e.target.value) },
+        el("option", { value: "", text: "選択" }),
+        Array.from({ length: n }, (_, i) => el("option", { value: pad(i), text: `${i}${suffix}`, selected: value === pad(i) }))));
     const clock = el("div", { class: "clock" },
-      grid("時", hours, ch, (h) => pick(h, cm), (v) => `${+v}時`),
-      grid("分", mins, cm, (m) => pick(ch, m), (v) => `${v}分`),
-      el("div", { class: "clock-val" }, cur && cur !== UNKNOWN
-        ? ["選んだ時刻", el("b", { text: `${+ch}時${cm}分` })] : "「時」と「分」を1つずつ押してください"));
+      sel("時", 24, ch, (h) => upd(h, cm), "時"),
+      el("span", { class: "clock-sep", text: ":" }),
+      sel("分", 60, cm, (m) => upd(ch, m), "分"));
     const unk = it.unknown_option ? el("label", { class: "opt unknown" },
       el("input", { type: "checkbox", id: id + "_unk", checked: cur === UNKNOWN,
         onchange: (e) => { if (e.target.checked) set(UNKNOWN); else delete answers[it.id]; render(); } }),
