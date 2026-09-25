@@ -135,43 +135,67 @@ def test_excel_has_no_sensitive_columns(workbook):
 
 
 @pytest.fixture(scope="module")
-def chapters(spec):
-    return build_slides.load_chapters(spec)
+def lecture(spec):
+    return build_slides.load_lecture(spec)
 
 
-def test_slides_have_13_chapters(chapters):
-    assert [c["id"] for c in chapters] == list(range(14))
+def test_slides_cover_13_chapters(lecture):
+    assert [c["id"] for c in lecture["chapters"]] == list(range(14))
+    covered = {c for part in lecture["parts"] for sl in part["slides"] for c in build_slides.slide_chapters(sl)}
+    assert covered == set(range(1, 14))
 
 
 def test_slides_total_time_within_visit(spec):
     # 5章の章立ての目安を足すと、全章で123分。キッチン伝票(使う店舗のみ)を除いた標準で90〜120分に収める
-    standard = build_slides.load_chapters(spec, exclude={9})
+    standard = build_slides.load_lecture(spec, exclude={9})["chapters"]
     assert 90 <= build_slides.total_minutes(standard) <= 120
 
 
-def test_operation_slides_have_three_parts(chapters):
-    for ch in chapters:
-        for sl in ch["slides"]:
-            if sl.get("kind", "op") == "op":
-                assert 3 <= len(sl["steps"]) <= 5, sl["title"]
-                assert sl["screen"].endswith(".png") and sl["try"], sl["title"]
+def test_deck_is_15_to_20_slides(lecture):
+    _, files = build_slides.deck(lecture)
+    assert 15 <= len(files) <= 20
+
+
+def test_each_part_is_two_or_three_slides(lecture):
+    for part in lecture["parts"][:-1]:
+        assert 2 <= len(part["slides"]) <= 3, part["title"]
+
+
+def test_operations_have_three_parts(lecture):
+    for part in lecture["parts"]:
+        for sl in part["slides"]:
+            if sl["kind"] == "ops":
+                assert 1 <= len(sl["ops"]) <= 2, sl["title"]
+                for op in sl["ops"]:
+                    assert 3 <= len(op["steps"]) <= 5, op["title"]
+                    assert op["screen"].endswith(".png") and op["try"], op["title"]
 
 
 def test_slides_exclude_chapter(spec):
-    md = build_slides.marp(build_slides.load_chapters(spec, exclude={9}))
-    assert "キッチン伝票" not in md
+    lec = build_slides.load_lecture(spec, exclude={9})
+    assert "キッチン伝票" not in build_slides.marp(lec)
+    assert len(build_slides.deck(lec)[1]) == len(build_slides.deck(build_slides.load_lecture(spec))[1]) - 1
 
 
-def test_deck_ids_and_order(chapters):
-    index, files = build_slides.deck(chapters)
+def test_every_chapter_check_is_shown(lecture):
+    _, files = build_slides.deck(lecture)
+    html = "".join(files.values())
+    for items in lecture["checks"].values():
+        for c in items:
+            assert c in html, c
+
+
+def test_deck_ids_and_order(lecture):
+    index, files = build_slides.deck(lecture)
     assert index["order"] == list(files)
     assert all(re.fullmatch(r"[A-Za-z0-9_-]{1,64}", i) for i in index["order"])
     for sid, html in files.items():
         assert html.startswith(f'<section id="{sid}"') and html.endswith("</section>")
+        assert "<span style" not in html
 
 
-def test_checklist_fits_one_page(chapters):
-    lines = build_slides.checklist(chapters).splitlines()
-    assert len(lines) <= 40
+def test_checklist_fits_one_page(lecture):
+    text = build_slides.checklist(lecture)
+    assert len(text.splitlines()) <= 40
     for c in build_slides.FINAL_CHECKS:
-        assert f"□ {c}" in "\n".join(lines)
+        assert f"□ {c}" in text
