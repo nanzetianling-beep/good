@@ -211,13 +211,13 @@ def test_form_options_are_not_split_by_commas(spec):
             assert s.count("(") == s.count(")"), (it["id"], s)
 
 
-def test_theme_workbooks_are_one_sheet_each(spec):
-    for t in spec["themes"]:
-        wb = build_templates.build_theme_workbook(spec, t)
-        assert wb.sheetnames == [t["sheet"]]
-        ws = wb[t["sheet"]]
+def test_workbook_has_all_kinds_with_store_name(spec):
+    wb = build_templates.build_workbook(spec, standalone=True)
+    assert wb.sheetnames == [t["sheet"] for t in spec["themes"]]
+    for ws in wb:
         assert ws["A2"].value == "店舗名"
         assert any("LINEで送って" in str(c.value) for row in ws.iter_rows(max_row=8) for c in row if c.value)
+
 
 
 def test_tables_and_send_rules_are_in_form(spec):

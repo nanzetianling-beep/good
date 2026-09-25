@@ -1,9 +1,5 @@
-# Googleスプレッドシート版(種類別)。templates/excel/種類別/*.xlsx を Google ドライブで変換したもの。
-# フォルダ: https://drive.google.com/drive/folders/1y40jol42K-afiwcHNNeyDnwOd0isqhpC
+# Googleスプレッドシート版の記入シート(全種類を1ファイルにまとめたもの)。
+# templates/excel/初期設定_記入シート.xlsx を Google ドライブで変換して作る。
 # 店舗に渡すときは、共有を「リンクを知っている全員(閲覧者)」にして、URL末尾の /edit を /copy に変えて送る。
 folder: https://drive.google.com/drive/folders/1y40jol42K-afiwcHNNeyDnwOd0isqhpC
-sheets:
-  1: https://docs.google.com/spreadsheets/d/1UWyKfkoBrPINdlmaNHON6cDcGjAlB7W58T-9m9JSBMw/edit
-  2: https://docs.google.com/spreadsheets/d/1ShG41Unxna6Zp7hhgPd6PBo-5CORlQyLiNFRKv48f44/edit
-  3: https://docs.google.com/spreadsheets/d/1uemMhupt0gJp85CEVr2mRt-8lRyd65pg-PQNNJ1LWLg/edit
-  5: https://docs.google.com/spreadsheets/d/1M2fd5w_4HpBDZYNn87j4IPWC2bA4zE1e2kCILc3ze2M/edit
+spreadsheet: https://docs.google.com/spreadsheets/d/1vbvgYzImZXtBc10rR6Z5e2j1lqSN4WoxLGyqXqnaFWQ/edit
