@@ -37,7 +37,7 @@ def test_form_has_10_sections_with_questions(spec):
 def test_form_choices_offer_unknown(spec):
     for sec in build_form.form_spec(spec)["sections"]:
         for it in sec["items"]:
-            if it["type"] in ("radio", "checkbox", "dropdown", "hour") and not it.get("required"):
+            if it["type"] in ("radio", "checkbox", "dropdown") and not it.get("required"):
                 assert it.get("unknown_option"), it["id"]
 
 

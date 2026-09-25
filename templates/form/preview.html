@@ -4,6 +4,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* Googleフォームの見た目に合わせる(常に白基調)。配色は要件定義書 6章:#673ab7 / #f0ebf8 */
+  /* 端末がダークモードでも、フォームは常に白基調で表示する */
+  :root,html,body{color-scheme:light}
   :root{
     --page:#f0ebf8; --card:#ffffff; --ink:#202124; --muted:#5f6368; --faint:#80868b;
     --line:#dadce0; --line-2:#bdc1c6; --accent:#673ab7; --accent-dark:#5528a0;
@@ -42,20 +44,35 @@
   .field .text-in{flex:0 1 50%;min-width:0}
   .opts{display:flex;flex-direction:column}
   .opt{display:flex;align-items:center;gap:14px;min-height:44px;cursor:pointer;padding:2px 0}
-  .opt input[type=radio],.opt input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);flex:none;margin:0}
+  .opt input[type=radio],.opt input[type=checkbox]{-webkit-appearance:none;appearance:none;width:20px;height:20px;flex:none;margin:0;
+    border:2px solid var(--muted);background:#fff;display:grid;place-content:center;cursor:pointer}
+  .opt input[type=radio]{border-radius:50%}
+  .opt input[type=checkbox]{border-radius:3px}
+  .opt input[type=radio]::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);transform:scale(0);transition:transform .1s}
+  .opt input[type=radio]:checked{border-color:var(--accent)}
+  .opt input[type=radio]:checked::before{transform:scale(1)}
+  .opt input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .opt input[type=checkbox]::before{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);margin-top:-2px}
+  .opt input[type=checkbox]:checked::before{transform:rotate(45deg) scale(1)}
+  .opt input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .clock{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .wheel-box{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .wheel-box span{font-size:12px;color:var(--muted)}
+  .wheel{position:relative;width:84px;height:200px;overflow-y:auto;border:1px solid var(--line-2);border-radius:8px;background:#fff;
+    scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--line-2) #fff;padding:4px}
+  .wheel button{display:block;width:100%;height:44px;border:none;background:#fff;color:var(--ink);font:inherit;font-size:17px;
+    font-variant-numeric:tabular-nums;border-radius:6px;cursor:pointer;scroll-snap-align:center}
+  .wheel button:hover{background:var(--accent-soft)}
+  .wheel button[aria-selected="true"]{background:var(--accent);color:#fff;font-weight:500}
+  .wheel button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .clock-sep{align-self:center;font-size:20px;color:var(--muted);margin-top:16px}
+  .clock-val{display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:200px;margin-top:16px;font-size:13px;color:var(--muted)}
+  .clock-val b{font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums}
   .opt .lbl{font-size:14px}
   .opt.unknown .lbl{color:var(--muted)}
   .opt .other{flex:1;min-width:120px;width:auto}
   select.text-in{width:auto;min-width:200px;border:1px solid var(--line-2);border-radius:4px;padding:8px 12px}
   select.text-in:focus{border:2px solid var(--accent);padding:7px 11px}
-  .hours{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-  .hour{flex:none;width:48px;height:48px;border-radius:50%;border:1px solid var(--line-2);background:var(--card);color:var(--ink);
-    font:inherit;font-size:16px;font-variant-numeric:tabular-nums;cursor:pointer;scroll-snap-align:start;display:grid;place-items:center}
-  .hour:hover{border-color:var(--accent);color:var(--accent)}
-  .hour[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
-  .hour:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  .hour-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-  .hour-foot b{color:var(--accent);font-size:15px}
   .rows{overflow-x:auto}
   .rows table{border-collapse:collapse;width:100%;min-width:320px;font-size:14px}
   .rows th{text-align:left;font-weight:500;color:var(--muted);font-size:13px;padding:6px 8px 6px 0;white-space:nowrap}
@@ -189,24 +206,35 @@ function renderInput(it) {
       rows.length < 50 ? el("button", { class: "add-row", type: "button", text: "＋ 行を追加",
         onclick: () => { rows.push([]); render(); } }) : null);
   }
-  if (it.type === "hour") {
-    // 時計の数字のように、0〜23時を横に並べて選ぶ
+  if (it.type === "time") {
+    // 何時何分を、上下にスクロールする「時」「分」の列から選ぶ
     const cur = answers[it.id];
-    const row = el("div", { class: "hours", role: "radiogroup", "aria-label": it.label });
-    it.options.map(String).forEach((h) => row.append(el("button", {
-      class: "hour", type: "button", role: "radio", "aria-checked": String(cur === h), "aria-label": h + "時", text: h,
-      onclick: () => { set(h); render(); } })));
-    const foot = el("div", { class: "hour-foot" },
-      el("span", {}, cur && cur !== UNKNOWN ? el("b", { text: cur + "時" }) : "左右にスクロールして選べます"));
-    if (it.unknown_option) foot.append(el("label", { class: "opt unknown" },
+    const [ch, cm] = cur && cur !== UNKNOWN ? cur.split(":") : [null, null];
+    const pad = (n) => String(n).padStart(2, "0");
+    const pick = (h, m) => { set(`${h ?? "00"}:${m ?? "00"}`); render(); };
+    const wheel = (label, n, selected, onPick) => {
+      const col = el("div", { class: "wheel", role: "listbox", "aria-label": `${it.label}の${label}` },
+        Array.from({ length: n }, (_, i) => el("button", {
+          type: "button", role: "option", "aria-selected": String(selected === pad(i)), text: pad(i),
+          onclick: () => onPick(pad(i)) })));
+      queueMicrotask(() => {           // 選んだ数字が見える位置までスクロール
+        const on = col.querySelector('[aria-selected="true"]');
+        if (on) col.scrollTop = on.offsetTop - col.clientHeight / 2 + 22;
+      });
+      return el("div", { class: "wheel-box" }, el("span", { text: label }), col);
+    };
+    const clock = el("div", { class: "clock" },
+      wheel("時", 24, ch, (h) => pick(h, cm)),
+      el("span", { class: "clock-sep", text: ":" }),
+      wheel("分", 60, cm, (m) => pick(ch, m)),
+      el("div", { class: "clock-val" },
+        cur && cur !== UNKNOWN ? [el("span", { text: "選んだ時刻" }), el("b", { text: `${+ch}時${cm}分` })]
+                               : el("span", { text: "上下にスクロールして選べます" })));
+    const unk = it.unknown_option ? el("label", { class: "opt unknown" },
       el("input", { type: "checkbox", id: id + "_unk", checked: cur === UNKNOWN,
         onchange: (e) => { if (e.target.checked) set(UNKNOWN); else delete answers[it.id]; render(); } }),
-      el("span", { class: "lbl", text: UNKNOWN })));
-    queueMicrotask(() => {           // 選んだ時刻が見える位置までスクロール
-      const on = row.querySelector('[aria-checked="true"]');
-      if (on) row.scrollLeft = on.offsetLeft - row.clientWidth / 2 + 24;
-    });
-    return el("div", {}, row, foot);
+      el("span", { class: "lbl", text: UNKNOWN })) : null;
+    return el("div", {}, clock, unk);
   }
   if (it.type === "dropdown") {
     const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);

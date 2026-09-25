@@ -248,7 +248,7 @@
             "datetime",
             "note",
             "table",
-            "hour"
+            "time"
           ]
         },
         "required": {
@@ -545,8 +545,7 @@
                 "enum": [
                   "radio",
                   "checkbox",
-                  "dropdown",
-                  "hour"
+                  "dropdown"
                 ]
               }
             }
