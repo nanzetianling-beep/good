@@ -53,6 +53,18 @@ def check(spec: dict) -> list[str]:
             errors.append(f"{it['id']}: 未定義の theme {it['theme']}")
         if "chapter" in it and it["chapter"] not in chapters:
             errors.append(f"{it['id']}: 未定義の chapter {it['chapter']}")
+        if it.get("merged_into") and it["merged_into"] not in by_id:
+            errors.append(f"{it['id']}: merged_into の参照先 {it['merged_into']} がありません")
+        if "cells" in it and len(it["cells"]) != len(it["columns"]):
+            errors.append(f"{it['id']}: cells と columns の数が違います")
+        for ex in it.get("examples", []):
+            if len(ex) != len(it.get("columns", [])):
+                errors.append(f"{it['id']}: 記入例の列数が columns と違います: {ex}")
+        line = it.get("line")
+        if line and len(line["format"]) > 1:
+            for ex in line["examples"]:
+                if len(ex) != len(line["format"]):
+                    errors.append(f"{it['id']}: LINEの記入例の数が format と違います: {ex}")
         cond = it.get("show_if")
         if cond:
             parent = by_id.get(cond["item"])

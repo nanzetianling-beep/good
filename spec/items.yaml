@@ -18,42 +18,106 @@
 
 version: 1
 
+# ① 導入アンケートの表紙と送信後の画面
+form:
+  title: ポッキリ.Night 導入アンケート
+  intro: |-
+    このたびは、ポッキリ.Nightを
+    お選びいただきありがとうございます。
+
+    お店の料金やルールを伺い、
+    POSの初期設定に使わせていただきます。
+  facts:
+    - 所要時間は約15〜20分です
+    - 回答期限:〇月〇日(〇)まで
+    - わからない項目は「わからない・訪問時に相談」でOKです
+  done: |-
+    ご回答ありがとうございました。
+
+    次に、料金表やメニューなどを
+    LINEで送っていただきます。
+
+    担当者から、記入用のひな形を
+    LINEでお送りします。
+    届くまで少々お待ちください。
+
 sections:
-  - {id: S1, title: はじめに}
-  - {id: S2, title: 店舗の基本情報}
-  - {id: S3, title: 料金のルール}
-  - {id: S4, title: 指名・バック}
-  - {id: S5, title: 税・インボイス}
-  - {id: S6, title: 決済方法}
-  - {id: S7, title: レジ・日報}
-  - {id: S8, title: プリンター・伝票}
-  - {id: S9, title: 集計・経費}
-  - {id: S10, title: 給与のルール}
-  - {id: S11, title: 訪問日の調整}
+  - {id: S1, title: はじめに, desc: ご回答いただく方について教えてください。}
+  - {id: S2, title: 営業時間の区分, desc: 一部・二部で料金や時給を分けている場合に使います。}
+  - {id: S3, title: 料金のルール, desc: セット料金以外にかかる料金と、端数の扱いです。}
+  - {id: S4, title: 指名・バック, desc: 指名の売上の付け方と、バックの端数の扱いです。}
+  - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
+  - {id: S6, title: 決済方法, desc: カード払いと売掛の手数料について伺います。}
+  - {id: S7, title: レジ・日報, desc: レジを開けるときと、締めるときの設定です。}
+  - {id: S8, title: プリンター・伝票, desc: レシートプリンターと、伝票・領収書の設定です。}
+  - {id: S9, title: 集計・経費, desc: 来店のきっかけと、経費の分け方です。}
+  - {id: S10, title: 給与のルール, desc: お店全体の給与のルールです。キャストごとの時給は訪問時に伺います。}
+  - {id: S11, title: 訪問日の調整, desc: 設定とレクチャーのために、お店へ伺う日を決めます。}
 
+# ② 記入テンプレート(LINE・Excel)
+#   line_notes … LINEの【テーマ名】の直後に入れる注意書き
+#   line_after … 表の後ろに付け足す行
 themes:
-  - {id: 1, title: 料金セット・延長メニュー, photo_ok: true}
-  - {id: 2, title: 指名区分, photo_ok: false}
-  - {id: 3, title: 商品メニュー, photo_ok: true}
-  - {id: 4, title: 卓, photo_ok: true}
-  - {id: 5, title: キャスト・スタッフ名簿, photo_ok: true}
-  - {id: 6, title: 送り・繁忙時間帯, photo_ok: false}
+  - id: 1
+    title: 料金セット・延長メニュー
+    sheet: 料金セット
+    photo_ok: true
+    line_notes: [料金表の写真だけでもOKです]
+  - id: 2
+    title: 指名区分
+    sheet: 指名区分
+    photo_ok: false
+    line_after: [※バックの細かいルールは、訪問時に一緒に決めます]
+  - id: 3
+    title: 商品メニュー
+    sheet: 商品メニュー
+    photo_ok: true
+    line_notes:
+      - メニュー表の写真だけでもOKです
+      - 写真の場合は、下の2つだけ教えてください
+    line_after:
+      - ■キャストドリンクになる商品
+      - ・例)ウーロン茶、ハイボール
+      - ■ボトルキープできる商品
+      - ・例)鏡月、ヴーヴクリコ
+  - id: 4
+    title: 卓
+    sheet: 卓
+    photo_ok: true
+    line_notes: [お店の配置がわかる写真や、手書きの図でもOKです]
+    excel_notes: [配置は、訪問時にPOSの画面で一緒に決めます]
+  - id: 5
+    title: キャスト・スタッフ名簿
+    sheet: 名簿
+    photo_ok: true
+    line_notes:
+      - 在籍表やシフト表の写真でもOKです
+      - 時給や本名・住所などの個人情報は送らないでください
+      - 時給は訪問時に、お店の方がPOSへ入力します
+    excel_notes: [時給や本名・住所などの個人情報は書かないでください]
+  - id: 6
+    title: 送り・繁忙時間帯
+    sheet: 送り・繁忙
+    photo_ok: false
+    optional: true   # 該当する店舗のみ
+    line_notes: [送りや時給アップがないお店は、送らなくて大丈夫です]
 
+# ③ 対面レクチャーの章(スライドの中身は templates/slides/lecture.yaml)
 chapters:
-  - {id: 0, title: 本日の流れ, minutes: 3}
-  - {id: 1, title: 最初の準備, minutes: 10}
-  - {id: 2, title: 卓の配置, minutes: 5}
-  - {id: 3, title: 接客の基本の流れ, minutes: 15}
-  - {id: 4, title: キャストの付け方, minutes: 10}
-  - {id: 5, title: バックの決め方, minutes: 15}
-  - {id: 6, title: テスト会計, minutes: 10}
-  - {id: 7, title: 訂正と取消, minutes: 5}
-  - {id: 8, title: プリンター, minutes: 10}
-  - {id: 9, title: キッチン伝票, minutes: 5}
-  - {id: 10, title: レジ, minutes: 10}
-  - {id: 11, title: メンバー登録, minutes: 15}
-  - {id: 12, title: 出退勤と遅刻, minutes: 5}
-  - {id: 13, title: 困ったとき, minutes: 5}
+  - {id: 0, title: 本日の流れ, minutes: 3, attendees: 全員}
+  - {id: 1, title: 最初の準備, minutes: 10, attendees: オーナー・店長}
+  - {id: 2, title: 卓の配置, minutes: 5, attendees: 店長}
+  - {id: 3, title: 接客の基本の流れ, minutes: 15, attendees: 店長・スタッフ}
+  - {id: 4, title: キャストの付け方, minutes: 10, attendees: 店長・スタッフ}
+  - {id: 5, title: バックの決め方, minutes: 15, attendees: オーナー・店長}
+  - {id: 6, title: テスト会計, minutes: 10, attendees: 店長}
+  - {id: 7, title: 訂正と取消, minutes: 5, attendees: オーナー・店長}
+  - {id: 8, title: プリンター, minutes: 10, attendees: 店長・スタッフ}
+  - {id: 9, title: キッチン伝票, minutes: 5, attendees: 厨房, skip_if: {item: kitchen_slip, equals: 使わない}}
+  - {id: 10, title: レジ, minutes: 10, attendees: 店長・スタッフ}
+  - {id: 11, title: メンバー登録, minutes: 15, attendees: オーナー・店長・キャスト}
+  - {id: 12, title: 出退勤と遅刻, minutes: 5, attendees: キャスト・スタッフ}
+  - {id: 13, title: 困ったとき, minutes: 5, attendees: 全員}
 
 # 見本にあるが、キットでは扱わないと決めた質問(どの成果物にも出さない)
 excluded:
@@ -123,20 +187,24 @@ items:
     label: セット
     type: table
     columns: [セット名, 時間(分), 料金(円), 延長(分), 延長料金(円)]
+    cells: [text, int, int, int, int]
     examples:
       - [セット1, 60, 8000, 30, 4000]
       - [VIPセット, 60, 15000, 30, 8000]
+    line: {format: [セット名, 時間(分), 料金], examples: [[セット1, 60, 8000], [VIPセット, 60, 15000]]}
     source: {sample: pricing, question: セット（基本の料金）}
 
   - id: extension_menu
     route: template
     theme: 1
-    label: 延長メニュー
+    label: 延長
     type: table
     columns: [名前, 時間(分), 料金(円), 現場に出す]
+    cells: [text, int, int, [○, ×]]
     examples:
       - [延長30分, 30, 4000, ○]
       - [延長60分, 60, 8000, ○]
+    line: {format: [延長名, 時間(分), 料金], examples: [[延長30分, 30, 4000], [延長60分, 60, 8000]]}
     source: {sample: pricing, question: 延長メニュー}
 
   - id: service_charge
@@ -294,12 +362,16 @@ items:
     theme: 2
     label: 指名区分
     type: table
-    columns: [名称, 指名料(円), 課金単位, バックの決め方(円/%), 金額または率]
+    columns: [名称, 指名料(円), 課金単位, バックの決め方, 金額または率]
+    cells: [text, int, [1接客ごと, 1時間ごと], [円, "%", なし], num]
     examples:
       - [本指名, 3000, 1接客ごと, 円, 1000]
       - [場内指名, 2000, 1接客ごと, "%", 50]
       - [同伴, 3000, 1接客ごと, 円, 1000]
       - [ヘルプ, 0, 1接客ごと, なし, ""]
+    line:
+      format: [名称, 指名料, バックの決め方(円 or 指名料の%)]
+      examples: [[本指名, 3000, 1000円], [場内指名, 2000, 50%], [同伴, 3000, 1000円], [ヘルプ, 0, なし]]
     source: {sample: nomination, question: 指名区分}
 
   - id: help_sales
@@ -457,6 +529,7 @@ items:
     theme: 3
     label: カテゴリー
     type: table
+    merged_into: products   # 商品の表の「カテゴリー」「種別」の列で兼ねる
     columns: [カテゴリー, 種別]
     examples:
       - [シャンパン, ボトル]
@@ -468,10 +541,12 @@ items:
     theme: 3
     label: 商品
     type: table
-    columns: [カテゴリー, 種別, 商品名, 価格(円), 原価(任意), キャストドリンク, ボトルキープ, 税区分]
+    columns: [カテゴリー, 種別, 商品名, 価格(円), 原価(円・任意), キャストドリンク, ボトルキープ, 税区分]
+    cells: [text, [ドリンク, ボトル, フード, その他], text, int, int, [○], [○], [標準10%, 軽減8%]]
     examples:
       - [シャンパン, ボトル, ヴーヴクリコ, 28000, 18000, "", ○, 標準10%]
       - [ソフトドリンク, ドリンク, ウーロン茶, 800, "", ○, "", 標準10%]
+    line: {format: [カテゴリー, 商品名, 金額], examples: [[シャンパン, ヴーヴクリコ, 28000], [ソフトドリンク, ウーロン茶, 800]]}
     source: {sample: products, question: 商品}
 
   - id: product_variants
@@ -489,10 +564,11 @@ items:
     label: 卓の一覧
     type: table
     columns: [卓名, 席数(任意)]
+    cells: [text, int]
     examples:
-      - [VIP1, ""]
-      - [カウンター, ""]
-      - [個室A, ""]
+      - [VIP1, 6]
+      - [カウンター, 8]
+    line: {format: [卓名を1行に1つ], examples: [[VIP1], [カウンター], [個室A]]}
     source: {sample: tables, question: 卓の一覧}
 
   - id: floor_map
@@ -732,9 +808,11 @@ items:
     label: キャスト
     type: table
     columns: [源氏名, ランク(あれば), 区分]
+    cells: [text, text, [在籍, 体験入店]]
     examples:
       - [ココ, レギュラー, 在籍]
       - [りん, なし, 体験入店]
+    line: {format: [源氏名, ランク(あれば), 区分], examples: [[ココ, レギュラー, 在籍], [りん, なし, 体験入店]]}
     source: {sample: roster, question: キャスト}
 
   - id: staff_roster
@@ -743,9 +821,11 @@ items:
     label: スタッフ
     type: table
     columns: [名前, 職種]
+    cells: [text, [ボーイ, キッチン, 店長, その他]]
     examples:
       - [山田, ボーイ]
       - [田中, キッチン]
+    line: {format: [名前, 職種], examples: [[山田, ボーイ], [田中, キッチン]]}
     source: {sample: roster, question: スタッフ}
 
   - id: member_pay
@@ -949,19 +1029,23 @@ items:
     label: 送りエリアごとの送り代
     type: table
     columns: [エリア名, 送り代(円)]
+    cells: [text, int]
     examples:
       - [みなとみらい, 1500]
       - [関内, 1000]
+    line: {format: [エリア名, 送り代], examples: [[みなとみらい, 1500], [関内, 1000]]}
     source: {sample: payroll, question: 送りエリア別の金額}
 
   - id: busy_hours
     route: template
     theme: 6
-    label: 時給を上げる時間帯
+    label: 時給を上げる時間帯(ある場合のみ)
     type: table
     columns: [開始, 終了, 倍率または加算額]
+    cells: [time, time, text]
     examples:
       - ["22:00", "24:00", 1.2倍]
+    line: {format: [開始, 終了, 倍率または加算額], examples: [["22:00", "24:00", 1.2倍]]}
     source: {sample: payroll, question: 繁忙時間帯の時給（期間限定）}
 
   # ── 要件定義書で追加(見本にない項目) ─────────────────────

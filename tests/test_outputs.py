@@ -1,0 +1,177 @@
+"""フェーズ2〜4: 生成物の検証(要件定義書 8章)。"""
+
+import json
+import re
+import sys
+from pathlib import Path
+
+import pytest
+from openpyxl import Workbook
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+import build_form  # noqa: E402
+import build_slides  # noqa: E402
+import build_templates  # noqa: E402
+from validate_items import load_spec  # noqa: E402
+
+UNKNOWN = "わからない・訪問時に相談"
+# 個人ごとの個人情報・給与・ログイン情報(6章)
+SENSITIVE = ["本名", "生年月日", "口座", "緊急連絡先", "身分証", "パスワード", "ログインID"]
+
+
+@pytest.fixture(scope="module")
+def spec():
+    return load_spec()
+
+
+# ── ① 導入アンケート ─────────────────────────────
+
+
+def test_form_has_11_sections_with_questions(spec):
+    fs = build_form.form_spec(spec)
+    assert len(fs["sections"]) == 11
+    assert all(sec["items"] for sec in fs["sections"])
+
+
+def test_form_choices_offer_unknown(spec):
+    for sec in build_form.form_spec(spec)["sections"]:
+        for it in sec["items"]:
+            if it["type"] in ("radio", "checkbox", "dropdown") and not it.get("required"):
+                assert it.get("unknown_option"), it["id"]
+
+
+def test_form_validation_rules_present(spec):
+    rules = {it["id"]: it.get("validation") for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
+    assert rules["invoice_number"]["pattern"] == r"^T\d{13}$"
+    assert rules["house_charge"]["kind"] == "integer"
+    assert rules["card_fee"]["max"] == 100
+
+
+def test_form_html_embeds_spec(spec):
+    html = build_form.build(spec)
+    assert "/*__SPEC_JSON__*/" not in html
+    data = json.loads(re.search(r"const SPEC = (\{.*?\});\n", html).group(1).replace("<\\/", "</"))
+    assert data["form"]["title"] == spec["form"]["title"]
+
+
+def test_form_has_no_sensitive_questions(spec):
+    text = json.dumps(build_form.form_spec(spec), ensure_ascii=False)
+    for w in SENSITIVE:
+        assert w not in text, w
+
+
+# ── ② 記入テンプレート ─────────────────────────────
+
+
+def test_line_has_guide_six_themes_and_closing(spec):
+    names = [n for n, _ in build_templates.line_messages(spec)]
+    assert names[0] == "00_案内" and names[-1] == "99_最後に"
+    assert len(names) == 8
+
+
+def test_line_lines_fit_phone_width(spec):
+    for name, body in build_templates.line_messages(spec):
+        for line in body.splitlines():
+            assert len(line) <= 35, f"{name}: {line}"
+
+
+def test_line_roster_warns_against_personal_info(spec):
+    body = dict(build_templates.line_messages(spec))["05_キャスト・スタッフ名簿"]
+    assert "個人情報は送らないでください" in body
+
+
+def test_line_asks_no_sensitive_data(spec):
+    for name, body in build_templates.line_messages(spec):
+        asked = [l for l in body.splitlines() if not l.startswith("※")]
+        for w in SENSITIVE + ["時給"]:
+            assert not any(w in l and "時給を上げる" not in l for l in asked), (name, w)
+
+
+def test_line_skip_theme(spec):
+    names = [n for n, _ in build_templates.line_messages(spec, skip={6})]
+    assert not any(n.startswith("06_") for n in names)
+
+
+@pytest.fixture(scope="module")
+def workbook(spec) -> Workbook:
+    return build_templates.build_workbook(spec)
+
+
+def test_excel_has_six_sheets(workbook, spec):
+    assert workbook.sheetnames == [t["sheet"] for t in spec["themes"]]
+
+
+def test_excel_examples_are_gray(workbook, spec):
+    for t in spec["themes"]:
+        ws = workbook[t["sheet"]]
+        rows = build_templates.sheet_rows(spec, t)
+        for n, row in enumerate(rows, start=1):
+            if row["kind"] == "example":
+                cell = next(ws.cell(row=n, column=c) for c in range(1, 9) if ws.cell(row=n, column=c).value is not None)
+                assert cell.font.color.rgb.endswith("9AA0A6")
+
+
+def test_excel_has_validations(workbook, spec):
+    for t in spec["themes"]:
+        ws = workbook[t["sheet"]]
+        types = {dv.type for dv in ws.data_validations.dataValidation}
+        cells = [c for it in build_templates.template_items(spec, t["id"]) for c in it["cells"]]
+        if any(isinstance(c, list) for c in cells):
+            assert "list" in types, t["sheet"]
+        if any(c in ("int", "num") for c in cells):
+            assert types & {"whole", "decimal"}, t["sheet"]
+
+
+def test_excel_has_no_sensitive_columns(workbook):
+    for ws in workbook:
+        for row in ws.iter_rows(values_only=True):
+            for v in row:
+                if isinstance(v, str) and not v.startswith("※"):
+                    assert not any(w in v for w in SENSITIVE + ["時給"]) or "時給を上げる" in v, v
+
+
+# ── ③ 対面レクチャー資料 ─────────────────────────────
+
+
+@pytest.fixture(scope="module")
+def chapters(spec):
+    return build_slides.load_chapters(spec)
+
+
+def test_slides_have_13_chapters(chapters):
+    assert [c["id"] for c in chapters] == list(range(14))
+
+
+def test_slides_total_time_within_visit(spec):
+    # 5章の章立ての目安を足すと、全章で123分。キッチン伝票(使う店舗のみ)を除いた標準で90〜120分に収める
+    standard = build_slides.load_chapters(spec, exclude={9})
+    assert 90 <= build_slides.total_minutes(standard) <= 120
+
+
+def test_operation_slides_have_three_parts(chapters):
+    for ch in chapters:
+        for sl in ch["slides"]:
+            if sl.get("kind", "op") == "op":
+                assert 3 <= len(sl["steps"]) <= 5, sl["title"]
+                assert sl["screen"].endswith(".png") and sl["try"], sl["title"]
+
+
+def test_slides_exclude_chapter(spec):
+    md = build_slides.marp(build_slides.load_chapters(spec, exclude={9}))
+    assert "キッチン伝票" not in md
+
+
+def test_deck_ids_and_order(chapters):
+    index, files = build_slides.deck(chapters)
+    assert index["order"] == list(files)
+    assert all(re.fullmatch(r"[A-Za-z0-9_-]{1,64}", i) for i in index["order"])
+    for sid, html in files.items():
+        assert html.startswith(f'<section id="{sid}"') and html.endswith("</section>")
+
+
+def test_checklist_fits_one_page(chapters):
+    lines = build_slides.checklist(chapters).splitlines()
+    assert len(lines) <= 40
+    for c in build_slides.FINAL_CHECKS:
+        assert f"□ {c}" in "\n".join(lines)

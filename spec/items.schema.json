@@ -6,6 +6,7 @@
   "additionalProperties": false,
   "required": [
     "version",
+    "form",
     "sections",
     "themes",
     "chapters",
@@ -22,7 +23,8 @@
         "additionalProperties": false,
         "required": [
           "id",
-          "title"
+          "title",
+          "desc"
         ],
         "properties": {
           "id": {
@@ -30,6 +32,10 @@
             "pattern": "^S([1-9]|1[01])$"
           },
           "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "desc": {
             "type": "string",
             "minLength": 1
           }
@@ -44,6 +50,7 @@
         "required": [
           "id",
           "title",
+          "sheet",
           "photo_ok"
         ],
         "properties": {
@@ -58,6 +65,32 @@
           },
           "photo_ok": {
             "type": "boolean"
+          },
+          "sheet": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 31
+          },
+          "line_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "line_after": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excel_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "optional": {
+            "type": "boolean"
           }
         }
       }
@@ -70,7 +103,8 @@
         "required": [
           "id",
           "title",
-          "minutes"
+          "minutes",
+          "attendees"
         ],
         "properties": {
           "id": {
@@ -85,6 +119,12 @@
           "minutes": {
             "type": "integer",
             "minimum": 1
+          },
+          "attendees": {
+            "type": "string"
+          },
+          "skip_if": {
+            "$ref": "#/$defs/condition"
           }
         }
       }
@@ -118,6 +158,33 @@
             "type": "string",
             "minLength": 1
           }
+        }
+      }
+    },
+    "form": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "intro",
+        "facts",
+        "done"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "done": {
+          "type": "string"
         }
       }
     }
@@ -232,20 +299,7 @@
           }
         },
         "show_if": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "item",
-            "equals"
-          ],
-          "properties": {
-            "item": {
-              "type": "string"
-            },
-            "equals": {
-              "$ref": "#/$defs/scalar"
-            }
-          }
+          "$ref": "#/$defs/condition"
         },
         "unit": {
           "type": "string"
@@ -356,6 +410,56 @@
               }
             }
           ]
+        },
+        "merged_into": {
+          "type": "string"
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "enum": [
+                  "text",
+                  "int",
+                  "num",
+                  "time"
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        },
+        "line": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "format",
+            "examples"
+          ],
+          "properties": {
+            "format": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/scalar"
+                }
+              }
+            }
+          }
         }
       },
       "allOf": [
@@ -386,7 +490,20 @@
               "theme",
               "columns",
               "examples"
-            ]
+            ],
+            "if": {
+              "not": {
+                "required": [
+                  "merged_into"
+                ]
+              }
+            },
+            "then": {
+              "required": [
+                "cells",
+                "line"
+              ]
+            }
           }
         },
         {
@@ -467,6 +584,22 @@
         "roster",
         "payroll"
       ]
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item",
+        "equals"
+      ],
+      "properties": {
+        "item": {
+          "type": "string"
+        },
+        "equals": {
+          "$ref": "#/$defs/scalar"
+        }
+      }
     }
   }
 }
