@@ -14,6 +14,7 @@ import json
 import sys
 from pathlib import Path
 
+import yaml
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
@@ -25,6 +26,9 @@ from validate_items import load_spec  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 LINE_DIR = ROOT / "templates" / "line"
 XLSX = ROOT / "templates" / "excel" / "初期設定_記入シート.xlsx"
+BY_THEME_DIR = ROOT / "templates" / "excel" / "種類別"
+# Googleスプレッドシート版の URL(Drive へアップロード後に記入。無ければページにリンクを出さない)
+SHEETS_YAML = ROOT / "templates" / "google_sheets.yaml"
 PREVIEW_TEMPLATE = ROOT / "templates" / "kit" / "preview.html"
 PREVIEW = ROOT / "templates" / "preview" / "index.html"
 
@@ -126,10 +130,17 @@ def _validation(cell_type, first: str, last: str) -> DataValidation | None:
     return dv
 
 
-def sheet_rows(spec: dict, theme: dict, input_rows: int = INPUT_ROWS) -> list[dict]:
-    """1シート分の行を、種類(title / note / block / head / example / input / blank)付きで返す。"""
+def sheet_rows(spec: dict, theme: dict, input_rows: int = INPUT_ROWS, standalone: bool = False) -> list[dict]:
+    """1シート分の行を、種類(title / store / note / block / head / example / input / blank)付きで返す。
+
+    standalone … 種類別の1ファイルとして配るとき。店舗名の欄と、返送の案内を付ける。
+    """
     rows = [{"kind": "title", "cells": [theme["title"]]}]
+    if standalone:
+        rows.append({"kind": "store", "cells": ["店舗名", None]})
     notes = ["灰色の行は記入例です。消して上書きするか、下の空欄に書いてください。"] + theme.get("excel_notes", [])
+    if standalone:
+        notes.append("書き終わったら、このファイル(またはシートのリンク)をLINEで送ってください。")
     rows += [{"kind": "note", "cells": ["※" + n], "warn": "個人情報" in n} for n in notes]
     for it in template_items(spec, theme["id"]):
         rows.append({"kind": "blank", "cells": []})
@@ -143,13 +154,13 @@ def sheet_rows(spec: dict, theme: dict, input_rows: int = INPUT_ROWS) -> list[di
     return rows
 
 
-def build_workbook(spec: dict, skip: set[int] = frozenset()) -> Workbook:
+def build_workbook(spec: dict, skip: set[int] = frozenset(), standalone: bool = False) -> Workbook:
     wb = Workbook()
     wb.remove(wb.active)
     for t in themes(spec, skip):
         ws = wb.create_sheet(t["sheet"])
         ws.sheet_view.showGridLines = False
-        rows = sheet_rows(spec, t)
+        rows = sheet_rows(spec, t, standalone=standalone)
         widths: dict[int, int] = {}
         r = 0
         while r < len(rows):
@@ -174,6 +185,10 @@ def build_workbook(spec: dict, skip: set[int] = frozenset()) -> Workbook:
                 cell = ws.cell(row=n, column=c, value=v)
                 if kind == "title":
                     cell.font = TITLE_FONT
+                elif kind == "store":
+                    cell.font = BLOCK_FONT if c == 1 else Font()
+                    if c == 2:
+                        cell.border = BOX
                 elif kind == "note":
                     cell.font = NOTE_FONT if row.get("warn") else Font(color="5F6368")
                 elif kind == "block":
@@ -188,6 +203,29 @@ def build_workbook(spec: dict, skip: set[int] = frozenset()) -> Workbook:
         for c, w in widths.items():
             ws.column_dimensions[get_column_letter(c)].width = max(12, min(w, 28))
     return wb
+
+
+def theme_filename(theme: dict) -> str:
+    return f"{theme['id']:02d}_{theme['title']}.xlsx"
+
+
+def build_theme_workbook(spec: dict, theme: dict) -> Workbook:
+    """種類別の1ファイル(1テーマ1シート)。"""
+    others = {t["id"] for t in spec["themes"] if t["id"] != theme["id"]}
+    return build_workbook(spec, skip=others, standalone=True)
+
+
+def _xlsx_bytes(wb: Workbook) -> bytes:
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
+
+
+def google_sheets() -> dict[int, str]:
+    if not SHEETS_YAML.exists():
+        return {}
+    data = yaml.safe_load(SHEETS_YAML.read_text(encoding="utf-8")) or {}
+    return {int(k): v for k, v in (data.get("sheets") or {}).items() if v}
 
 
 def build_preview(spec: dict, xlsx_bytes: bytes) -> str:
@@ -205,6 +243,13 @@ def build_preview(spec: dict, xlsx_bytes: bytes) -> str:
         "messages": messages,
         "sheets": sheets,
         "xlsx": {"filename": XLSX.name, "base64": base64.b64encode(xlsx_bytes).decode()},
+        "byTheme": [
+            {"title": t["title"], "sheet": t["sheet"], "optional": bool(t.get("optional")),
+             "filename": theme_filename(t),
+             "base64": base64.b64encode(_xlsx_bytes(build_theme_workbook(spec, t))).decode(),
+             "sheetUrl": google_sheets().get(t["id"])}
+            for t in spec["themes"]
+        ],
     }
     js = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     return PREVIEW_TEMPLATE.read_text(encoding="utf-8").replace("/*__DATA_JSON__*/null", js)
@@ -222,12 +267,18 @@ def main() -> None:
         (LINE_DIR / f"{name}.txt").write_text(body + "\n", encoding="utf-8")
     XLSX.parent.mkdir(parents=True, exist_ok=True)
     build_workbook(spec, skip).save(XLSX)
+    BY_THEME_DIR.mkdir(parents=True, exist_ok=True)
+    for old in BY_THEME_DIR.glob("*.xlsx"):
+        old.unlink()
+    for t in themes(spec, skip):
+        build_theme_workbook(spec, t).save(BY_THEME_DIR / theme_filename(t))
     # 確認ページは、すべてのテーマを載せる(送らないテーマはページ上で外せる)
     buf = io.BytesIO()
     build_workbook(spec).save(buf)
     PREVIEW.parent.mkdir(parents=True, exist_ok=True)
     PREVIEW.write_text(build_preview(spec, buf.getvalue()), encoding="utf-8")
-    print(f"wrote {LINE_DIR.relative_to(ROOT)}/*.txt, {XLSX.relative_to(ROOT)} and {PREVIEW.relative_to(ROOT)}")
+    print(f"wrote {LINE_DIR.relative_to(ROOT)}/*.txt, {XLSX.relative_to(ROOT)}, "
+          f"{BY_THEME_DIR.relative_to(ROOT)}/*.xlsx and {PREVIEW.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

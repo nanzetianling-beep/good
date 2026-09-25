@@ -209,3 +209,12 @@ def test_form_options_are_not_split_by_commas(spec):
         for o in it.get("options", []):
             s = str(o)
             assert s.count("(") == s.count(")"), (it["id"], s)
+
+
+def test_theme_workbooks_are_one_sheet_each(spec):
+    for t in spec["themes"]:
+        wb = build_templates.build_theme_workbook(spec, t)
+        assert wb.sheetnames == [t["sheet"]]
+        ws = wb[t["sheet"]]
+        assert ws["A2"].value == "店舗名"
+        assert any("LINEで送って" in str(c.value) for row in ws.iter_rows(max_row=8) for c in row if c.value)

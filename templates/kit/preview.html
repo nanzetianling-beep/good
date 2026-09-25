@@ -71,6 +71,18 @@
   .legend .l-ex::before{background:#fff;border-color:var(--xl-ex)} .legend .l-th::before{background:var(--xl-th)}
   .legend .l-dd::before{content:"▾";border:none;width:auto;height:auto}
   .status{color:var(--muted);font-size:13px;margin:0}
+  .kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+  .kind{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .kind h3{margin:0;font-size:16px;font-weight:700;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .kind .num{color:var(--accent);font-variant-numeric:tabular-nums}
+  .kind .cols{margin:0;color:var(--muted);font-size:13px}
+  .kind .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+  .kind .acts .btn{flex:1;min-width:0}
+  a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+  .btn.sheets{background:#188038;border-color:#188038;color:#fff}
+  .btn[disabled]{opacity:.5;cursor:default}
+  .note{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+  .note code{background:var(--accent-soft);color:var(--ink);padding:1px 5px;border-radius:4px}
   footer{color:var(--muted);font-size:12px}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -78,12 +90,13 @@
 <div class="wrap">
   <header class="card">
     <h1>ポッキリ.Night 記入テンプレート</h1>
-    <p class="lead">アンケートの回答後に、LINEで店舗へ送るひな形です。店舗は、LINEに書いて返すか、Excelの記入シートに書くかを選べます。</p>
+    <p class="lead">アンケートの回答後に、店舗へ送るひな形です。店舗は、LINE・Excel・Googleスプレッドシートの中から、書きやすいものを選べます。</p>
   </header>
 
   <div class="tabs" role="tablist" aria-label="テンプレートの種類">
     <button class="tab" role="tab" id="tab-line" aria-selected="true" aria-controls="panel-line">LINEで送る文章</button>
-    <button class="tab" role="tab" id="tab-excel" aria-selected="false" aria-controls="panel-excel">Excelの記入シート</button>
+    <button class="tab" role="tab" id="tab-kinds" aria-selected="false" aria-controls="panel-kinds">種類別(Excel・スプレッドシート)</button>
+    <button class="tab" role="tab" id="tab-excel" aria-selected="false" aria-controls="panel-excel">Excel(6シートまとめ)</button>
   </div>
 
   <section class="panel" id="panel-line" role="tabpanel" aria-labelledby="tab-line">
@@ -92,6 +105,16 @@
       <label class="toggle"><input type="checkbox" id="opt-theme" checked> <span id="opt-label">送り・繁忙時間帯も送る</span></label>
     </div>
     <div class="talk" id="talk"></div>
+  </section>
+
+  <section class="panel" id="panel-kinds" role="tabpanel" aria-labelledby="tab-kinds" hidden>
+    <div class="bar">
+      <p>種類ごとに1ファイルです。店舗名の欄と、書き終わったらLINEで送る案内が入っています。</p>
+    </div>
+    <p class="status" id="kind-status" role="status"></p>
+    <div class="kinds" id="kinds"></div>
+    <p class="note">スプレッドシートを店舗に渡すときは、共有を「リンクを知っている全員(閲覧者)」にします。
+      そのうえで、URL末尾の <code>/edit</code> を <code>/copy</code> に変えて送ると、店舗は自分用のコピーに記入できます。</p>
   </section>
 
   <section class="panel" id="panel-excel" role="tabpanel" aria-labelledby="tab-excel" hidden>
@@ -128,7 +151,7 @@ const el = (tag, attrs = {}, ...kids) => {
 };
 
 /* ── タブ ── */
-const tabs = [["tab-line", "panel-line"], ["tab-excel", "panel-excel"]];
+const tabs = [["tab-line", "panel-line"], ["tab-kinds", "panel-kinds"], ["tab-excel", "panel-excel"]];
 tabs.forEach(([t, p]) => document.getElementById(t).addEventListener("click", () => {
   tabs.forEach(([t2, p2]) => {
     document.getElementById(t2).setAttribute("aria-selected", String(t2 === t));
@@ -209,23 +232,46 @@ document.getElementById("sheet-tabs").replaceChildren(...DATA.sheets.map((s, i) 
   el("button", { class: "sheet-tab", role: "tab", type: "button", text: s.name, onclick: () => { sheetIdx = i; renderSheet(); } })));
 renderSheet();
 
+/* ── 種類別のカード ── */
+const kindBtns = [];
+document.getElementById("kinds").replaceChildren(...DATA.byTheme.map((k, i) => {
+  const cols = DATA.sheets.find((s) => s.name === k.sheet)?.rows.filter((r) => r.kind === "block").map((r) => r.cells[0]) || [];
+  const dl = el("button", { class: "btn", type: "button", text: "Excel", disabled: true, "aria-label": `${k.title}のExcelをダウンロード` });
+  dl.addEventListener("click", () => save(k.filename, k.base64, document.getElementById("kind-status")));
+  kindBtns.push(dl);
+  const sheet = k.sheetUrl
+    ? el("a", { class: "btn sheets", href: k.sheetUrl, target: "_blank", rel: "noopener", text: "スプレッドシート" })
+    : el("button", { class: "btn", type: "button", disabled: true, text: "スプレッドシート準備中" });
+  return el("div", { class: "kind" },
+    el("h3", {}, el("span", { class: "num", text: String(i + 1).padStart(2, "0") }), k.title,
+      k.optional ? el("span", { class: "tag", text: "該当する店舗のみ" }) : null),
+    el("p", { class: "cols", text: "記入する表:" + cols.join("・") }),
+    el("div", { class: "acts" }, dl, sheet));
+}));
+
 /* ── ダウンロード(使える環境だけボタンを出す) ── */
+let downloads = null;
+async function save(filename, b64, status) {
+  const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  try {
+    await downloads.save({ filename, data: bin });
+    status.textContent = `${filename} をダウンロードしました。`;
+  } catch (e) {
+    status.textContent = e && e.code === "declined" ? "ダウンロードを取りやめました。"
+      : e && e.code === "rate_limited" ? "少し待ってから、もう一度押してください。"
+      : "ダウンロードできませんでした。リポジトリの templates/excel/ にあるファイルを使ってください。";
+  }
+}
 (async () => {
   const dlBtn = document.getElementById("dl");
   const status = document.getElementById("dl-status");
-  const downloads = window.claude?.use ? await window.claude.use("downloads").catch(() => null) : null;
-  if (!downloads) { status.textContent = "この画面ではダウンロードできません。リポジトリの templates/excel/ にあるファイルを使ってください。"; return; }
+  downloads = window.claude?.use ? await window.claude.use("downloads").catch(() => null) : null;
+  if (!downloads) {
+    const msg = "この画面ではダウンロードできません。リポジトリの templates/excel/ にあるファイルを使ってください。";
+    status.textContent = msg; document.getElementById("kind-status").textContent = msg; return;
+  }
   dlBtn.hidden = false;
-  dlBtn.addEventListener("click", async () => {
-    const bin = Uint8Array.from(atob(DATA.xlsx.base64), (c) => c.charCodeAt(0));
-    try {
-      await downloads.save({ filename: DATA.xlsx.filename, data: bin });
-      status.textContent = "ダウンロードしました。";
-    } catch (e) {
-      status.textContent = e && e.code === "declined" ? "ダウンロードを取りやめました。"
-        : e && e.code === "rate_limited" ? "少し待ってから、もう一度押してください。"
-        : "ダウンロードできませんでした。リポジトリの templates/excel/ にあるファイルを使ってください。";
-    }
-  });
+  kindBtns.forEach((b) => { b.disabled = false; });
+  dlBtn.addEventListener("click", () => save(DATA.xlsx.filename, DATA.xlsx.base64, status));
 })();
 </script>
