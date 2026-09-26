@@ -42,7 +42,7 @@ form:
     届くまで少々お待ちください。
 
 sections:
-  - {id: S2, title: 営業時間の区分, desc: 一部・二部で料金や時給を分けている場合に使います。}
+  - {id: S2, title: 店舗名・営業時間の区分, desc: 店舗名と、一部・二部の分け方を伺います。}
   - {id: S3, title: 料金のルール, desc: セット料金以外にかかる料金と、端数の扱いです。}
   - {id: S11, title: 卓, desc: お店にある卓(テーブル・カウンター・個室など)です。}
   - {id: S4, title: 指名・バック, desc: 指名区分・ドリンク・ボトルのバックと、端数の扱いです。}
@@ -113,7 +113,6 @@ chapters:
 
 # 見本にあるが、キットでは扱わないと決めた質問(どの成果物にも出さない)
 excluded:
-  - {sample: store, question: 店舗名, reason: 不要と判断}
   - {sample: store, question: 業態, reason: 不要と判断}
   - {sample: store, question: 郵便番号 ／ 電話番号, reason: 不要と判断}
   - {sample: store, question: 住所, reason: 不要と判断}
@@ -132,6 +131,16 @@ excluded:
 items:
 
   # ── 既存見本 ① 店舗情報 ─────────────────────────────
+
+  - id: store_name
+    route: form
+    section: S2
+    label: 店舗名
+    type: short
+    required: true
+    placeholder: 例:Club ポッキリ 新宿店
+    hint: 看板やメニューに書いている店名を入力してください
+    source: {sample: store, question: 店舗名}
 
   - id: shift_split
     route: form

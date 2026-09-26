@@ -38,14 +38,14 @@ def test_template_has_4_themes(spec):
     assert used == {1, 2, 3, 5}
 
 
-def test_no_required_questions(spec):
-    # 店舗名・電話番号・業態は聞かないことにしたため、必須の質問はない
-    assert [it["id"] for it in spec["items"] if it.get("required")] == []
+def test_only_store_name_is_required(spec):
+    # どの店舗の回答か分かるよう、店舗名だけは必須にする
+    assert [it["id"] for it in spec["items"] if it.get("required")] == ["store_name"]
 
 
 def test_excluded_store_info_is_not_asked(spec):
-    # 店舗の情報として①②で聞かない(③のキャスト個人情報・交通費は別物)
-    labels = [it["label"] for it in spec["items"] if it["route"] in ("form", "template")]
+    # 店舗の情報として①②で聞かない(店舗名だけは聞く。③のキャスト個人情報・交通費は別物)
+    labels = [it["label"] for it in spec["items"] if it["route"] in ("form", "template") and it["id"] != "store_name"]
     for word in ["店舗名", "業態", "郵便番号", "電話番号", "住所", "事業者名", "最寄り駅"]:
         assert not any(word in label for label in labels), word
 
