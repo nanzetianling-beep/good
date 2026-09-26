@@ -162,7 +162,6 @@ const UNKNOWN = "未定";
 const answers = {};          // id -> string | string[]
 const others = {};           // id -> 「その他」「あり」に添える入力
 let page = -1;               // -1 = 表紙, 0..n-1 = セクション, n = 送信完了
-let autoSent = false;        // 完了画面に着いたとき、運営コンソールへ1回だけ自動送信する
 const history = [];
 
 const el = (tag, attrs = {}, ...kids) => {
@@ -435,39 +434,6 @@ function answerText() {
   return lines.join("\n");
 }
 
-// 運営コンソールへの送信用データ(質問と回答のペアをそのまま渡す。個人情報・給与・ログイン情報は
-// このアンケートの項目に最初から含まれない=docs/requirements.md 6章)
-function answerPayload() {
-  const answersOut = [];
-  SPEC.sections.forEach((s) => s.items.forEach((it) => {
-    const v = it.type !== "note" && visible(it) ? fmt(it) : null;
-    if (v) answersOut.push({ id: it.id, label: it.label, value: v });
-  }));
-  return {
-    storeName: String(answers.store_name || "").trim() || "(店舗名未回答)",
-    submittedAt: new Date().toISOString(),
-    answers: answersOut,
-  };
-}
-
-// 運営コンソール(nightwork-pos)へ送信する。失敗してもLINE送付は変わらず案内する(二重の経路)。
-async function sendToConsole(status) {
-  status.textContent = "送信中…";
-  try {
-    const res = await fetch("/api/submit", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(answerPayload()),
-    });
-    if (!res.ok) throw new Error(String(res.status));
-    status.textContent = "運営コンソールに送信しました。";
-    return true;
-  } catch {
-    status.textContent = "送信できませんでした。お手数ですが、下の「LINEで送る」からも送ってください。";
-    return false;
-  }
-}
-
 async function copyAnswer(text, status) {
   try { await navigator.clipboard.writeText(text); }
   catch {
@@ -513,7 +479,7 @@ function clearAll() {
   for (const k of Object.keys(answers)) delete answers[k];
   for (const k of Object.keys(others)) delete others[k];
   for (const k of Object.keys(errors)) delete errors[k];
-  history.length = 0; page = -1; autoSent = false; render();
+  history.length = 0; page = -1; render();
 }
 
 function fmt(it) {
@@ -555,10 +521,9 @@ function render() {
       el("button", { class: "btn primary", type: "button", text: page === n - 1 ? "回答をまとめる" : "次へ", onclick: nextPage }),
       progress()));
   } else {
-    // 回答はブラウザには保存しない。運営コンソールへは自動送信し、LINEは店舗からの補助的な連絡経路として残す
+    // 回答はどこにも保存しないので、店舗の方にLINEで送ってもらう
     const text = answerText();
     const status = el("p", { class: "send-status", role: "status" });
-    if (!autoSent) { autoSent = true; sendToConsole(status); }
     out.push(el("div", { class: "card head done" }, el("div", { class: "in" },
       el("h2", { text: "最後に、回答をLINEで送ってください" }),
       el("p", { class: "desc", text: "まだ送信は終わっていません。\n下の「LINEで送る」を押して、担当者に送ると完了です。" }),
