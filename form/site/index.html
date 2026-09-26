@@ -36,13 +36,12 @@
   .desc{white-space:pre-line;margin:0;font-size:14px}
   .facts{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
   .facts li::before{content:"・";color:var(--accent)}
-  .facts li.deadline{display:flex;align-items:flex-start;gap:8px;color:var(--error);font-weight:700;font-size:15px;background:var(--error-soft);border:1px solid #f5c2bd;border-left:4px solid var(--error);border-radius:6px;padding:10px 12px;margin:4px 0}
-  .facts li.deadline::before{content:none}
-  .facts .warn-icon{flex:none;width:20px;height:20px;margin-top:1px}
+  .deadline{display:flex;align-items:flex-start;gap:6px;margin:14px 0 0;color:var(--error);font-weight:700;font-size:15px}
+  .deadline .warn-icon{flex:none;width:18px;height:18px;margin-top:2px}
   .req-note{border-top:1px solid var(--line);padding:12px 24px;color:var(--error);font-size:14px}
   .sec{padding:0;overflow:hidden}
   .sec .tab{display:inline-block;background:var(--accent);color:#fff;font-size:14px;padding:8px 16px;border-radius:8px 8px 0 0}
-  .sec .body{border-top:10px solid var(--accent);padding:18px 24px 20px;margin-top:-1px}
+  .sec .body{border-top:10px solid var(--accent);padding:18px 24px 20px}
   .sec h2{font-family:"Noto Sans JP",sans-serif;font-size:22px;font-weight:400;margin:0 0 6px;text-wrap:balance}
   .sec p{margin:0;color:var(--ink)}
   .q{display:flex;flex-direction:column;gap:12px;transition:border-color .15s}
@@ -495,9 +494,10 @@ function render() {
   const header = el("div", { class: "card head" }, el("div", { class: "in" },
     el("h1", { text: SPEC.form.title }),
     el("p", { class: "desc", text: SPEC.form.intro }),
-    el("ul", { class: "facts" }, SPEC.form.facts.map((f) => f.includes("{deadline}")
-      ? el("li", { class: "deadline", role: "note" }, warnIcon(), el("span", { text: f.replace("{deadline}", deadlineText()) }))
-      : el("li", { text: f })))));
+    // 回答期限は箇条書きから外し、下に赤の太字で1行だけ出す
+    el("ul", { class: "facts" }, SPEC.form.facts.filter((f) => !f.includes("{deadline}")).map((f) => el("li", { text: f }))),
+    SPEC.form.facts.filter((f) => f.includes("{deadline}")).map((f) =>
+      el("p", { class: "deadline", role: "note" }, warnIcon(), el("span", { text: f.replace("{deadline}", deadlineText()) })))));
   const out = [];
   const n = SPEC.sections.length;
   if (page === -1) {
@@ -508,7 +508,6 @@ function render() {
     const sec = SPEC.sections[page];
     out.push(el("div", { class: "card head" }, el("div", { class: "in" }, el("h1", { text: SPEC.form.title }))));
     out.push(el("div", { class: "card sec" },
-      el("div", { class: "tab", text: `セクション ${page + 1}/${n}` }),
       el("div", { class: "body" }, el("h2", { text: sec.title }), el("p", { text: sec.desc }))));
     sec.items.filter(visible).forEach((it) => out.push(questionCard(it)));
     out.push(el("div", { class: "nav" },
