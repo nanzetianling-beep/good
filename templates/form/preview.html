@@ -3,13 +3,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* Googleフォームの見た目に合わせる(常に白基調)。配色は要件定義書 6章:#673ab7 / #f0ebf8 */
+  /* Googleフォームの形に合わせる(常に白基調)。配色は紺を基調にする */
   /* 端末がダークモードでも、フォームは常に白基調で表示する */
   :root,html,body{color-scheme:light}
   :root{
-    --page:#f0ebf8; --card:#ffffff; --ink:#202124; --muted:#5f6368; --faint:#80868b;
-    --line:#dadce0; --line-2:#bdc1c6; --accent:#673ab7; --accent-dark:#5528a0;
-    --accent-soft:#f3ecfb; --error:#d93025; --error-soft:#fce8e6;
+    --page:#e9eef6; --card:#ffffff; --ink:#202124; --muted:#5f6368; --faint:#80868b;
+    --line:#dadce0; --line-2:#bdc1c6; --accent:#1f3a6b; --accent-dark:#152a50;
+    --accent-soft:#e8eef8; --error:#d93025; --error-soft:#fce8e6;
   }
   *{box-sizing:border-box}
   body{background:var(--page);color:var(--ink);font-family:"Roboto","Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:14px;line-height:1.6;padding-inline:16px;padding-block:12px 48px}
@@ -93,13 +93,13 @@
   .samples .sample-missing{width:100%;aspect-ratio:4/5;border:1px dashed var(--line-2);border-radius:4px;display:grid;place-items:center;
     color:var(--faint);font-size:12px;text-align:center;padding:8px}
   .samples figcaption{font-size:14px;color:var(--ink);font-weight:500}
-  .nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:4px}
+  .nav{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;padding-top:4px}
   .btn{font:inherit;font-size:14px;font-weight:500;border-radius:4px;min-height:44px;padding:0 24px;cursor:pointer;border:1px solid var(--line-2);background:var(--card);color:var(--accent)}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .btn.primary:hover{background:var(--accent-dark)}
   .btn:focus-visible,.clear-choice:focus-visible,.link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  .progress{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-left:auto}
-  .progress .track{width:120px;height:10px;border-radius:5px;background:#e8e0f3;overflow:hidden}
+  .progress{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);order:-1;margin-right:auto}
+  .progress .track{width:120px;height:10px;border-radius:5px;background:#d6dfee;overflow:hidden}
   .progress .fill{height:100%;background:var(--accent);transition:width .2s}
   .link{background:none;border:none;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;min-height:44px;padding:0;text-decoration:underline}
   .clear-all{margin-left:0}
@@ -109,7 +109,7 @@
   .summary dl{margin:8px 0 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 16px;font-size:13px}
   .summary dt{color:var(--muted)} .summary dd{margin:0}
   .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
-  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{margin-left:0;width:100%}}
+  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -386,8 +386,8 @@ function render() {
   const n = SPEC.sections.length;
   if (page === -1) {
     out.push(header, el("div", { class: "nav" },
-      el("button", { class: "btn primary", type: "button", text: "次へ", onclick: () => go(0) }),
-      el("button", { class: "link clear-all", type: "button", text: "フォームをクリア", onclick: clearAll })));
+      el("button", { class: "link clear-all", type: "button", text: "フォームをクリア", onclick: clearAll }),
+      el("button", { class: "btn primary", type: "button", text: "次へ", onclick: () => go(0) })));
   } else if (page < n) {
     const sec = SPEC.sections[page];
     out.push(el("div", { class: "card head" }, el("div", { class: "in" }, el("h1", { text: SPEC.form.title }))));
