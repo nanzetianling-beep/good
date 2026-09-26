@@ -95,9 +95,9 @@ def marp(lec: dict) -> str:
     out = [
         "---", "marp: true", "size: 16:9", "paginate: true",
         "style: |",
-        "  section { font-family: 'Noto Sans JP', sans-serif; background: #f7f3fc; color: #2b1f3d; }",
-        "  h1, h2 { color: #673ab7; }",
-        "  .time { position: absolute; top: 40px; right: 60px; font-size: 22px; color: #6b5d80; }",
+        "  section { font-family: 'Noto Sans JP', sans-serif; background: #f3f6fb; color: #1c2433; }",
+        "  h1, h2 { color: #1f3a6b; }",
+        "  .time { position: absolute; top: 40px; right: 60px; font-size: 22px; color: #5b6678; }",
         "  .cols { display: flex; gap: 40px; }",
         "---", "",
         f"# {DECK_TITLE}", "", "[店舗名] 様 / [訪問日]", "",
@@ -146,8 +146,8 @@ def checklist(lec: dict) -> str:
 
 # ── Web のスライド(Slides アーティファクト用) ─────────────────
 
-INK, LIGHT, SOFT, ACCENT, DARK, MUTED, LINE = "#2b1f3d", "#f7f3fc", "#ede4f8", "#673ab7", "#241a33", "#6b5d80", "#d9cfe6"
-CARD = "#fdfcff"
+INK, LIGHT, SOFT, ACCENT, DARK, MUTED, LINE = "#1c2433", "#f3f6fb", "#e3eaf5", "#1f3a6b", "#14213b", "#5b6678", "#cfd8e6"
+CARD = "#fcfdff"
 FONT = "'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif"
 BASE = (f"background:{LIGHT}; color:{INK}; font-family:{FONT}; padding:128px 128px 160px; "
         f"display:flex; flex-direction:column; gap:32px")
@@ -200,8 +200,8 @@ def slide_cover(chapters: list[dict]) -> str:
             f'flex-direction:column; justify-content:flex-end; gap:32px">'
             f'<div style="width:120px; height:12px; background:{ACCENT}; border-radius:6px"></div>'
             f'<h1 style="font-size:104px; font-weight:700; line-height:1.15">ポッキリ.Night<br>導入レクチャー</h1>'
-            f'<p style="font-size:40px; color:#cbbde0">[店舗名] 様 ・ [訪問日]</p>'
-            f'<p style="font-size:32px; color:#cbbde0">所要時間 約{total_minutes(chapters)}分 ・ 全{len(chapters) - 1}章</p>'
+            f'<p style="font-size:40px; color:#c3cfe3">[店舗名] 様 ・ [訪問日]</p>'
+            f'<p style="font-size:32px; color:#c3cfe3">所要時間 約{total_minutes(chapters)}分 ・ 全{len(chapters) - 1}章</p>'
             f'<aside>最初に、今日の流れと所要時間を説明します。</aside></section>')
 
 

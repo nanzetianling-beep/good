@@ -3,9 +3,9 @@ marp: true
 size: 16:9
 paginate: true
 style: |
-  section { font-family: 'Noto Sans JP', sans-serif; background: #f7f3fc; color: #2b1f3d; }
-  h1, h2 { color: #673ab7; }
-  .time { position: absolute; top: 40px; right: 60px; font-size: 22px; color: #6b5d80; }
+  section { font-family: 'Noto Sans JP', sans-serif; background: #f3f6fb; color: #1c2433; }
+  h1, h2 { color: #1f3a6b; }
+  .time { position: absolute; top: 40px; right: 60px; font-size: 22px; color: #5b6678; }
   .cols { display: flex; gap: 40px; }
 ---
 
