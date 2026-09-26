@@ -37,7 +37,7 @@ form:
     送っていただいたら、回答は完了です。
     ありがとうございました。
 
-    次に、料金表やメニューなどを
+    次に、商品メニューや名簿などを
     LINEで送っていただきます。
 
     担当者から、記入用のひな形を
@@ -46,7 +46,7 @@ form:
 
 sections:
   - {id: S2, title: 店舗名・営業時間の区分, desc: 店舗名と、一部・二部の分け方を伺います。}
-  - {id: S3, title: 料金のルール, desc: セット料金以外にかかる料金と、端数の扱いです。}
+  - {id: S3, title: 料金のルール, desc: セット・延長の料金と、そのほかにかかる料金、端数の扱いです。}
   - {id: S11, title: 卓, desc: お店にある卓(テーブル・カウンター・個室など)です。}
   - {id: S4, title: 指名・バック, desc: 指名・売上・商品のバックと、端数の扱いです。}
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
@@ -60,11 +60,6 @@ sections:
 #   line_notes … LINEの【テーマ名】の直後に入れる注意書き
 #   line_after … 表の後ろに付け足す行
 themes:
-  - id: 1
-    title: 料金セット・延長メニュー
-    sheet: 料金セット
-    photo_ok: true
-    line_notes: [料金表の写真だけでもOKです]
   - id: 3
     title: 商品メニュー
     sheet: 商品メニュー
@@ -180,29 +175,34 @@ items:
   # ── 既存見本 ② 料金セット ─────────────────────────────
 
   - id: price_sets
-    route: template
-    theme: 1
-    label: セット
+    route: form
+    section: S3
+    label: 料金セット
     type: table
     columns: [セット名, 時間(分), 料金(円), 延長(分)]
     cells: [text, int, int, int]
     examples:
       - [セット1, 60, 8000, 30]
       - [VIPセット, 60, 15000, 30]
-    line: {format: [セット名, 時間(分), 料金], examples: [[セット1, 60, 8000], [VIPセット, 60, 15000]]}
+    hint: |-
+      例)セット1/60分/8000円/延長30分
+      例)VIPセット/60分/15000円/延長30分
+      お店のセットを、1行に1つずつ書いてください。
     source: {sample: pricing, question: セット（基本の料金）}
 
   - id: extension_menu
-    route: template
-    theme: 1
-    label: 延長
+    route: form
+    section: S3
+    label: 延長メニュー
     type: table
     columns: [名前, 時間(分), 料金(円)]
     cells: [text, int, int]
     examples:
       - [延長30分, 30, 4000]
       - [延長60分, 60, 8000]
-    line: {format: [延長名, 時間(分), 料金], examples: [[延長30分, 30, 4000], [延長60分, 60, 8000]]}
+    hint: |-
+      例)延長30分/30分/4000円
+      例)延長60分/60分/8000円
     source: {sample: pricing, question: 延長メニュー}
 
   - id: service_charge

@@ -69,7 +69,7 @@ def test_form_has_no_sensitive_questions(spec):
 def test_line_has_guide_themes_and_closing(spec):
     names = [n for n, _ in build_templates.line_messages(spec)]
     assert names[0] == "00_案内" and names[-1] == "99_最後に"
-    assert len(names) == 5
+    assert len(names) == 4
 
 
 def test_line_lines_fit_phone_width(spec):
@@ -224,7 +224,7 @@ def test_workbook_has_all_kinds_with_store_name(spec):
 
 def test_tables_and_send_rules_are_in_form(spec):
     by_id = {it["id"]: it for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
-    for i in ["tables", "send_areas", "busy_hours", "nomination_types"]:
+    for i in ["tables", "send_areas", "busy_hours", "nomination_types", "price_sets", "extension_menu"]:
         assert by_id[i]["type"] == "table" and by_id[i]["columns"] and by_id[i]["cells"]
     assert by_id["send_areas"]["show_if"] == {"item": "send_areas_use", "equals": "あり"}
     names = [n for n, _ in build_templates.line_messages(spec)]
