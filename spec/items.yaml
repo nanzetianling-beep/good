@@ -179,14 +179,14 @@ items:
     section: S3
     label: 料金セット
     type: table
-    columns: [セット名, 時間(分), 料金(円), 延長(分)]
-    cells: [text, int, int, int]
+    columns: [セット名, 時間(分), 料金(円)]
+    cells: [text, int, int]
     examples:
-      - [セット1, 60, 8000, 30]
-      - [VIPセット, 60, 15000, 30]
+      - [セット1, 60, 8000]
+      - [VIPセット, 60, 15000]
     hint: |-
-      例)セット1/60分/8000円/延長30分
-      例)VIPセット/60分/15000円/延長30分
+      例)セット1/60分/8000円
+      例)VIPセット/60分/15000円
       お店のセットを、1行に1つずつ書いてください。
     source: {sample: pricing, question: セット（基本の料金）}
 
@@ -284,7 +284,9 @@ items:
     type: radio
     options: [使わない, 使う]
     unknown_option: true
-    hint: 主にバー・スナック向けの機能です
+    hint: |-
+      セットの時間が終わったら、決めた間隔で自動で延長をつける機能です。
+      「使わない」場合は、上の延長メニューから手で延長をつけます。
     source: {sample: pricing, question: 自動延長を使うか}
 
   - id: auto_extension_interval
