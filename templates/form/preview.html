@@ -104,17 +104,18 @@
   .link{background:none;border:none;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;min-height:44px;padding:0;text-decoration:underline}
   .clear-all{margin-left:0}
   .done h2{font-family:"Noto Sans JP",sans-serif;font-size:24px;font-weight:400;margin:0 0 12px}
-  .summary{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
-  .summary summary{cursor:pointer;color:var(--accent);min-height:44px;display:flex;align-items:center}
-  .summary dl{margin:8px 0 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 16px;font-size:13px}
-  .summary dt{color:var(--muted)} .summary dd{margin:0}
+  .answer-text{width:100%;min-height:260px;margin-top:16px;border:1px solid var(--line-2);border-radius:4px;padding:12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink);background:#fafbfd;resize:vertical}
+  .send{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .btn.line{background:#06c755;border-color:#06c755;color:#fff}
+  .btn.line:hover{background:#05a948}
+  .send-status{margin:8px 0 0;font-size:13px;color:var(--muted);text-align:right;min-height:1.6em}
+  .after{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;white-space:pre-line;font-size:14px}
   .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
   @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="wrap">
-  <p class="demo">これはアンケートの見本です。送信しても回答は保存されません。</p>
   <div id="app"></div>
   <p class="foot">このフォームは ポッキリ.Night が作成しました</p>
 </div>
@@ -355,7 +356,46 @@ function nextPage() {
   go(target);
 }
 
+// 途中まで書いた回答は、この端末のブラウザにだけ残す(再読み込みしても消えないように)
+const DRAFT_KEY = "pokkiri-onboarding-draft";
+function saveDraft() {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers, others, page })); } catch {}
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+    if (!d) return false;
+    Object.assign(answers, d.answers || {}); Object.assign(others, d.others || {});
+    if (Number.isInteger(d.page) && d.page >= -1 && d.page <= SPEC.sections.length) page = d.page;
+    return true;
+  } catch { return false; }
+}
+document.addEventListener("input", saveDraft);
+document.addEventListener("change", saveDraft);
+
+// LINEで送る文章(質問と回答を1つずつ並べる)
+function answerText() {
+  const lines = [`【${SPEC.form.title}】`];
+  SPEC.sections.forEach((s) => s.items.forEach((it) => {
+    const v = it.type !== "note" && visible(it) ? fmt(it) : null;
+    if (v) lines.push("", `■${it.label}`, v);
+  }));
+  return lines.join("\n");
+}
+
+async function copyAnswer(text, status) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const ta = document.querySelector(".answer-text");
+    ta.select();
+    try { document.execCommand("copy"); } catch { status.textContent = "コピーできませんでした。上の文章を長押しして、コピーしてください。"; return false; }
+  }
+  status.textContent = "コピーしました。LINEのトークに貼り付けて送ってください。";
+  return true;
+}
+
 function clearAll() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch {}
   for (const k of Object.keys(answers)) delete answers[k];
   for (const k of Object.keys(others)) delete others[k];
   for (const k of Object.keys(errors)) delete errors[k];
@@ -397,26 +437,32 @@ function render() {
     sec.items.filter(visible).forEach((it) => out.push(questionCard(it)));
     out.push(el("div", { class: "nav" },
       el("button", { class: "btn", type: "button", text: "戻る", onclick: () => { page = history.pop() ?? -1; render(); window.scrollTo({ top: 0 }); } }),
-      el("button", { class: "btn primary", type: "button", text: page === n - 1 ? "送信" : "次へ", onclick: nextPage }),
+      el("button", { class: "btn primary", type: "button", text: page === n - 1 ? "回答をまとめる" : "次へ", onclick: nextPage }),
       progress()));
   } else {
-    const dl = el("dl");
-    SPEC.sections.forEach((s) => s.items.forEach((it) => {
-      const v = it.type !== "note" && visible(it) ? fmt(it) : null;
-      if (v) dl.append(el("dt", { text: it.label }), el("dd", { text: v }));
-    }));
+    // 回答はどこにも保存しないので、店舗の方にLINEで送ってもらう
+    const text = answerText();
+    const status = el("p", { class: "send-status", role: "status" });
     out.push(el("div", { class: "card head done" }, el("div", { class: "in" },
-      el("h2", { text: SPEC.form.title }),
-      el("p", { class: "desc", text: SPEC.form.done }),
-      el("details", { class: "summary" }, el("summary", { text: "回答の内容を見る" }),
-        dl.children.length ? dl : el("p", { text: "回答した項目はありません。" })),
-      el("button", { class: "link", type: "button", text: "別の回答を送信", onclick: clearAll }))));
+      el("h2", { text: "最後に、回答をLINEで送ってください" }),
+      el("p", { class: "desc", text: "まだ送信は終わっていません。\n下の「LINEで送る」を押して、担当者に送ると完了です。" }),
+      el("textarea", { class: "answer-text", readonly: true, "aria-label": "回答の内容" }, text),
+      el("div", { class: "send" },
+        el("button", { class: "btn", type: "button", text: "文章をコピー", onclick: () => copyAnswer(text, status) }),
+        el("a", { class: "btn line", href: "https://line.me/R/share?text=" + encodeURIComponent(text), target: "_blank", rel: "noopener",
+          style: "display:inline-flex;align-items:center;text-decoration:none", text: "LINEで送る" })),
+      status,
+      el("p", { class: "after", text: SPEC.form.done }))));
+    out.push(el("div", { class: "nav" },
+      el("button", { class: "btn", type: "button", text: "戻って直す", onclick: () => { page = history.pop() ?? n - 1; render(); window.scrollTo({ top: 0 }); } }),
+      el("button", { class: "link", type: "button", text: "最初から入力し直す", onclick: clearAll })));
   }
   app.replaceChildren(...out);
+  saveDraft();
 }
 
-// 初期値のある質問は、最初から入れておく
-for (const s of SPEC.sections) for (const it of s.items) if (it.default != null) answers[it.id] = String(it.default);
+// 初期値のある質問は、最初から入れておく(書きかけがあれば、そちらを戻す)
+if (!loadDraft()) for (const s of SPEC.sections) for (const it of s.items) if (it.default != null) answers[it.id] = String(it.default);
 
 // #s3 のようなリンクで、そのセクションから開く
 const m = /^#s(\d+)$/.exec(location.hash);
