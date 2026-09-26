@@ -383,7 +383,7 @@ items:
     hint: |-
       担当した卓の売上に対して、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: sales_back_rate
     route: form
@@ -393,7 +393,7 @@ items:
     units: ["%", 円]
     show_if: {item: sales_back_mode, equals: 店舗一律}
     hint: 売上の%か、金額(円)を入力してください
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: sales_back_later
     route: form
@@ -402,7 +402,7 @@ items:
     type: note
     show_if: {item: sales_back_mode, equals: キャストごとに違う}
     body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: drink_back_mode
     route: form
@@ -476,7 +476,7 @@ items:
     hint: |-
       1本のボトルに、複数のキャストが付いたときの扱いです。
       「使う」にすると、バックを均等に分けます。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: food_back_mode
     route: form
@@ -488,7 +488,7 @@ items:
     hint: |-
       フードが1品入るごとに、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: food_back_rate
     route: form
@@ -498,7 +498,7 @@ items:
     units: ["%", 円]
     show_if: {item: food_back_mode, equals: 店舗一律}
     hint: 1品あたりの金額か、フードの料金の%を入力してください
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: food_back_later
     route: form
@@ -507,19 +507,7 @@ items:
     type: note
     show_if: {item: food_back_mode, equals: キャストごとに違う}
     body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
-
-  - id: help_back
-    route: form
-    section: S4
-    label: ヘルプバック
-    type: radio
-    options: [使わない, 使う]
-    unknown_option: true
-    hint: |-
-      ヘルプで付いたキャストにも、バックを分けるかどうかです。
-      分ける割合は、訪問時に一緒に決めます。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: other_backs
     route: form
@@ -531,7 +519,7 @@ items:
     hint: |-
       使っているものに、すべてチェックしてください。
       細かい条件は、訪問時に伺います。
-    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・ヘルプ・スライド・本数ボーナス)}
+    source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
   - id: sales_split
     route: form
