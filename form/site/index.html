@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ポッキリ.Night 導入アンケート</title>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Googleフォームの形に合わせる(常に白基調)。配色は紺を基調にする */
+  /* 端末がダークモードでも、フォームは常に白基調で表示する */
+  :root,html,body{color-scheme:light}
+  :root{
+    --page:#e9eef6; --card:#ffffff; --ink:#202124; --muted:#5f6368; --faint:#80868b;
+    --line:#dadce0; --line-2:#bdc1c6; --accent:#1f3a6b; --accent-dark:#152a50;
+    --accent-soft:#e8eef8; --error:#d93025; --error-soft:#fce8e6;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--page);color:var(--ink);font-family:"Roboto","Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:14px;line-height:1.6;padding-inline:16px;padding-block:12px 48px}
+  .wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .demo{font-size:12px;color:var(--muted);text-align:center}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px}
+  .head{padding:0;overflow:hidden;border-top:10px solid var(--accent)}
+  .head .in{padding:22px 24px 18px}
+  .head h1{font-family:"Noto Sans JP",sans-serif;font-size:28px;font-weight:400;line-height:1.35;margin:0 0 12px;text-wrap:balance}
+  .desc{white-space:pre-line;margin:0;font-size:14px}
+  .facts{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
+  .facts li::before{content:"・";color:var(--accent)}
+  .req-note{border-top:1px solid var(--line);padding:12px 24px;color:var(--error);font-size:14px}
+  .sec{padding:0;overflow:hidden}
+  .sec .tab{display:inline-block;background:var(--accent);color:#fff;font-size:14px;padding:8px 16px;border-radius:8px 8px 0 0}
+  .sec .body{border-top:10px solid var(--accent);padding:18px 24px 20px;margin-top:-1px}
+  .sec h2{font-family:"Noto Sans JP",sans-serif;font-size:22px;font-weight:400;margin:0 0 6px;text-wrap:balance}
+  .sec p{margin:0;color:var(--ink)}
+  .q{display:flex;flex-direction:column;gap:12px;transition:border-color .15s}
+  .q.err{border-color:var(--error)}
+  .q-title{font-size:16px;font-weight:400;line-height:1.5;margin:0;white-space:pre-line}
+  .q-title .star{color:var(--error);margin-left:4px}
+  .q-hint{font-size:13px;color:var(--muted);margin:-6px 0 0;white-space:pre-line}
+  .q.note .q-title{font-size:18px}
+  .q.note .q-body{white-space:pre-line;font-size:14px}
+  .text-in{width:50%;min-width:220px;max-width:100%;border:none;border-bottom:1px solid var(--line-2);font:inherit;font-size:14px;padding:8px 0;background:transparent;color:var(--ink);min-height:44px}
+  .text-in.full{width:100%}
+  .text-in:focus{outline:none;border-bottom:2px solid var(--accent);padding-bottom:7px}
+  textarea.text-in{resize:vertical;min-height:64px}
+  .unit{color:var(--muted);margin-left:8px;font-size:14px}
+  .field{display:flex;align-items:flex-end}
+  .field .text-in{flex:0 1 50%;min-width:0}
+  .opts{display:flex;flex-direction:column}
+  .opt{display:flex;align-items:center;gap:14px;min-height:44px;cursor:pointer;padding:2px 0}
+  .opt input[type=radio],.opt input[type=checkbox]{-webkit-appearance:none;appearance:none;width:20px;height:20px;flex:none;margin:0;
+    border:2px solid var(--muted);background:#fff;display:grid;place-content:center;cursor:pointer}
+  .opt input[type=radio]{border-radius:50%}
+  .opt input[type=checkbox]{border-radius:3px}
+  .opt input[type=radio]::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);transform:scale(0);transition:transform .1s}
+  .opt input[type=radio]:checked{border-color:var(--accent)}
+  .opt input[type=radio]:checked::before{transform:scale(1)}
+  .opt input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .opt input[type=checkbox]::before{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);margin-top:-2px}
+  .opt input[type=checkbox]:checked::before{transform:rotate(45deg) scale(1)}
+  .opt input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .rate{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .rate .text-in{width:140px;min-width:0}
+  .seg{display:flex;gap:16px}
+  .clock{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+  .clock label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+  .clock select.text-in{min-width:110px;width:auto}
+  .clock-sep{font-size:18px;color:var(--muted);padding-bottom:10px}
+  .opt .lbl{font-size:14px}
+  .opt.unknown .lbl{color:var(--muted)}
+  .opt .other{flex:1;min-width:120px;width:auto}
+  select.text-in{width:auto;min-width:200px;border:1px solid var(--line-2);border-radius:4px;padding:8px 12px}
+  select.text-in:focus{border:2px solid var(--accent);padding:7px 11px}
+  .rows{overflow-x:auto}
+  .rows table{border-collapse:collapse;width:100%;min-width:320px;font-size:14px}
+  .rows th{text-align:left;font-weight:500;color:var(--muted);font-size:13px;padding:6px 8px 6px 0;white-space:nowrap}
+  .rows td{padding:2px 8px 2px 0;vertical-align:bottom}
+  .rows td.no{color:var(--faint);font-size:12px;width:1.5em;font-variant-numeric:tabular-nums}
+  .rows .text-in{width:100%;min-width:90px}
+  .rows select.text-in{min-width:90px;width:100%}
+  .rows .del{background:none;border:none;color:var(--faint);font-size:18px;cursor:pointer;min-width:44px;min-height:44px;border-radius:50%}
+  .rows .del:hover{background:#f1f3f4;color:var(--ink)}
+  .add-row{align-self:flex-start;background:none;border:1px dashed var(--line-2);color:var(--accent);font:inherit;font-size:14px;font-weight:500;
+    min-height:44px;padding:0 16px;border-radius:4px;cursor:pointer}
+  .add-row:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .add-row:focus-visible,.rows .del:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .dt{display:flex;gap:24px;flex-wrap:wrap}
+  .dt label{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
+  .dt input{width:180px;min-width:0}
+  .clear-choice{align-self:flex-end;background:none;border:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;min-height:44px;padding:0 8px;border-radius:4px}
+  .clear-choice:hover{background:#f1f3f4}
+  .errmsg{display:flex;align-items:center;gap:8px;color:var(--error);font-size:13px}
+  .errmsg::before{content:"!";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--error);color:#fff;font-size:11px;font-weight:700}
+  .samples{display:grid;grid-template-columns:1fr;gap:14px}
+  .samples figure{margin:0;display:flex;flex-direction:column;gap:4px;align-items:center;font-size:12px;color:var(--muted)}
+  .samples img{width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+  .samples .sample-missing{width:100%;aspect-ratio:4/5;border:1px dashed var(--line-2);border-radius:4px;display:grid;place-items:center;
+    color:var(--faint);font-size:12px;text-align:center;padding:8px}
+  .samples figcaption{font-size:14px;color:var(--ink);font-weight:500}
+  .nav{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;padding-top:4px}
+  .btn{font:inherit;font-size:14px;font-weight:500;border-radius:4px;min-height:44px;padding:0 24px;cursor:pointer;border:1px solid var(--line-2);background:var(--card);color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:var(--accent-dark)}
+  .btn:focus-visible,.clear-choice:focus-visible,.link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .progress{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);order:-1;margin-right:auto}
+  .progress .track{width:120px;height:10px;border-radius:5px;background:#d6dfee;overflow:hidden}
+  .progress .fill{height:100%;background:var(--accent);transition:width .2s}
+  .link{background:none;border:none;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;min-height:44px;padding:0;text-decoration:underline}
+  .clear-all{margin-left:0}
+  .done h2{font-family:"Noto Sans JP",sans-serif;font-size:24px;font-weight:400;margin:0 0 12px}
+  .answer-text{width:100%;min-height:260px;margin-top:16px;border:1px solid var(--line-2);border-radius:4px;padding:12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink);background:#fafbfd;resize:vertical}
+  .send{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .btn.line{background:#06c755;border-color:#06c755;color:#fff}
+  .btn.line:hover{background:#05a948}
+  .send-status{margin:8px 0 0;font-size:13px;color:var(--muted);text-align:right;min-height:1.6em}
+  .after{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;white-space:pre-line;font-size:14px}
+  .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
+  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div id="app"></div>
+  <p class="foot">このフォームは ポッキリ.Night が作成しました</p>
+</div>
+
+<script>
+const SPEC = {"form": {"title": "ポッキリ.Night 導入アンケート", "intro": "このたびは、ポッキリ.Nightを\nお選びいただきありがとうございます。\n\nお店の料金やルールを伺い、\nPOSの初期設定に使わせていただきます。", "facts": ["所要時間は約15〜20分です", "回答期限:〇月〇日(〇)まで", "まだ決まっていない項目は「未定」でOKです", "最後に、回答をLINEで担当者へ送ります"], "done": "送っていただいたら、回答は完了です。\nありがとうございました。\n\n次に、料金表やメニューなどを\nLINEで送っていただきます。\n\n担当者から、記入用のひな形を\nLINEでお送りします。\n届くまで少々お待ちください。"}, "sections": [{"id": "S2", "title": "店舗名・営業時間の区分", "desc": "店舗名と、一部・二部の分け方を伺います。", "items": [{"id": "store_name", "label": "店舗名", "type": "short", "required": true, "placeholder": "例:Club ポッキリ 新宿店", "hint": "看板やメニューに書いている店名を入力してください"}, {"id": "shift_split", "label": "一部・二部(深夜)の区別", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true}, {"id": "shift_split_start", "label": "二部の開始時刻", "type": "time", "unknown_option": true, "show_if": {"item": "shift_split", "equals": "使う"}}, {"id": "shift_split_end", "label": "二部の終了時刻", "type": "time", "unknown_option": true, "show_if": {"item": "shift_split", "equals": "使う"}, "hint": "翌朝の場合は、そのままの時刻を選びます(例:5時(翌朝)なら5時00分)"}]}, {"id": "S3", "title": "料金のルール", "desc": "セット料金以外にかかる料金と、端数の扱いです。", "items": [{"id": "service_charge", "label": "サービス料", "type": "radio", "options": ["なし", "10%", "15%", "20%", "その他"], "other": {"type": "number", "unit": "%", "min": 0, "max": 100}, "unknown_option": true, "hint": "会計の小計にかける割合です"}, {"id": "house_charge", "label": "ハウスチャージの有無", "type": "radio", "options": ["なし", "あり"], "unknown_option": true, "hint": "セット料金とは別にかかる、席料などの料金です"}, {"id": "house_charge_amount", "label": "ハウスチャージの金額", "type": "number", "show_if": {"item": "house_charge", "equals": "あり"}, "unit": "円", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "rounding_example", "label": "端数処理とは", "type": "note", "body": "お会計の端数を、きりのいい金額にそろえる設定です。\nお会計が12,345円のときの例です。\n\n・100円単位で切り捨て → 12,300円\n・100円単位で切り上げ → 12,400円\n・1000円単位で切り捨て → 12,000円\n・なし → 12,345円のまま"}, {"id": "total_rounding_unit", "label": "端数処理(単位)", "type": "dropdown", "options": ["なし", "10円", "100円", "500円", "1000円"], "unknown_option": true}, {"id": "total_rounding_mode", "label": "端数処理(方法)", "type": "dropdown", "options": ["切り捨て", "切り上げ"], "unknown_option": true}, {"id": "extension_alert", "label": "延長アラート", "type": "dropdown", "options": ["終了の5分前", "終了の10分前", "終了の15分前"], "unknown_option": true, "hint": "この時刻になると、卓の色が変わってお知らせします"}, {"id": "auto_extension", "label": "自動延長", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true, "hint": "主にバー・スナック向けの機能です"}, {"id": "auto_extension_interval", "label": "自動延長の間隔", "type": "number", "show_if": {"item": "auto_extension", "equals": "使う"}, "unit": "分ごと", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "auto_extension_price", "label": "自動延長の金額", "type": "number", "show_if": {"item": "auto_extension", "equals": "使う"}, "unit": "円", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "late_night_surcharge", "label": "深夜割増", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true, "hint": "卓を開いた時刻が基準時刻以降なら、会計に定額を1回だけ加えます"}, {"id": "late_night_surcharge_from", "label": "深夜割増の基準時刻(時)", "type": "dropdown", "options": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "unknown_option": true, "show_if": {"item": "late_night_surcharge", "equals": "使う"}}, {"id": "late_night_surcharge_amount", "label": "深夜割増の金額(1セットあたり)", "type": "number", "show_if": {"item": "late_night_surcharge", "equals": "使う"}, "unit": "円", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}]}, {"id": "S11", "title": "卓", "desc": "お店にある卓(テーブル・カウンター・個室など)です。", "items": [{"id": "tables", "label": "卓の一覧", "type": "table", "hint": "お店にある卓を、1行に1つ書いてください。\n配置は、訪問時にPOSの画面で一緒に決めます。", "columns": ["卓名", "席数(任意)"], "cells": ["text", "int"], "examples": [["VIP1", 6], ["カウンター", 8]]}]}, {"id": "S4", "title": "指名・バック", "desc": "指名区分・ドリンク・ボトルのバックと、端数の扱いです。", "items": [{"id": "nomination_back_note", "label": "指名区分のバック", "type": "note", "body": "指名料のバックは、「指名区分」の記入シートに書いてください。\n区分ごとに、円か指名料の%で決められます。"}, {"id": "sales_split", "label": "複数キャストでの売上折半(指名された方のみ)", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true}, {"id": "back_rounding", "label": "バック端数の丸め", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true, "hint": "バックの金額の端数を、きりのいい金額にそろえるかどうかです"}, {"id": "back_rounding_unit", "label": "バック端数の丸め単位", "type": "radio", "options": ["10円", "100円", "記入"], "other": {"type": "number", "unit": "円", "min": 1, "max": 10000}, "unknown_option": true, "show_if": {"item": "back_rounding", "equals": "使う"}}, {"id": "drink_back_mode", "label": "ドリンクバック(全キャスト)", "type": "radio", "options": ["店舗一律", "キャストごとに違う"], "unknown_option": true, "hint": "キャストドリンクが1杯入るごとに、キャストに付くバックです。\n「店舗一律」にすると、全キャストが同じバックになります。"}, {"id": "drink_back_rate", "label": "ドリンクバックの金額・率(店舗一律)", "type": "rate", "show_if": {"item": "drink_back_mode", "equals": "店舗一律"}, "hint": "1杯あたりの金額か、キャストドリンクの料金の%を入力してください", "units": ["%", "円"]}, {"id": "drink_back_later", "label": "ドリンクバックは、あとで登録します", "type": "note", "show_if": {"item": "drink_back_mode", "equals": "キャストごとに違う"}, "body": "キャストごとのバックは、訪問時にPOSへ一緒に登録します。"}, {"id": "bottle_back_mode", "label": "ボトルバック(全キャスト)", "type": "radio", "options": ["店舗一律", "キャストごとに違う"], "unknown_option": true, "hint": "ボトルが1本入るごとに、キャストに付くバックです。\n「店舗一律」にすると、全キャストが同じバックになります。"}, {"id": "bottle_back_rate", "label": "ボトルバックの金額・率(店舗一律)", "type": "rate", "show_if": {"item": "bottle_back_mode", "equals": "店舗一律"}, "hint": "1本あたりの金額か、ボトルの料金の%を入力してください", "units": ["%", "円"]}, {"id": "bottle_back_later", "label": "ボトルバックは、あとで登録します", "type": "note", "show_if": {"item": "bottle_back_mode", "equals": "キャストごとに違う"}, "body": "キャストごとのバックは、訪問時にPOSへ一緒に登録します。"}]}, {"id": "S5", "title": "税・インボイス", "desc": "領収書と会計の税の扱いに使います。", "items": [{"id": "invoice_registered", "label": "インボイス登録", "type": "radio", "options": ["登録している", "登録していない"], "unknown_option": true}, {"id": "invoice_number", "label": "インボイス登録番号", "type": "short", "show_if": {"item": "invoice_registered", "equals": "登録している"}, "placeholder": "例:T1234567890123", "validation": {"kind": "regex", "pattern": "^T\\d{13}$", "message": "「T」から始まる14文字で入力してください(例:T1234567890123)"}}, {"id": "tax_rate_notice", "label": "税率", "type": "note", "body": "税率は10%(軽減8%)で設定します"}, {"id": "price_display", "label": "価格の表示方法", "type": "radio", "options": ["内税(税込表示)", "外税(税抜表示)"], "unknown_option": true}]}, {"id": "S6", "title": "決済方法", "desc": "カード払いと売掛の手数料について伺います。", "items": [{"id": "card_surcharge", "label": "カード払いの上乗せ手数料", "type": "radio", "options": ["なし", "あり"], "other": {"type": "number", "unit": "%", "min": 0, "max": 100}, "unknown_option": true, "hint": "カード会社の規約で、手数料の上乗せが禁止されている場合があります"}, {"id": "credit_surcharge", "label": "売掛の上乗せ手数料", "type": "radio", "options": ["なし", "あり"], "other": {"type": "number", "unit": "%", "min": 0, "max": 100}, "unknown_option": true}, {"id": "card_fee", "label": "カード決済手数料(店舗負担)", "type": "number", "unit": "%", "hint": "内税(税込表示)のときだけ、自動で適用されます", "validation": {"kind": "number", "min": 0, "max": 100, "message": "0〜100の数字で入力してください"}}]}, {"id": "S7", "title": "レジ", "desc": "レジを開けるときと、締めるときの設定です。", "items": [{"id": "register_float", "label": "いつものレジ金(釣銭準備額)", "type": "number", "unit": "円", "placeholder": "例:50000", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "cash_diff_lower", "label": "現金過不足の許容範囲(下限・マイナス)", "type": "number", "unit": "円", "placeholder": "例:1000", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "cash_diff_upper", "label": "現金過不足の許容範囲(上限・プラス)", "type": "number", "unit": "円", "placeholder": "例:1000", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}]}, {"id": "S8", "title": "プリンター・伝票", "desc": "レシートプリンターと、伝票・領収書の設定です。", "items": [{"id": "receipt_printer", "label": "レシートプリンター\n(EPSON/TM-m30Ⅲ-H・Star/MCP31LB)", "type": "radio", "options": ["ある", "これから用意", "使わない"], "unknown_option": true, "skip_to_on": {"使わない": "S9"}}, {"id": "paper_width", "label": "用紙幅", "type": "radio", "options": ["58mm", "80mm"], "unknown_option": true}, {"id": "receipt_design", "label": "領収書のデザイン", "type": "radio", "options": ["1", "2", "3"], "unknown_option": false, "option_images": ["images/receipt-1.svg", "images/receipt-2.svg", "images/receipt-3.svg"], "hint": "下の見本から、刷りたいデザインの番号を選んでください"}, {"id": "receipt_fields", "label": "領収書に刷る内容", "type": "checkbox", "options": ["事業者名", "インボイス登録番号"], "unknown_option": true, "hint": "店舗名・電話番号・住所は必ず印字します"}, {"id": "slip_numbering", "label": "伝票番号の採番", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true, "hint": "伝票に通し番号を付けるかどうかです。\n例:接頭辞「A」・開始番号「1」なら、\nA1、A2、A3…と順に番号が付きます。"}, {"id": "slip_prefix", "label": "伝票番号の接頭辞(任意)", "type": "short", "show_if": {"item": "slip_numbering", "equals": "使う"}, "placeholder": "例:A"}, {"id": "slip_start", "label": "伝票番号の開始番号", "type": "number", "show_if": {"item": "slip_numbering", "equals": "使う"}, "placeholder": "例:1", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "slip_reset", "label": "採番のリセット単位", "type": "dropdown", "options": ["リセットしない", "営業日ごと", "月初にリセット"], "unknown_option": true, "show_if": {"item": "slip_numbering", "equals": "使う"}, "hint": "例:「営業日ごと」なら、毎日A1から数え直します"}, {"id": "kitchen_slip", "label": "キッチン伝票", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true}, {"id": "kitchen_categories", "label": "キッチン伝票に印刷するカテゴリ", "type": "checkbox", "options": ["ドリンク", "ボトル", "フード", "その他"], "unknown_option": true, "show_if": {"item": "kitchen_slip", "equals": "使う"}}]}, {"id": "S9", "title": "来店のきっかけ", "desc": "新規やリピーターなど、来店のきっかけを集計します。", "items": [{"id": "referral_tags", "label": "来店きっかけの集計タグ", "type": "checkbox", "options": ["新規", "リピーター", "紹介", "SNS", "ビラ", "看板"], "other": {"type": "short"}, "unknown_option": true, "hint": "金額の計算には影響しません。あとから追加できます"}]}, {"id": "S10", "title": "給与のルール", "desc": "お店全体の給与・送り代のルールです。キャストごとの時給は訪問時に伺います。", "items": [{"id": "closing_day", "label": "締め日", "type": "dropdown", "options": ["5日", "10日", "15日", "20日", "25日", "末日"], "unknown_option": true}, {"id": "pay_day", "label": "支払日", "type": "dropdown", "options": ["5日", "10日", "15日", "20日", "25日", "末日"], "unknown_option": true}, {"id": "wage_rounding_unit", "label": "時給の丸め(単位)", "type": "dropdown", "options": ["1分", "5分", "10分", "15分", "30分"], "unknown_option": true}, {"id": "wage_rounding_mode", "label": "時給の丸め(方法)", "type": "dropdown", "options": ["切り捨て", "切り上げ"], "unknown_option": true}, {"id": "main_withholding_type", "label": "主に使う源泉区分", "type": "radio", "options": ["報酬源泉(10.21%)", "ホステス源泉(日額5,000円控除)", "給与源泉"], "unknown_option": true, "hint": "率は初期値で設定します。キャストごとの区分は訪問時に入力します"}, {"id": "commute_min_hours", "label": "交通費の対象になる最低勤務時間", "type": "number", "unit": "時間", "validation": {"kind": "number", "min": 0, "max": 24, "message": "0〜24の数字で入力してください"}}, {"id": "commute_full_day_hours", "label": "フル日とみなす勤務時間", "type": "number", "unit": "時間", "validation": {"kind": "number", "min": 0, "max": 24, "message": "0〜24の数字で入力してください"}}, {"id": "welfare_amount", "label": "福利厚生費", "type": "number", "unit": "円", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "welfare_unit", "label": "福利厚生費の単位", "type": "radio", "options": ["期間ごと", "出勤日ごと"], "unknown_option": true}, {"id": "late_deduction", "label": "遅刻控除", "type": "radio", "options": ["使わない", "使う"], "unknown_option": true}, {"id": "late_deduction_per_minute", "label": "遅刻控除(1分あたり)", "type": "number", "show_if": {"item": "late_deduction", "equals": "使う"}, "unit": "円", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "late_grace_minutes", "label": "遅刻の猶予", "type": "number", "show_if": {"item": "late_deduction", "equals": "使う"}, "unit": "分", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "late_daily_cap", "label": "遅刻控除の1日の上限", "type": "number", "show_if": {"item": "late_deduction", "equals": "使う"}, "unit": "円", "hint": "空欄なら上限なし", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "daily_advance_cap", "label": "日払いの上限", "type": "number", "unit": "円", "hint": "空欄なら上限なし", "validation": {"kind": "integer", "min": 0, "message": "数字のみで入力してください(カンマ不要)"}}, {"id": "pay_ratio_alert", "label": "給率の警告しきい値(任意)", "type": "number", "unit": "%", "hint": "担当売上に対するバック率がこれを超えたら、画面でお知らせします", "validation": {"kind": "number", "min": 0, "max": 100, "message": "0〜100の数字で入力してください"}}, {"id": "send_areas_use", "label": "送り代", "type": "radio", "options": ["なし", "あり"], "unknown_option": true, "hint": "キャストの送りに、エリアごとの送り代を決めている場合は「あり」です"}, {"id": "send_areas", "label": "送りエリアごとの送り代", "type": "table", "show_if": {"item": "send_areas_use", "equals": "あり"}, "columns": ["エリア名", "送り代(円)"], "cells": ["text", "int"], "examples": [["みなとみらい", 1500], ["関内", 1000]]}, {"id": "busy_hours_use", "label": "時給を上げる時間帯", "type": "radio", "options": ["なし", "あり"], "unknown_option": true, "hint": "忙しい時間帯だけ、時給を上げている場合は「あり」です"}, {"id": "busy_hours", "label": "時給を上げる時間帯と、上げ方", "type": "table", "show_if": {"item": "busy_hours_use", "equals": "あり"}, "hint": "例:22時〜24時は時給を1.2倍、または+300円", "columns": ["開始", "終了", "倍率または加算額"], "cells": ["time", "time", "text"], "examples": [["22:00", "24:00", "1.2倍"]]}]}]};
+const UNKNOWN = "未定";
+
+const answers = {};          // id -> string | string[]
+const others = {};           // id -> 「その他」「あり」に添える入力
+let page = -1;               // -1 = 表紙, 0..n-1 = セクション, n = 送信完了
+const history = [];
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c);
+  return n;
+};
+
+const visible = (it) => !it.show_if || answers[it.show_if.item] === String(it.show_if.equals);
+const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
+
+function optionSamples(it) {
+  // 選択肢ごとの見本画像(ポッキリ.Night の実際の領収書)。画像が無い番号は枠だけ出す
+  return el("div", { class: "samples" }, it.options.map((o, i) => {
+    const src = it.option_images[i];
+    return el("figure", {},
+      src ? el("img", { src, alt: `${it.label} ${o}の見本` })
+          : el("div", { class: "sample-missing", text: "見本画像を準備中" }),
+      el("figcaption", { text: String(o) }));
+  }));
+}
+
+function renderInput(it) {
+  const id = "q_" + it.id;
+  const set = (v) => { answers[it.id] = v; clearError(it.id); };
+  if (it.type === "short" || it.type === "number") {
+    return el("div", { class: "field" },
+      el("input", { class: "text-in", id, type: "text", inputmode: it.type === "number" ? "numeric" : "text",
+        placeholder: it.placeholder || "回答を入力", value: answers[it.id] || "", "aria-label": it.label,
+        oninput: (e) => set(e.target.value) }),
+      it.unit ? el("span", { class: "unit", text: it.unit }) : null);
+  }
+  if (it.type === "paragraph") {
+    return el("textarea", { class: "text-in full", id, placeholder: "回答を入力", "aria-label": it.label,
+      oninput: (e) => set(e.target.value) }, answers[it.id] || "");
+  }
+  if (it.type === "datetime") {
+    const cur = answers[it.id] || {};
+    const upd = (k) => (e) => { answers[it.id] = { ...(answers[it.id] || {}), [k]: e.target.value }; };
+    return el("div", { class: "dt" },
+      el("label", {}, "日付", el("input", { class: "text-in", id: id + "_d", type: "date", value: cur.d || "", onchange: upd("d") })),
+      el("label", {}, "時刻", el("input", { class: "text-in", id: id + "_t", type: "time", value: cur.t || "", onchange: upd("t") })));
+  }
+  if (it.type === "table") {
+    // 表の形で、行を足しながら書く(1行目のうすい文字は記入例)
+    if (!Array.isArray(answers[it.id])) answers[it.id] = [[], [], []];
+    const rows = answers[it.id];
+    const cellInput = (r, c) => {
+      const t = it.cells[c], v = rows[r][c] ?? "", ex = it.examples?.[0]?.[c];
+      const upd = (e) => { rows[r][c] = e.target.value; clearError(it.id); };
+      const aria = `${it.label} ${r + 1}行目 ${it.columns[c]}`;
+      if (Array.isArray(t)) return el("select", { class: "text-in", "aria-label": aria, onchange: upd },
+        el("option", { value: "", text: "選択" }), t.map((o) => el("option", { value: o, text: o, selected: v === o })));
+      return el("input", { class: "text-in", type: t === "time" ? "time" : "text", inputmode: t === "int" || t === "num" ? "numeric" : "text",
+        value: v, placeholder: r === 0 && ex != null && ex !== "" ? "例:" + ex : "", "aria-label": aria, oninput: upd });
+    };
+    const table = el("table", {},
+      el("thead", {}, el("tr", {}, el("th", {}), it.columns.map((c) => el("th", { text: c })), el("th", {}))),
+      el("tbody", {}, rows.map((_, r) => el("tr", {},
+        el("td", { class: "no", text: String(r + 1) }),
+        it.columns.map((_, c) => el("td", {}, cellInput(r, c))),
+        el("td", {}, rows.length > 1 ? el("button", { class: "del", type: "button", text: "×", "aria-label": `${r + 1}行目を削除`,
+          onclick: () => { rows.splice(r, 1); render(); } }) : null)))));
+    return el("div", { class: "opts" }, el("div", { class: "rows" }, table),
+      rows.length < 50 ? el("button", { class: "add-row", type: "button", text: "＋ 行を追加",
+        onclick: () => { rows.push([]); render(); } }) : null);
+  }
+  if (it.type === "time") {
+    // 何時何分を、「時」「分」のプルダウンを横に並べて選ぶ
+    const cur = answers[it.id];
+    const [ch, cm] = cur && cur !== UNKNOWN ? cur.split(":") : ["", ""];
+    const pad = (n) => String(n).padStart(2, "0");
+    const upd = (h, m) => { if (h === "" && m === "") delete answers[it.id]; else set(`${h || "00"}:${m || "00"}`); render(); };
+    const sel = (label, n, value, onChange, suffix) => el("label", {}, label,
+      el("select", { class: "text-in", "aria-label": `${it.label}の${label}`, onchange: (e) => onChange(e.target.value) },
+        el("option", { value: "", text: "選択" }),
+        Array.from({ length: n }, (_, i) => el("option", { value: pad(i), text: `${i}${suffix}`, selected: value === pad(i) }))));
+    const clock = el("div", { class: "clock" },
+      sel("時", 24, ch, (h) => upd(h, cm), "時"),
+      el("span", { class: "clock-sep", text: ":" }),
+      sel("分", 60, cm, (m) => upd(ch, m), "分"));
+    const unk = it.unknown_option ? el("label", { class: "opt unknown" },
+      el("input", { type: "checkbox", id: id + "_unk", checked: cur === UNKNOWN,
+        onchange: (e) => { if (e.target.checked) set(UNKNOWN); else delete answers[it.id]; render(); } }),
+      el("span", { class: "lbl", text: UNKNOWN })) : null;
+    return el("div", {}, clock, unk);
+  }
+  if (it.type === "rate") {
+    // 金額か率を、数字と単位(%・円)の組で書く
+    const cur = answers[it.id] || { v: "", u: it.units[0] };
+    const upd = (k) => (e) => { answers[it.id] = { ...cur, ...(answers[it.id] || {}), [k]: e.target.value }; clearError(it.id); if (k === "u") render(); };
+    return el("div", { class: "rate" },
+      el("input", { class: "text-in", id, type: "text", inputmode: "decimal", placeholder: "数字", value: cur.v,
+        "aria-label": it.label, oninput: upd("v") }),
+      el("div", { class: "seg", role: "radiogroup", "aria-label": "単位" }, it.units.map((u, i) =>
+        el("label", { class: "opt" }, el("input", { type: "radio", name: id + "_u", id: `${id}_u${i}`, checked: cur.u === u, onchange: upd("u") , value: u }),
+          el("span", { class: "lbl", text: u })))));
+  }
+  if (it.type === "dropdown") {
+    const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);
+    return el("select", { class: "text-in", id, "aria-label": it.label, onchange: (e) => { set(e.target.value); render(); } },
+      el("option", { value: "", text: "選択" }),
+      opts.map((o) => el("option", { value: o, text: o, selected: answers[it.id] === o })));
+  }
+  if (it.type === "radio" || it.type === "checkbox") {
+    const multi = it.type === "checkbox";
+    const host = otherHost(it);
+    const opts = it.options.map(String);
+    const extraOther = it.other && !host;          // 選択肢の末尾に「その他:」を足す
+    const list = opts.concat(extraOther ? ["その他"] : [], it.unknown_option ? [UNKNOWN] : []);
+    const cur = answers[it.id] || (multi ? [] : "");
+    const wrap = el("div", { class: "opts", role: multi ? "group" : "radiogroup", "aria-label": it.label });
+    list.forEach((o, i) => {
+      const oid = `${id}_${i}`;
+      const checked = multi ? cur.includes(o) : cur === o;
+      const input = el("input", { type: multi ? "checkbox" : "radio", name: id, id: oid, checked,
+        onchange: (e) => {
+          if (multi) {
+            let v = (answers[it.id] || []).filter((x) => x !== o);
+            if (e.target.checked) v = o === UNKNOWN ? [UNKNOWN] : v.filter((x) => x !== UNKNOWN).concat(o);
+            set(v);
+          } else set(o);
+          render();
+        } });
+      const row = el("label", { class: "opt" + (o === UNKNOWN ? " unknown" : ""), for: oid }, input,
+        el("span", { class: "lbl", text: ((o === "その他" || o === "記入") && it.other) ? o + ":" : o }));
+      if (it.other && (o === host || (extraOther && o === "その他")) && checked) {
+        row.append(el("input", { class: "text-in other", id: oid + "_other", type: "text",
+          inputmode: it.other.type === "number" ? "decimal" : "text", value: others[it.id] || "",
+          placeholder: it.other.unit ? `数字(${it.other.unit})` : "入力してください", "aria-label": it.label + " その他",
+          oninput: (e) => { others[it.id] = e.target.value; clearError(it.id); } }));
+        if (it.other.unit) row.append(el("span", { class: "unit", text: it.other.unit }));
+      }
+      wrap.append(row);
+    });
+    if (!multi && cur) wrap.append(el("button", { class: "clear-choice", type: "button", text: "選択を解除",
+      onclick: () => { delete answers[it.id]; render(); } }));
+    return wrap;
+  }
+  return null;
+}
+
+function checkItem(it) {
+  if (!visible(it)) return null;
+  const v = answers[it.id];
+  const empty = v == null || v === "" || (Array.isArray(v) && !v.length);
+  if (it.required && empty) return "この質問は必須です";
+  if (it.type === "table" && Array.isArray(v)) {
+    for (const [r, row] of v.entries()) for (const [c, t] of (it.cells || []).entries()) {
+      const x = String(row[c] ?? "").trim().replace(/[,，]/g, "");
+      if (x && t === "int" && !/^\d+$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字のみで入力してください(カンマ不要)`;
+      if (x && t === "num" && !/^\d+(\.\d+)?$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字で入力してください`;
+    }
+  }
+  if (it.type === "rate" && v && String(v.v).trim()) {
+    const x = String(v.v).trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+    if (!/^\d+(\.\d+)?$/.test(x)) return "数字で入力してください";
+    if (v.u === "%" && +x > 100) return "%は0〜100で入力してください";
+  }
+  const val = it.validation;
+  if (val && !empty && typeof v === "string") {
+    const s = v.trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+    if (val.kind === "regex" && !new RegExp(val.pattern).test(v.trim())) return val.message;
+    if (val.kind === "integer" && (!/^\d+$/.test(s) || (val.min != null && +s < val.min) || (val.max != null && +s > val.max))) return val.message;
+    if (val.kind === "number" && (!/^\d+(\.\d+)?$/.test(s) || (val.min != null && +s < val.min) || (val.max != null && +s > val.max))) return val.message;
+  }
+  const host = otherHost(it);
+  const picked = Array.isArray(v) ? v : [v];
+  if (it.other && it.other.type === "number" && picked.includes(host || "その他")) {
+    const o = (others[it.id] || "").trim();
+    if (o && (!/^\d+(\.\d+)?$/.test(o) || +o < (it.other.min ?? 0) || +o > (it.other.max ?? Infinity)))
+      return `${it.other.min ?? 0}〜${it.other.max}の数字で入力してください`;
+  }
+  return null;
+}
+
+const errors = {};
+function clearError(id) {
+  if (!errors[id]) return;
+  delete errors[id];
+  const card = document.getElementById("card_" + id);
+  if (card) { card.classList.remove("err"); card.querySelector(".errmsg")?.remove(); }
+}
+
+function questionCard(it) {
+  const card = el("div", { class: "card q" + (it.type === "note" ? " note" : "") + (errors[it.id] ? " err" : ""), id: "card_" + it.id },
+    el("h3", { class: "q-title" }, it.label, it.required ? el("span", { class: "star", text: "*", "aria-label": "必須" }) : null));
+  if (it.type === "note") { card.append(el("div", { class: "q-body", text: it.body || "" })); return card; }
+  if (it.hint) card.append(el("p", { class: "q-hint", text: it.hint }));
+  if (it.option_images) card.append(optionSamples(it));
+  card.append(renderInput(it));
+  if (errors[it.id]) card.append(el("div", { class: "errmsg", text: errors[it.id] }));
+  return card;
+}
+
+function progress() {
+  const n = SPEC.sections.length;
+  const pct = Math.round(((page + 1) / n) * 100);
+  return el("div", { class: "progress" }, el("div", { class: "track" }, el("div", { class: "fill", style: `width:${pct}%` })),
+    el("span", { text: `${page + 1} / ${n} ページ` }));
+}
+
+function go(next) {
+  history.push(page); page = next; render(); window.scrollTo({ top: 0 });
+}
+
+function nextPage() {
+  const sec = SPEC.sections[page];
+  let firstBad = null;
+  for (const it of sec.items) {
+    const msg = checkItem(it);
+    if (msg) { errors[it.id] = msg; firstBad = firstBad || it.id; } else delete errors[it.id];
+  }
+  if (firstBad) { render(); document.getElementById("card_" + firstBad)?.scrollIntoView({ block: "center" }); return; }
+  let target = page + 1;
+  for (const it of sec.items) {
+    const jump = it.skip_to_on && it.skip_to_on[answers[it.id]];
+    if (jump) target = SPEC.sections.findIndex((s) => s.id === jump);
+  }
+  go(target);
+}
+
+// 途中まで書いた回答は、この端末のブラウザにだけ残す(再読み込みしても消えないように)
+const DRAFT_KEY = "pokkiri-onboarding-draft";
+function saveDraft() {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers, others, page })); } catch {}
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+    if (!d) return false;
+    Object.assign(answers, d.answers || {}); Object.assign(others, d.others || {});
+    if (Number.isInteger(d.page) && d.page >= -1 && d.page <= SPEC.sections.length) page = d.page;
+    return true;
+  } catch { return false; }
+}
+document.addEventListener("input", saveDraft);
+document.addEventListener("change", saveDraft);
+
+// LINEで送る文章(質問と回答を1つずつ並べる)
+function answerText() {
+  const lines = [`【${SPEC.form.title}】`];
+  SPEC.sections.forEach((s) => s.items.forEach((it) => {
+    const v = it.type !== "note" && visible(it) ? fmt(it) : null;
+    if (v) lines.push("", `■${it.label}`, v);
+  }));
+  return lines.join("\n");
+}
+
+async function copyAnswer(text, status) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const ta = document.querySelector(".answer-text");
+    ta.select();
+    try { document.execCommand("copy"); } catch { status.textContent = "コピーできませんでした。上の文章を長押しして、コピーしてください。"; return false; }
+  }
+  status.textContent = "コピーしました。LINEのトークに貼り付けて送ってください。";
+  return true;
+}
+
+function clearAll() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch {}
+  for (const k of Object.keys(answers)) delete answers[k];
+  for (const k of Object.keys(others)) delete others[k];
+  for (const k of Object.keys(errors)) delete errors[k];
+  history.length = 0; page = -1; render();
+}
+
+function fmt(it) {
+  const v = answers[it.id];
+  if (v == null || v === "" || (Array.isArray(v) && !v.length)) return null;
+  if (it.type === "datetime") return [v.d, v.t].filter(Boolean).join(" ");
+  if (it.type === "rate") return String(v.v ?? "").trim() ? `${v.v}${v.u}` : null;
+  if (it.type === "table") {
+    const filled = v.filter((row) => row.some((x) => String(x ?? "").trim()));
+    return filled.length ? filled.map((row) => it.columns.map((_, c) => row[c] || "-").join("/")).join("、") : null;
+  }
+  let s = Array.isArray(v) ? v.join("、") : String(v);
+  if (others[it.id]) s += `(${others[it.id]}${it.other?.unit || ""})`;
+  return it.unit && it.type === "number" ? `${s} ${it.unit}` : s;
+}
+
+function render() {
+  const app = document.getElementById("app");
+  const header = el("div", { class: "card head" }, el("div", { class: "in" },
+    el("h1", { text: SPEC.form.title }),
+    el("p", { class: "desc", text: SPEC.form.intro }),
+    el("ul", { class: "facts" }, SPEC.form.facts.map((f) => el("li", { text: f })))));
+  const out = [];
+  const n = SPEC.sections.length;
+  if (page === -1) {
+    out.push(header, el("div", { class: "nav" },
+      el("button", { class: "link clear-all", type: "button", text: "フォームをクリア", onclick: clearAll }),
+      el("button", { class: "btn primary", type: "button", text: "次へ", onclick: () => go(0) })));
+  } else if (page < n) {
+    const sec = SPEC.sections[page];
+    out.push(el("div", { class: "card head" }, el("div", { class: "in" }, el("h1", { text: SPEC.form.title }))));
+    out.push(el("div", { class: "card sec" },
+      el("div", { class: "tab", text: `セクション ${page + 1}/${n}` }),
+      el("div", { class: "body" }, el("h2", { text: sec.title }), el("p", { text: sec.desc }))));
+    sec.items.filter(visible).forEach((it) => out.push(questionCard(it)));
+    out.push(el("div", { class: "nav" },
+      el("button", { class: "btn", type: "button", text: "戻る", onclick: () => { page = history.pop() ?? -1; render(); window.scrollTo({ top: 0 }); } }),
+      el("button", { class: "btn primary", type: "button", text: page === n - 1 ? "回答をまとめる" : "次へ", onclick: nextPage }),
+      progress()));
+  } else {
+    // 回答はどこにも保存しないので、店舗の方にLINEで送ってもらう
+    const text = answerText();
+    const status = el("p", { class: "send-status", role: "status" });
+    out.push(el("div", { class: "card head done" }, el("div", { class: "in" },
+      el("h2", { text: "最後に、回答をLINEで送ってください" }),
+      el("p", { class: "desc", text: "まだ送信は終わっていません。\n下の「LINEで送る」を押して、担当者に送ると完了です。" }),
+      el("textarea", { class: "answer-text", readonly: true, "aria-label": "回答の内容" }, text),
+      el("div", { class: "send" },
+        el("button", { class: "btn", type: "button", text: "文章をコピー", onclick: () => copyAnswer(text, status) }),
+        el("a", { class: "btn line", href: "https://line.me/R/share?text=" + encodeURIComponent(text), target: "_blank", rel: "noopener",
+          style: "display:inline-flex;align-items:center;text-decoration:none", text: "LINEで送る" })),
+      status,
+      el("p", { class: "after", text: SPEC.form.done }))));
+    out.push(el("div", { class: "nav" },
+      el("button", { class: "btn", type: "button", text: "戻って直す", onclick: () => { page = history.pop() ?? n - 1; render(); window.scrollTo({ top: 0 }); } }),
+      el("button", { class: "link", type: "button", text: "最初から入力し直す", onclick: clearAll })));
+  }
+  app.replaceChildren(...out);
+  saveDraft();
+}
+
+// 初期値のある質問は、最初から入れておく(書きかけがあれば、そちらを戻す)
+if (!loadDraft()) for (const s of SPEC.sections) for (const it of s.items) if (it.default != null) answers[it.id] = String(it.default);
+
+// #s3 のようなリンクで、そのセクションから開く
+const m = /^#s(\d+)$/.exec(location.hash);
+if (m && +m[1] >= 1 && +m[1] <= SPEC.sections.length) page = +m[1] - 1;
+render();
+</script>
+
+</body>
+</html>

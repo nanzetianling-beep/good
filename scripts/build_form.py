@@ -1,6 +1,7 @@
 """① 導入アンケートのHTMLプレビューを spec/items.yaml から生成する。
 
 使い方: python scripts/build_form.py  → form/preview/index.html
+        python scripts/build_form.py --site DIR → DIR に店舗へ配る公開用ページ(Vercel などに置く)
 """
 
 from __future__ import annotations
@@ -8,6 +9,8 @@ from __future__ import annotations
 import base64
 import json
 import mimetypes
+import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -33,11 +36,13 @@ def _image_uri(path: str) -> str | None:
     return f"data:{mime};base64," + base64.b64encode(f.read_bytes()).decode()
 
 
-def form_spec(spec: dict) -> dict:
+def form_spec(spec: dict, embed: bool = True) -> dict:
+    """embed=False のときは、見本画像をファイルへのリンクのままにする(公開用ページ)。"""
+    img = _image_uri if embed else (lambda path: "images/" + Path(path).name)
     sections = []
     for sec in spec["sections"]:
         items = [
-            {k: ([_image_uri(x) for x in it[k]] if k == "option_images" else it[k]) for k in KEYS if k in it}
+            {k: ([img(x) for x in it[k]] if k == "option_images" else it[k]) for k in KEYS if k in it}
             for it in spec["items"]
             if it["route"] == "form" and it["section"] == sec["id"]
         ]
@@ -45,12 +50,34 @@ def form_spec(spec: dict) -> dict:
     return {"form": spec["form"], "sections": sections}
 
 
-def build(spec: dict) -> str:
-    data = json.dumps(form_spec(spec), ensure_ascii=False).replace("</", "<\\/")
+def build(spec: dict, embed: bool = True) -> str:
+    data = json.dumps(form_spec(spec, embed), ensure_ascii=False).replace("</", "<\\/")
     return TEMPLATE.read_text(encoding="utf-8").replace("/*__SPEC_JSON__*/null", data)
 
 
+def build_site(spec: dict, out: Path) -> None:
+    """1枚で開ける完全な HTML と、見本画像のファイルを書き出す。"""
+    body = build(spec, embed=False)
+    title = re.search(r"<title>.*?</title>", body).group(0)
+    body = body.replace(title, "", 1)
+    html = ('<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
+            '<meta name="robots" content="noindex">\n'
+            f"{title}\n</head>\n<body>\n{body}\n</body>\n</html>\n")
+    (out / "images").mkdir(parents=True, exist_ok=True)
+    (out / "index.html").write_text(html, encoding="utf-8")
+    for it in spec["items"]:
+        for path in it.get("option_images", []):
+            if (ROOT / path).exists():
+                shutil.copy(ROOT / path, out / "images" / Path(path).name)
+
+
 def main() -> None:
+    if len(sys.argv) == 3 and sys.argv[1] == "--site":
+        out = Path(sys.argv[2])
+        build_site(load_spec(), out)
+        print(f"wrote site to {out}")
+        return
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(build(load_spec()), encoding="utf-8")
     print(f"wrote {OUT.relative_to(ROOT)}")

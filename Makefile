@@ -7,6 +7,7 @@ validate:
 
 form:
 	python3 scripts/build_form.py
+	python3 scripts/build_form.py --site form/site
 
 templates:
 	python3 scripts/build_templates.py
