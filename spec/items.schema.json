@@ -323,6 +323,20 @@
         "hint": {
           "type": "string"
         },
+        "help": {
+          "type": "array",
+          "description": "ヘルプに出す、選び方や記入例(見出しと本文の組)",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "text"],
+            "properties": {
+              "title": {"type": "string"},
+              "text": {"type": "string"}
+            }
+          }
+        },
         "body": {
           "type": "string"
         },

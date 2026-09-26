@@ -22,7 +22,7 @@ TEMPLATE = ROOT / "templates" / "form" / "preview.html"
 OUT = ROOT / "form" / "preview" / "index.html"
 
 # プレビューで使うキーだけを渡す
-KEYS = ["id", "label", "type", "required", "options", "other", "unknown_option", "option_images",
+KEYS = ["id", "label", "type", "required", "help", "options", "other", "unknown_option", "option_images",
         "skip_to_on", "show_if", "unit", "placeholder", "default", "hint", "body", "validation",
         "columns", "cells", "examples", "units"]
 

@@ -230,3 +230,17 @@ def test_tables_and_send_rules_are_in_form(spec):
     assert by_id["send_areas"]["show_if"] == {"item": "send_areas_use", "equals": "あり"}
     names = [n for n, _ in build_templates.line_messages(spec)]
     assert not any("卓" in n or "送り" in n or "指名" in n for n in names)
+
+
+def test_every_question_has_hint_and_help(spec):
+    # 記入する方が迷わないよう、全質問にタイトル下の説明と、具体例つきのヘルプを付ける
+    for sec in build_form.form_spec(spec)["sections"]:
+        for it in sec["items"]:
+            if it["type"] == "note":
+                continue
+            assert it.get("hint"), it["id"]
+            assert it.get("help"), it["id"]
+            assert any("例" in h["text"] for h in it["help"]), it["id"]
+            for h in it["help"]:
+                for line in h["text"].split("\n"):
+                    assert len(line) <= 35, (it["id"], line)

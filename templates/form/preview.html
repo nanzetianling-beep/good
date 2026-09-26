@@ -36,7 +36,19 @@
   .q.err{border-color:var(--error);box-shadow:0 0 0 1px var(--error)}
   .q-title{font-size:16px;font-weight:400;line-height:1.5;margin:0;white-space:pre-line}
   .q-title .star{color:var(--error);margin-left:4px}
-  .q-hint{font-size:13px;color:var(--muted);margin:-6px 0 0;white-space:pre-line}
+  .q-head{display:flex;align-items:flex-start;gap:12px}
+  .q-head .q-title{flex:1;min-width:0}
+  .help-btn{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:-8px -8px -8px 0;padding:0 14px;
+    border:none;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:500;cursor:pointer;border-radius:22px}
+  .help-btn .qm{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;font-size:12px;font-weight:700}
+  .help-btn:hover{background:var(--accent-soft)}
+  .help-btn[aria-expanded="true"]{background:var(--accent);color:#fff}
+  .help-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .help{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+  .help[hidden]{display:none}
+  .help h4{margin:0;font-size:14px;font-weight:700;color:var(--accent)}
+  .help p{margin:4px 0 0;white-space:pre-line;font-size:14px;line-height:1.7;color:var(--ink)}
+  .q-hint{font-size:14px;color:var(--muted);margin:-6px 0 0;white-space:pre-line}
   .q.note .q-title{font-size:18px}
   .q.note .q-body{white-space:pre-line;font-size:14px}
   .text-in{width:50%;min-width:220px;max-width:100%;border:none;border-bottom:1px solid var(--line-2);font:inherit;font-size:14px;padding:8px 0;background:transparent;color:var(--ink);min-height:44px}
@@ -345,6 +357,7 @@ function checkItem(it) {
 }
 
 const errors = {};
+const openHelp = new Set();   // ヘルプを開いている質問(描き直しても開いたままにする)
 function clearError(id) {
   if (!errors[id]) return;
   delete errors[id];
@@ -354,10 +367,26 @@ function clearError(id) {
 }
 
 function questionCard(it) {
+  const title = el("h3", { class: "q-title" }, it.label, it.type !== "note" ? el("span", { class: "star", text: "*", "aria-label": "必須" }) : null);
+  // ヘルプ: どちらがお店に合うか、具体例で確かめられるようにする
+  let help = null, helpBtn = null;
+  if (it.help) {
+    const pid = "help_" + it.id, open = openHelp.has(it.id);
+    help = el("div", { class: "help", id: pid, hidden: !open },
+      it.help.map((h) => el("div", {}, el("h4", { text: h.title }), el("p", { text: h.text }))));
+    helpBtn = el("button", { class: "help-btn", type: "button", "aria-expanded": String(open), "aria-controls": pid,
+      onclick: () => {
+        const now = !openHelp.has(it.id);
+        if (now) openHelp.add(it.id); else openHelp.delete(it.id);
+        help.hidden = !now; helpBtn.setAttribute("aria-expanded", String(now));
+        helpBtn.lastChild.textContent = now ? "閉じる" : "ヘルプ";
+      } }, el("span", { class: "qm", text: "?", "aria-hidden": "true" }), el("span", { text: open ? "閉じる" : "ヘルプ" }));
+  }
   const card = el("div", { class: "card q" + (it.type === "note" ? " note" : "") + (errors[it.id] ? " err" : ""), id: "card_" + it.id },
-    el("h3", { class: "q-title" }, it.label, it.type !== "note" ? el("span", { class: "star", text: "*", "aria-label": "必須" }) : null));
+    helpBtn ? el("div", { class: "q-head" }, title, helpBtn) : title);
   if (it.type === "note") { card.append(el("div", { class: "q-body", text: it.body || "" })); return card; }
   if (it.hint) card.append(el("p", { class: "q-hint", text: it.hint }));
+  if (help) card.append(help);
   if (it.option_images) card.append(optionSamples(it));
   card.append(renderInput(it));
   if (errors[it.id]) card.append(el("div", { class: "errmsg", text: errors[it.id] }));
