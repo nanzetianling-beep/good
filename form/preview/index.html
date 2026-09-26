@@ -446,9 +446,9 @@ function warnIcon() {
 }
 function deadlineText() {
   const v = visitDate();
-  if (!v) return "訪問日(対面でお話しする日)の2日前 23:59まで";
+  if (!v) return "訪問日(対面でお話しする日)の2日前まで";
   const d = new Date(v); d.setDate(d.getDate() - 2);
-  return `${md(d)} 23:59まで(訪問日 ${md(v)} の2日前)`;
+  return `${md(d)}まで(訪問日 ${md(v)} の2日前)`;
 }
 
 function clearAll() {
