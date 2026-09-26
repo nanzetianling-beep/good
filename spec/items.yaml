@@ -64,11 +64,6 @@ themes:
     sheet: 料金セット
     photo_ok: true
     line_notes: [料金表の写真だけでもOKです]
-  - id: 2
-    title: 指名区分
-    sheet: 指名区分
-    photo_ok: false
-    line_after: [※バックの細かいルールは、訪問時に一緒に決めます]
   - id: 3
     title: 商品メニュー
     sheet: 商品メニュー
@@ -346,32 +341,24 @@ items:
   # ── 既存見本 ③ 指名・バック設定 ───────────────────────────
 
   - id: nomination_types
-    route: template
-    theme: 2
-    label: 指名区分
+    route: form
+    section: S4
+    label: 指名区分とバック
     type: table
-    columns: [名称, 指名料(円), 課金単位(何分ごと), バックの決め方, 金額または率, 円のときの単位]
+    columns: [名称, 指名料(円), 何分ごと, バックの決め方, 金額または率, 円のときの単位]
     cells: [text, int, int, [円, "%", なし], num, [1接客ごと, 1時間ごと]]
     examples:
       - [本指名, 3000, 60, 円, 1000, 1接客ごと]
       - [場内指名, 2000, 60, "%", 50, ""]
       - [同伴, 3000, 60, 円, 1000, 1接客ごと]
       - [ヘルプ, 0, "", なし, "", ""]
-    line:
-      format: [名称, 指名料, 何分ごと, バックの決め方(円 or 指名料の%)]
-      examples: [[本指名, 3000, 60分, 1000円(1接客ごと)], [場内指名, 2000, 60分, 50%], [同伴, 3000, 60分, 1000円(1接客ごと)], [ヘルプ, 0, "-", なし]]
+    hint: |-
+      例)本指名/3000円/60分ごと/円で1000(1接客ごと)
+      例)場内指名/2000円/60分ごと/指名料の50%
+      例)同伴/3000円/60分ごと/円で1000(1接客ごと)
+      例)ヘルプ/0円/-/なし
+      バックの細かいルールは、訪問時に一緒に決めます。
     source: {sample: nomination, question: 指名区分}
-
-  - id: nomination_back_note
-    route: form
-    section: S4
-    label: 指名区分のバック
-    type: note
-    body: |-
-      指名料のバックは、「指名区分」の記入シートに書いてください。
-      区分ごとに、円か指名料の%で決められます。
-      円の場合は、1接客ごとか1時間ごとかも書いてください。
-    source: {doc: 追加要望 S4 指名区分のバック}
 
   - id: sales_back_mode
     route: form
@@ -508,6 +495,37 @@ items:
     show_if: {item: food_back_mode, equals: キャストごとに違う}
     body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
     source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
+
+  - id: extension_back_mode
+    route: form
+    section: S4
+    label: 延長バック(全キャスト)
+    type: radio
+    options: [店舗一律, キャストごとに違う]
+    unknown_option: true
+    hint: |-
+      延長が1回入るごとに、キャストに付くバックです。
+      「店舗一律」にすると、全キャストが同じバックになります。
+    source: {doc: 追加要望 S4 延長バック}
+
+  - id: extension_back_rate
+    route: form
+    section: S4
+    label: 延長バックの金額・率(店舗一律)
+    type: rate
+    units: ["%", 円]
+    show_if: {item: extension_back_mode, equals: 店舗一律}
+    hint: 延長1回あたりの金額か、延長料金の%を入力してください
+    source: {doc: 追加要望 S4 延長バック}
+
+  - id: extension_back_later
+    route: form
+    section: S4
+    label: 延長バックは、あとで登録します
+    type: note
+    show_if: {item: extension_back_mode, equals: キャストごとに違う}
+    body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
+    source: {doc: 追加要望 S4 延長バック}
 
   - id: other_backs
     route: form

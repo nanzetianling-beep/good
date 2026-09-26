@@ -33,9 +33,9 @@ def test_form_has_10_sections(spec):
     assert len(used) == 10
 
 
-def test_template_has_4_themes(spec):
+def test_template_has_3_themes(spec):
     used = {it["theme"] for it in spec["items"] if it["route"] == "template"}
-    assert used == {1, 2, 3, 5}
+    assert used == {1, 3, 5}
 
 
 def test_only_store_name_is_required(spec):
