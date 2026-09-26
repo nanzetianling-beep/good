@@ -15,6 +15,7 @@ POS「ポッキリ.Night」の導入時に店舗情報を集めるキット。�
 - `scripts/sample_sections.py` … 既存見本の SECTIONS から質問を抽出
 - `scripts/validate_items.py` … items.yaml の検証と route 別件数の報告
 - `scripts/build_form.py` … ① アンケートのHTMLプレビュー(`templates/form/preview.html` → `form/preview/index.html`)
+  - `--site form/site` で店舗に配る公開用ページも書き出す。Vercel(チーム koku・プロジェクト pokkiri-night-survey、rootDirectory `form/site`)で https://pokkiri-night-survey.vercel.app に公開している。変更後は push してから再デプロイする
 - `scripts/build_templates.py` … ② LINEテキスト・Excel・確認ページ(`templates/line/`・`templates/excel/`・`templates/preview/`)
 - `scripts/build_slides.py` … ③ スライド(`templates/slides/lecture.yaml` → `slides/lecture.md`・`slides/checklist.md`)。`--exclude 9` で章を除外
 - `tests/` … pytest
