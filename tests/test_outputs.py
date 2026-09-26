@@ -15,9 +15,6 @@ import build_slides  # noqa: E402
 import build_templates  # noqa: E402
 from validate_items import load_spec  # noqa: E402
 
-UNKNOWN = "未定"
-# 「未定」を付けない選択式(領収書のデザインは見本から必ず選ぶ)
-NO_UNKNOWN = {"receipt_design"}
 # 個人ごとの個人情報・給与・ログイン情報(6章)
 SENSITIVE = ["本名", "生年月日", "口座", "緊急連絡先", "身分証", "パスワード", "ログインID"]
 
@@ -36,11 +33,15 @@ def test_form_has_10_sections_with_questions(spec):
     assert all(sec["items"] for sec in fs["sections"])
 
 
-def test_form_choices_offer_unknown(spec):
-    for sec in build_form.form_spec(spec)["sections"]:
+def test_form_has_no_unknown_choice(spec):
+    # 全項目が必須なので、「未定」は付けず必ずどれかを選んでもらう
+    form = build_form.form_spec(spec)
+    for sec in form["sections"]:
         for it in sec["items"]:
-            if it["type"] in ("radio", "checkbox", "dropdown") and not it.get("required"):
-                assert it.get("unknown_option") or it["id"] in NO_UNKNOWN, it["id"]
+            assert not it.get("unknown_option"), it["id"]
+            assert "未定" not in [str(o) for o in it.get("options", [])], it["id"]
+            assert "任意" not in it["label"], it["id"]
+    assert not any("未定" in f for f in form["form"]["facts"])
 
 
 def test_form_validation_rules_present(spec):

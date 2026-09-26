@@ -32,7 +32,7 @@ form:
     # {deadline} はページで置き換える(URLに ?visit=2026-10-05 があれば、その2日前の日付)
     - 回答期限:{deadline}
     - 期限までに内容を記入してください
-    - まだ決まっていない項目は「未定」でOKです
+    - すべての項目の記入が必要です
   done: |-
     送っていただいたら、回答は完了です。
     ありがとうございました。
@@ -141,7 +141,6 @@ items:
     label: 一部・二部(深夜)の区別
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     source: {sample: store, question: 一部（通常）／二部（深夜）の切り替え時刻}
 
   - id: shift_split_start
@@ -149,7 +148,6 @@ items:
     section: S2
     label: 二部の開始時刻
     type: time
-    unknown_option: true
     show_if: {item: shift_split, equals: 使う}
     source: {sample: store, question: 一部（通常）／二部（深夜）の切り替え時刻}
 
@@ -158,7 +156,6 @@ items:
     section: S2
     label: 二部の終了時刻
     type: time
-    unknown_option: true
     hint: 翌朝の場合は、そのままの時刻を選びます(例:5時(翌朝)なら5時00分)
     show_if: {item: shift_split, equals: 使う}
     source: {sample: store, question: 一部（通常）／二部（深夜）の切り替え時刻}
@@ -196,7 +193,6 @@ items:
     label: セットバック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       セット料金に対して、付いたキャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -242,7 +238,6 @@ items:
     label: 延長バック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       延長が1回入るごとに、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -273,7 +268,6 @@ items:
     label: 延長アラート
     type: dropdown
     options: [終了の5分前, 終了の10分前, 終了の15分前]
-    unknown_option: true
     hint: この時刻になると、卓の色が変わってお知らせします
     source: {sample: pricing, question: 延長アラート（終了の何分前に卓の色を変えるか）}
 
@@ -283,7 +277,6 @@ items:
     label: 自動延長
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     hint: |-
       セットの時間が終わったら、決めた間隔で自動で延長をつける機能です。
       「使わない」場合は、上の延長メニューから手で延長をつけます。
@@ -316,7 +309,6 @@ items:
     type: radio
     options: [なし, 10%, 15%, 20%, その他]
     other: {type: number, unit: "%", min: 0, max: 100}
-    unknown_option: true
     hint: 会計の小計にかける割合です
     source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
 
@@ -326,7 +318,6 @@ items:
     label: ハウスチャージの有無
     type: radio
     options: [なし, あり]
-    unknown_option: true
     hint: セット料金とは別にかかる、席料などの料金です
     source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
 
@@ -346,7 +337,6 @@ items:
     label: 深夜割増
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     hint: 卓を開いた時刻が基準時刻以降なら、会計に定額を1回だけ加えます
     source: {sample: pricing, question: 深夜割増を使うか}
 
@@ -356,7 +346,6 @@ items:
     label: 深夜割増の基準時刻(時)
     type: dropdown
     options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-    unknown_option: true
     show_if: {item: late_night_surcharge, equals: 使う}
     source: {sample: pricing, question: 深夜割増の内容}
 
@@ -391,7 +380,6 @@ items:
     label: 端数処理(単位)
     type: dropdown
     options: [なし, 10円, 100円, 500円, 1000円]
-    unknown_option: true
     source: {sample: pricing, question: 総額の端数処理}
 
   - id: total_rounding_mode
@@ -400,7 +388,6 @@ items:
     label: 端数処理(方法)
     type: dropdown
     options: [切り捨て, 切り上げ]
-    unknown_option: true
     source: {sample: pricing, question: 総額の端数処理}
 
   # ── 既存見本 ③ 指名・バック設定 ───────────────────────────
@@ -431,7 +418,6 @@ items:
     label: 指名バック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       指名が1回入るごとに、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -464,7 +450,6 @@ items:
     label: 複数キャストでの売上折半(指名された方のみ)
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     source: {doc: 3章 S4}
 
   - id: sales_back_mode
@@ -473,7 +458,6 @@ items:
     label: 担当卓の売上バック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       担当した卓の売上に対して、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -504,7 +488,6 @@ items:
     label: ドリンクバック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       キャストドリンクが1杯入るごとに、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -535,7 +518,6 @@ items:
     label: ボトルバック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       ボトルが1本入るごとに、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -566,7 +548,6 @@ items:
     label: ボトルバックの折半
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     hint: |-
       1本のボトルに、複数のキャストが付いたときの扱いです。
       「使う」にすると、バックを均等に分けます。
@@ -578,7 +559,6 @@ items:
     label: フードバック(全キャスト)
     type: radio
     options: [店舗一律, キャストごとに違う]
-    unknown_option: true
     hint: |-
       フードが1品入るごとに、キャストに付くバックです。
       「店舗一律」にすると、全キャストが同じバックになります。
@@ -609,7 +589,6 @@ items:
     label: そのほかのバック
     type: checkbox
     options: [スライド(実績に応じて率が上がる), 本数ボーナス(指名本数に応じたボーナス), 特になし]
-    unknown_option: true
     hint: |-
       使っているものに、すべてチェックしてください。
       細かい条件は、訪問時に伺います。
@@ -621,7 +600,6 @@ items:
     label: バック端数の丸め
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     hint: バックの金額の端数を、きりのいい金額にそろえるかどうかです
     source: {sample: nomination, question: バック端数の丸め単位}
 
@@ -632,7 +610,6 @@ items:
     type: radio
     options: [10円, 100円, 記入]
     other: {type: number, unit: 円, min: 1, max: 10000}
-    unknown_option: true
     show_if: {item: back_rounding, equals: 使う}
     source: {sample: nomination, question: バック端数の丸め単位}
 
@@ -662,7 +639,6 @@ items:
     label: インボイス登録
     type: radio
     options: [登録している, 登録していない]
-    unknown_option: true
     source: {sample: tax, question: 適格請求書 登録番号}
 
   - id: invoice_number
@@ -705,7 +681,6 @@ items:
     label: 価格の表示方法
     type: radio
     options: [内税(税込表示), 外税(税抜表示)]
-    unknown_option: true
     source: {sample: tax, question: 表示価格}
 
   # ── 既存見本 ⑤ 決済方法 ─────────────────────────────────
@@ -725,7 +700,6 @@ items:
     type: radio
     options: [なし, あり]
     other: {type: number, unit: "%", min: 0, max: 100}
-    unknown_option: true
     hint: カード会社の規約で、手数料の上乗せが禁止されている場合があります
     source: {sample: payments, question: 決済方法ごとの上乗せ手数料}
 
@@ -736,7 +710,6 @@ items:
     type: radio
     options: [なし, あり]
     other: {type: number, unit: "%", min: 0, max: 100}
-    unknown_option: true
     source: {sample: payments, question: 決済方法ごとの上乗せ手数料}
 
   - id: card_fee
@@ -790,7 +763,7 @@ items:
     section: S11
     label: 卓の一覧
     type: table
-    columns: [卓名, 席数(任意)]
+    columns: [卓名, 席数]
     cells: [text, int]
     examples:
       - [VIP1, 6]
@@ -817,7 +790,6 @@ items:
     type: checkbox
     options: [新規, リピーター, 紹介, SNS, ビラ, 看板]
     other: {type: short}
-    unknown_option: true
     hint: 金額の計算には影響しません。あとから追加できます
     source: {sample: referral, question: 集計タグ}
 
@@ -863,7 +835,6 @@ items:
       (EPSON/TM-m30Ⅲ-H・Star/MCP31LB)
     type: radio
     options: [ある, これから用意, 使わない]
-    unknown_option: true
     skip_to_on: {使わない: S9}
     source: {doc: 3章 S8}
 
@@ -881,7 +852,6 @@ items:
     label: 用紙幅
     type: radio
     options: [58mm, 80mm]
-    unknown_option: true
     source: {sample: printer, question: 使用する用紙幅}
 
   - id: receipt_design
@@ -890,7 +860,6 @@ items:
     label: 領収書のデザイン
     type: radio
     options: ["1", "2", "3"]
-    unknown_option: false   # 見本から必ず1つ選んでもらうため「未定」は付けない
     hint: 下の見本から、刷りたいデザインの番号を選んでください
     # 各選択肢の見本画像。ポッキリ.Night の領収書プレビュー(nightwork-pos.vercel.app/api/receipt/preview)の
     # classic-frame・seigaiha-frame・kikka-frame をそのまま保存したもの。ファイルが無い番号は「見本画像を準備中」
@@ -903,7 +872,6 @@ items:
     label: 領収書に刷る内容
     type: checkbox
     options: [事業者名, インボイス登録番号]
-    unknown_option: true
     hint: 店舗名・電話番号・住所は必ず印字します
     source: {sample: printer, question: 領収書に刷る内容}
 
@@ -913,7 +881,6 @@ items:
     label: 伝票番号の採番
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     hint: |-
       伝票に通し番号を付けるかどうかです。
       例:接頭辞「A」・開始番号「1」なら、
@@ -923,7 +890,7 @@ items:
   - id: slip_prefix
     route: form
     section: S8
-    label: 伝票番号の接頭辞(任意)
+    label: 伝票番号の接頭辞
     type: short
     placeholder: 例:A
     show_if: {item: slip_numbering, equals: 使う}
@@ -945,7 +912,6 @@ items:
     label: 採番のリセット単位
     type: dropdown
     options: [リセットしない, 営業日ごと, 月初にリセット]
-    unknown_option: true
     hint: 例:「営業日ごと」なら、毎日A1から数え直します
     show_if: {item: slip_numbering, equals: 使う}
     source: {sample: printer, question: 採番のリセット単位}
@@ -956,7 +922,6 @@ items:
     label: キッチン伝票
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     source: {sample: printer, question: キッチン伝票に印刷するカテゴリ}
 
   - id: kitchen_categories
@@ -965,7 +930,6 @@ items:
     label: キッチン伝票に印刷するカテゴリ
     type: checkbox
     options: [ドリンク, ボトル, フード, その他]
-    unknown_option: true
     show_if: {item: kitchen_slip, equals: 使う}
     source: {sample: printer, question: キッチン伝票に印刷するカテゴリ}
 
@@ -1037,7 +1001,6 @@ items:
     label: 締め日
     type: dropdown
     options: [5日, 10日, 15日, 20日, 25日, 末日]
-    unknown_option: true
     source: {sample: payroll, question: 締め日 ／ 支払日}
 
   - id: pay_day
@@ -1046,7 +1009,6 @@ items:
     label: 支払日
     type: dropdown
     options: [5日, 10日, 15日, 20日, 25日, 末日]
-    unknown_option: true
     source: {sample: payroll, question: 締め日 ／ 支払日}
 
   - id: wage_rounding_unit
@@ -1055,7 +1017,6 @@ items:
     label: 時給の丸め(単位)
     type: dropdown
     options: [1分, 5分, 10分, 15分, 30分]
-    unknown_option: true
     source: {sample: payroll, question: 時給の丸め}
 
   - id: wage_rounding_mode
@@ -1064,7 +1025,6 @@ items:
     label: 時給の丸め(方法)
     type: dropdown
     options: [切り捨て, 切り上げ]
-    unknown_option: true
     source: {sample: payroll, question: 時給の丸め}
 
   - id: main_withholding_type
@@ -1073,7 +1033,6 @@ items:
     label: 主に使う源泉区分
     type: radio
     options: ["報酬源泉(10.21%)", "ホステス源泉(日額5,000円控除)", 給与源泉]
-    unknown_option: true
     hint: 率は初期値で設定します。キャストごとの区分は訪問時に入力します
     source: {sample: payroll, question: 源泉率}
 
@@ -1121,7 +1080,6 @@ items:
     label: 福利厚生費の単位
     type: radio
     options: [期間ごと, 出勤日ごと]
-    unknown_option: true
     source: {sample: payroll, question: 福利厚生費}
 
   - id: late_deduction
@@ -1130,7 +1088,6 @@ items:
     label: 遅刻控除
     type: radio
     options: [使わない, 使う]
-    unknown_option: true
     source: {sample: payroll, question: 遅刻控除を使うか}
 
   - id: late_deduction_per_minute
@@ -1185,7 +1142,7 @@ items:
   - id: pay_ratio_alert
     route: form
     section: S10
-    label: 給率の警告しきい値(任意)
+    label: 給率の警告しきい値
     type: number
     unit: "%"
     hint: 担当売上に対するバック率がこれを超えたら、画面でお知らせします
@@ -1198,7 +1155,6 @@ items:
     label: 送り代
     type: radio
     options: [なし, あり]
-    unknown_option: true
     hint: キャストの送りに、エリアごとの送り代を決めている場合は「あり」です
     source: {doc: 2026-09-25 記入テンプレートからアンケートへ移動}
 
@@ -1221,7 +1177,6 @@ items:
     label: 時給を上げる時間帯
     type: radio
     options: [なし, あり]
-    unknown_option: true
     hint: 忙しい時間帯だけ、時給を上げている場合は「あり」です
     source: {doc: 2026-09-25 記入テンプレートからアンケートへ移動}
 
