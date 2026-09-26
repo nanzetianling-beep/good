@@ -2,7 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="導入アンケート">
+<meta name="theme-color" content="#1f3a6b">
 <meta name="robots" content="noindex">
 <title>ポッキリ.Night 導入アンケート</title>
 </head>
@@ -15,13 +18,15 @@
   /* Googleフォームの形に合わせる(常に白基調)。配色は紺を基調にする */
   /* 端末がダークモードでも、フォームは常に白基調で表示する */
   :root,html,body{color-scheme:light}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   :root{
     --page:#e9eef6; --card:#ffffff; --ink:#202124; --muted:#5f6368; --faint:#80868b;
     --line:#dadce0; --line-2:#bdc1c6; --accent:#1f3a6b; --accent-dark:#152a50;
     --accent-soft:#e8eef8; --error:#d93025; --error-soft:#fce8e6;
   }
   *{box-sizing:border-box}
-  body{background:var(--page);color:var(--ink);font-family:"Roboto","Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:14px;line-height:1.6;padding-inline:16px;padding-block:12px 48px}
+  body{background:var(--page);color:var(--ink);font-family:"Roboto","Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:14px;line-height:1.6;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-block:12px max(48px,env(safe-area-inset-bottom))}
+  button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
   .demo{font-size:12px;color:var(--muted);text-align:center}
   .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px}
@@ -120,7 +125,26 @@
   .send-status{margin:8px 0 0;font-size:13px;color:var(--muted);text-align:right;min-height:1.6em}
   .after{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;white-space:pre-line;font-size:14px}
   .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
-  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}}
+  /* iPhone・iPad で入力欄をタップしたとき、画面が勝手に拡大しないよう16px以上にする */
+  input.text-in,select.text-in,textarea.text-in,.answer-text{font-size:16px}
+  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}
+    .card:not(.head):not(.sec){padding:20px 16px}.head .in,.sec .body{padding-left:16px;padding-right:16px}}
+  /* スマホ: 表は1行ずつカードにして縦に並べる(横スクロールなし) */
+  @media (max-width:600px){
+    .rows{overflow:visible}
+    .rows table,.rows tbody{display:block;min-width:0}
+    .rows thead{display:none}
+    .rows tr{display:grid;grid-template-columns:1fr 44px;gap:4px 8px;border:1px solid var(--line);border-radius:8px;padding:8px 8px 12px 12px;margin-bottom:10px}
+    .rows td{display:block;padding:0}
+    .rows td.no{grid-column:1;font-size:13px;color:var(--muted);width:auto}
+    .rows td.no::after{content:"行目"}
+    .rows td.act{grid-column:2;grid-row:1}
+    .rows td[data-label]{grid-column:1 / -1}
+    .rows td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);margin-top:4px}
+    .rows .text-in{min-width:0}
+  }
+  /* iPad・パソコン: 横幅を少し広げて、表がそのまま収まるようにする */
+  @media (min-width:768px){.wrap{max-width:760px}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -203,8 +227,8 @@ function renderInput(it) {
       el("thead", {}, el("tr", {}, el("th", {}), it.columns.map((c) => el("th", { text: c })), el("th", {}))),
       el("tbody", {}, rows.map((_, r) => el("tr", {},
         el("td", { class: "no", text: String(r + 1) }),
-        it.columns.map((_, c) => el("td", {}, cellInput(r, c))),
-        el("td", {}, rows.length > 1 ? el("button", { class: "del", type: "button", text: "×", "aria-label": `${r + 1}行目を削除`,
+        it.columns.map((col, c) => el("td", { "data-label": col }, cellInput(r, c))),
+        el("td", { class: "act" }, rows.length > 1 ? el("button", { class: "del", type: "button", text: "×", "aria-label": `${r + 1}行目を削除`,
           onclick: () => { rows.splice(r, 1); render(); } }) : null)))));
     return el("div", { class: "opts" }, el("div", { class: "rows" }, table),
       rows.length < 50 ? el("button", { class: "add-row", type: "button", text: "＋ 行を追加",
