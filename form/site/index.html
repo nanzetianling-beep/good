@@ -393,7 +393,13 @@ function nextPage() {
 }
 
 // 途中まで書いた回答は、この端末のブラウザにだけ残す(再読み込みしても消えないように)
-const DRAFT_KEY = "pokkiri-onboarding-draft";
+// 質問の構成が変わったら、古い書きかけは使わない(キーに構成の指紋を入れる)
+const SPEC_SIG = (() => {
+  const src = JSON.stringify(SPEC.sections.map((sec) => sec.items.map((it) => [it.id, it.type, it.columns || it.options || ""])));
+  let h = 0; for (let i = 0; i < src.length; i++) h = (h * 31 + src.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+})();
+const DRAFT_KEY = "pokkiri-onboarding-draft-" + SPEC_SIG;
 function saveDraft() {
   try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers, others, page })); } catch {}
 }
@@ -402,7 +408,7 @@ function loadDraft() {
     const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
     if (!d) return false;
     Object.assign(answers, d.answers || {}); Object.assign(others, d.others || {});
-    if (Number.isInteger(d.page) && d.page >= -1 && d.page <= SPEC.sections.length) page = d.page;
+    // 開いたときは、いつも表紙から始める(書いた内容だけ戻す)
     return true;
   } catch { return false; }
 }
@@ -458,7 +464,12 @@ function deadlineText() {
 }
 
 function clearAll() {
-  try { localStorage.removeItem(DRAFT_KEY); } catch {}
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("pokkiri-onboarding-draft")) localStorage.removeItem(k);
+    }
+  } catch {}
   for (const k of Object.keys(answers)) delete answers[k];
   for (const k of Object.keys(others)) delete others[k];
   for (const k of Object.keys(errors)) delete errors[k];
@@ -525,6 +536,15 @@ function render() {
   app.replaceChildren(...out);
   saveDraft();
 }
+
+// 以前の構成の書きかけは消す
+try {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith("pokkiri-onboarding-draft") && k !== DRAFT_KEY) localStorage.removeItem(k);
+  }
+} catch {}
+if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
 
 // 初期値のある質問は、最初から入れておく(書きかけがあれば、そちらを戻す)
 if (!loadDraft()) for (const s of SPEC.sections) for (const it of s.items) if (it.default != null) answers[it.id] = String(it.default);
