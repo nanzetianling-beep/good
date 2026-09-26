@@ -46,7 +46,7 @@ form:
 
 sections:
   - {id: S2, title: 店舗名・営業時間の区分, desc: 店舗名と、一部・二部の分け方を伺います。}
-  - {id: S3, title: 料金のルール, desc: セット・延長の料金と、そのほかにかかる料金、端数の扱いです。}
+  - {id: S3, title: 料金のルール, desc: セット・延長の料金とバック、そのほかの料金、端数の扱いです。}
   - {id: S11, title: 卓, desc: お店にある卓(テーブル・カウンター・個室など)です。}
   - {id: S4, title: 指名・バック, desc: 指名・売上・商品のバックと、端数の扱いです。}
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
@@ -190,6 +190,37 @@ items:
       お店のセットを、1行に1つずつ書いてください。
     source: {sample: pricing, question: セット（基本の料金）}
 
+  - id: set_back_mode
+    route: form
+    section: S3
+    label: セットバック(全キャスト)
+    type: radio
+    options: [店舗一律, キャストごとに違う]
+    unknown_option: true
+    hint: |-
+      セット料金に対して、付いたキャストに付くバックです。
+      「店舗一律」にすると、全キャストが同じバックになります。
+    source: {doc: 追加要望 S3 セットバック}
+
+  - id: set_back_rate
+    route: form
+    section: S3
+    label: セットバックの金額・率(店舗一律)
+    type: rate
+    units: ["%", 円]
+    show_if: {item: set_back_mode, equals: 店舗一律}
+    hint: 1セットあたりの金額か、セット料金の%を入力してください
+    source: {doc: 追加要望 S3 セットバック}
+
+  - id: set_back_later
+    route: form
+    section: S3
+    label: セットバックは、あとで登録します
+    type: note
+    show_if: {item: set_back_mode, equals: キャストごとに違う}
+    body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
+    source: {doc: 追加要望 S3 セットバック}
+
   - id: extension_menu
     route: form
     section: S3
@@ -205,69 +236,36 @@ items:
       例)延長60分/60分/8000円
     source: {sample: pricing, question: 延長メニュー}
 
-  - id: service_charge
+  - id: extension_back_mode
     route: form
     section: S3
-    label: サービス料
+    label: 延長バック(全キャスト)
     type: radio
-    options: [なし, 10%, 15%, 20%, その他]
-    other: {type: number, unit: "%", min: 0, max: 100}
+    options: [店舗一律, キャストごとに違う]
     unknown_option: true
-    hint: 会計の小計にかける割合です
-    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+    hint: |-
+      延長が1回入るごとに、キャストに付くバックです。
+      「店舗一律」にすると、全キャストが同じバックになります。
+    source: {doc: 追加要望 S3 延長バック}
 
-  - id: house_charge
+  - id: extension_back_rate
     route: form
     section: S3
-    label: ハウスチャージの有無
-    type: radio
-    options: [なし, あり]
-    unknown_option: true
-    hint: セット料金とは別にかかる、席料などの料金です
-    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+    label: 延長バックの金額・率(店舗一律)
+    type: rate
+    units: ["%", 円]
+    show_if: {item: extension_back_mode, equals: 店舗一律}
+    hint: 延長1回あたりの金額か、延長料金の%を入力してください
+    source: {doc: 追加要望 S3 延長バック}
 
-  - id: house_charge_amount
+  - id: extension_back_later
     route: form
     section: S3
-    label: ハウスチャージの金額
-    type: number
-    unit: 円
-    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
-    show_if: {item: house_charge, equals: あり}
-    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
-
-  - id: rounding_example
-    route: form
-    section: S3
-    label: 端数処理とは
+    label: 延長バックは、あとで登録します
     type: note
-    body: |-
-      お会計の端数を、きりのいい金額にそろえる設定です。
-      お会計が12,345円のときの例です。
-
-      ・100円単位で切り捨て → 12,300円
-      ・100円単位で切り上げ → 12,400円
-      ・1000円単位で切り捨て → 12,000円
-      ・なし → 12,345円のまま
-    source: {doc: 2026-09-25 店舗向けの説明として追加}
-
-  - id: total_rounding_unit
-    route: form
-    section: S3
-    label: 端数処理(単位)
-    type: dropdown
-    options: [なし, 10円, 100円, 500円, 1000円]
-    unknown_option: true
-    source: {sample: pricing, question: 総額の端数処理}
-
-  - id: total_rounding_mode
-    route: form
-    section: S3
-    label: 端数処理(方法)
-    type: dropdown
-    options: [切り捨て, 切り上げ]
-    unknown_option: true
-    source: {sample: pricing, question: 総額の端数処理}
+    show_if: {item: extension_back_mode, equals: キャストごとに違う}
+    body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
+    source: {doc: 追加要望 S3 延長バック}
 
   - id: extension_alert
     route: form
@@ -309,6 +307,37 @@ items:
     show_if: {item: auto_extension, equals: 使う}
     source: {sample: pricing, question: 自動延長の内容}
 
+  - id: service_charge
+    route: form
+    section: S3
+    label: サービス料
+    type: radio
+    options: [なし, 10%, 15%, 20%, その他]
+    other: {type: number, unit: "%", min: 0, max: 100}
+    unknown_option: true
+    hint: 会計の小計にかける割合です
+    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+
+  - id: house_charge
+    route: form
+    section: S3
+    label: ハウスチャージの有無
+    type: radio
+    options: [なし, あり]
+    unknown_option: true
+    hint: セット料金とは別にかかる、席料などの料金です
+    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+
+  - id: house_charge_amount
+    route: form
+    section: S3
+    label: ハウスチャージの金額
+    type: number
+    unit: 円
+    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    show_if: {item: house_charge, equals: あり}
+    source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
+
   - id: late_night_surcharge
     route: form
     section: S3
@@ -339,6 +368,39 @@ items:
     show_if: {item: late_night_surcharge, equals: 使う}
     source: {sample: pricing, question: 深夜割増の内容}
 
+  - id: rounding_example
+    route: form
+    section: S3
+    label: 端数処理とは
+    type: note
+    body: |-
+      お会計の端数を、きりのいい金額にそろえる設定です。
+      お会計が12,345円のときの例です。
+
+      ・100円単位で切り捨て → 12,300円
+      ・100円単位で切り上げ → 12,400円
+      ・1000円単位で切り捨て → 12,000円
+      ・なし → 12,345円のまま
+    source: {doc: 2026-09-25 店舗向けの説明として追加}
+
+  - id: total_rounding_unit
+    route: form
+    section: S3
+    label: 端数処理(単位)
+    type: dropdown
+    options: [なし, 10円, 100円, 500円, 1000円]
+    unknown_option: true
+    source: {sample: pricing, question: 総額の端数処理}
+
+  - id: total_rounding_mode
+    route: form
+    section: S3
+    label: 端数処理(方法)
+    type: dropdown
+    options: [切り捨て, 切り上げ]
+    unknown_option: true
+    source: {sample: pricing, question: 総額の端数処理}
+
   # ── 既存見本 ③ 指名・バック設定 ───────────────────────────
 
   - id: nomination_types
@@ -360,6 +422,15 @@ items:
       例)ヘルプ/0円/-/なし
       バックの細かいルールは、訪問時に一緒に決めます。
     source: {sample: nomination, question: 指名区分}
+
+  - id: sales_split
+    route: form
+    section: S4
+    label: 複数キャストでの売上折半(指名された方のみ)
+    type: radio
+    options: [使わない, 使う]
+    unknown_option: true
+    source: {doc: 3章 S4}
 
   - id: sales_back_mode
     route: form
@@ -497,37 +568,6 @@ items:
     body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
     source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
 
-  - id: extension_back_mode
-    route: form
-    section: S4
-    label: 延長バック(全キャスト)
-    type: radio
-    options: [店舗一律, キャストごとに違う]
-    unknown_option: true
-    hint: |-
-      延長が1回入るごとに、キャストに付くバックです。
-      「店舗一律」にすると、全キャストが同じバックになります。
-    source: {doc: 追加要望 S4 延長バック}
-
-  - id: extension_back_rate
-    route: form
-    section: S4
-    label: 延長バックの金額・率(店舗一律)
-    type: rate
-    units: ["%", 円]
-    show_if: {item: extension_back_mode, equals: 店舗一律}
-    hint: 延長1回あたりの金額か、延長料金の%を入力してください
-    source: {doc: 追加要望 S4 延長バック}
-
-  - id: extension_back_later
-    route: form
-    section: S4
-    label: 延長バックは、あとで登録します
-    type: note
-    show_if: {item: extension_back_mode, equals: キャストごとに違う}
-    body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
-    source: {doc: 追加要望 S4 延長バック}
-
   - id: other_backs
     route: form
     section: S4
@@ -539,15 +579,6 @@ items:
       使っているものに、すべてチェックしてください。
       細かい条件は、訪問時に伺います。
     source: {doc: ポッキリ.Night のバックルール(担当卓売上・商品・ボトル折半・スライド・本数ボーナス)}
-
-  - id: sales_split
-    route: form
-    section: S4
-    label: 複数キャストでの売上折半(指名された方のみ)
-    type: radio
-    options: [使わない, 使う]
-    unknown_option: true
-    source: {doc: 3章 S4}
 
   - id: back_rounding
     route: form
