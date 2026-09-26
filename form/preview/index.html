@@ -528,7 +528,6 @@ function render() {
       el("button", { class: "btn primary", type: "button", text: "次へ", onclick: () => go(0) })));
   } else if (page < n) {
     const sec = SPEC.sections[page];
-    out.push(el("div", { class: "card head" }, el("div", { class: "in" }, el("h1", { text: SPEC.form.title }))));
     out.push(el("div", { class: "card sec" },
       el("div", { class: "body" }, el("h2", { text: sec.title }), el("p", { text: sec.desc }))));
     sec.items.filter(visible).forEach((it) => out.push(questionCard(it)));
