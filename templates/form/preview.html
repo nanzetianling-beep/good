@@ -24,6 +24,9 @@
   .desc{white-space:pre-line;margin:0;font-size:14px}
   .facts{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
   .facts li::before{content:"・";color:var(--accent)}
+  .facts li.deadline{display:flex;align-items:flex-start;gap:8px;color:var(--error);font-weight:700;font-size:15px;background:var(--error-soft);border:1px solid #f5c2bd;border-left:4px solid var(--error);border-radius:6px;padding:10px 12px;margin:4px 0}
+  .facts li.deadline::before{content:none}
+  .facts .warn-icon{flex:none;width:20px;height:20px;margin-top:1px}
   .req-note{border-top:1px solid var(--line);padding:12px 24px;color:var(--error);font-size:14px}
   .sec{padding:0;overflow:hidden}
   .sec .tab{display:inline-block;background:var(--accent);color:#fff;font-size:14px;padding:8px 16px;border-radius:8px 8px 0 0}
@@ -427,6 +430,14 @@ function visitDate() {
   return isNaN(d) ? null : d;
 }
 const md = (d) => `${d.getMonth() + 1}月${d.getDate()}日(${WEEK[d.getDay()]})`;
+// 回答期限の横に出す注意マーク
+function warnIcon() {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true"); svg.setAttribute("class", "warn-icon");
+  svg.innerHTML = '<path d="M12 2 1 21h22L12 2z" fill="currentColor"/><path d="M11 9h2v6h-2zM11 17h2v2h-2z" fill="#fff"/>';
+  return svg;
+}
 function deadlineText() {
   const v = visitDate();
   if (!v) return "訪問日(対面でお話しする日)の2日前まで";
@@ -461,7 +472,9 @@ function render() {
   const header = el("div", { class: "card head" }, el("div", { class: "in" },
     el("h1", { text: SPEC.form.title }),
     el("p", { class: "desc", text: SPEC.form.intro }),
-    el("ul", { class: "facts" }, SPEC.form.facts.map((f) => el("li", { text: f.replace("{deadline}", deadlineText()) })))));
+    el("ul", { class: "facts" }, SPEC.form.facts.map((f) => f.includes("{deadline}")
+      ? el("li", { class: "deadline", role: "note" }, warnIcon(), el("span", { text: f.replace("{deadline}", deadlineText()) }))
+      : el("li", { text: f })))));
   const out = [];
   const n = SPEC.sections.length;
   if (page === -1) {
