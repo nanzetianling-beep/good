@@ -1,0 +1,597 @@
+<title>ポッキリ.Night 導入アンケート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Googleフォームの形に合わせる(常に白基調)。配色は紺を基調にする */
+  /* 端末がダークモードでも、フォームは常に白基調で表示する */
+  :root,html,body{color-scheme:light}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  :root{
+    --page:#e9eef6; --card:#ffffff; --ink:#202124; --muted:#5f6368; --faint:#80868b;
+    --line:#dadce0; --line-2:#bdc1c6; --accent:#1f3a6b; --accent-dark:#152a50;
+    --accent-soft:#e8eef8; --error:#d93025; --error-soft:#fce8e6;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--page);color:var(--ink);font-family:"Roboto","Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:14px;line-height:1.6;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-block:12px max(48px,env(safe-area-inset-bottom))}
+  button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .demo{font-size:12px;color:var(--muted);text-align:center}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px}
+  .head{padding:0;overflow:hidden;border-top:10px solid var(--accent)}
+  .head .in{padding:22px 24px 18px}
+  .head h1{font-family:"Noto Sans JP",sans-serif;font-size:28px;font-weight:400;line-height:1.35;margin:0 0 12px;text-wrap:balance}
+  .desc{white-space:pre-line;margin:0;font-size:14px}
+  .facts{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
+  .facts li::before{content:"・";color:var(--accent)}
+  .deadline{display:flex;align-items:flex-start;gap:6px;margin:14px 0 0;color:var(--error);font-weight:700;font-size:15px}
+  .deadline .warn-icon{flex:none;width:18px;height:18px;margin-top:2px}
+  .req-note{border-top:1px solid var(--line);padding:12px 24px;color:var(--error);font-size:14px}
+  .sec{padding:0;overflow:hidden}
+  .sec .tab{display:inline-block;background:var(--accent);color:#fff;font-size:14px;padding:8px 16px;border-radius:8px 8px 0 0}
+  .sec .body{border-top:10px solid var(--accent);padding:18px 24px 20px}
+  .sec h2{font-family:"Noto Sans JP",sans-serif;font-size:22px;font-weight:400;margin:0 0 6px;text-wrap:balance}
+  .sec p{margin:0;color:var(--ink)}
+  .q{display:flex;flex-direction:column;gap:12px;transition:border-color .15s}
+  .q.err{border-color:var(--error);box-shadow:0 0 0 1px var(--error)}
+  .q-title{font-size:16px;font-weight:400;line-height:1.5;margin:0;white-space:pre-line}
+  .q-title .star{color:var(--error);margin-left:4px}
+  .q-head{display:flex;align-items:flex-start;gap:12px}
+  .q-head .q-title{flex:1;min-width:0}
+  .help-btn{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:-8px -8px -8px 0;padding:0 14px;
+    border:none;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:500;cursor:pointer;border-radius:22px}
+  .help-btn .qm{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;font-size:12px;font-weight:700}
+  .help-btn:hover{background:var(--accent-soft)}
+  .help-btn[aria-expanded="true"]{background:var(--accent);color:#fff}
+  .help-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .help{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+  .help[hidden]{display:none}
+  .help h4{margin:0;font-size:14px;font-weight:700;color:var(--accent)}
+  .help p{margin:4px 0 0;white-space:pre-line;font-size:14px;line-height:1.7;color:var(--ink)}
+  .q-hint{font-size:14px;color:var(--muted);margin:-6px 0 0;white-space:pre-line}
+  .q.note .q-title{font-size:18px}
+  .q.note .q-body{white-space:pre-line;font-size:14px}
+  .text-in{width:50%;min-width:220px;max-width:100%;border:none;border-bottom:1px solid var(--line-2);font:inherit;font-size:14px;padding:8px 0;background:transparent;color:var(--ink);min-height:44px}
+  .text-in.full{width:100%}
+  .text-in:focus{outline:none;border-bottom:2px solid var(--accent);padding-bottom:7px}
+  textarea.text-in{resize:vertical;min-height:64px}
+  .unit{color:var(--muted);margin-left:8px;font-size:14px}
+  .field{display:flex;align-items:flex-end}
+  .field .text-in{flex:0 1 50%;min-width:0}
+  .opts{display:flex;flex-direction:column}
+  .opt{display:flex;align-items:center;gap:14px;min-height:44px;cursor:pointer;padding:2px 0}
+  .opt input[type=radio],.opt input[type=checkbox]{-webkit-appearance:none;appearance:none;width:20px;height:20px;flex:none;margin:0;
+    border:2px solid var(--muted);background:#fff;display:grid;place-content:center;cursor:pointer}
+  .opt input[type=radio]{border-radius:50%}
+  .opt input[type=checkbox]{border-radius:3px}
+  .opt input[type=radio]::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);transform:scale(0);transition:transform .1s}
+  .opt input[type=radio]:checked{border-color:var(--accent)}
+  .opt input[type=radio]:checked::before{transform:scale(1)}
+  .opt input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .opt input[type=checkbox]::before{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);margin-top:-2px}
+  .opt input[type=checkbox]:checked::before{transform:rotate(45deg) scale(1)}
+  .opt input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .rate{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .rate .text-in{width:140px;min-width:0}
+  .seg{display:flex;gap:16px}
+  .clock{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+  .clock label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+  .clock select.text-in{min-width:110px;width:auto}
+  .clock-sep{font-size:18px;color:var(--muted);padding-bottom:10px}
+  .opt .lbl{font-size:14px}
+  .opt .other{flex:1;min-width:120px;width:auto}
+  select.text-in{width:auto;min-width:200px;border:1px solid var(--line-2);border-radius:4px;padding:8px 12px}
+  select.text-in:focus{border:2px solid var(--accent);padding:7px 11px}
+  .rows{overflow-x:auto}
+  .rows table{border-collapse:collapse;width:100%;min-width:320px;font-size:14px}
+  .rows th{text-align:left;font-weight:500;color:var(--muted);font-size:13px;padding:6px 8px 6px 0;white-space:nowrap}
+  .rows td{padding:2px 8px 2px 0;vertical-align:bottom}
+  .rows td.no{color:var(--faint);font-size:12px;width:1.5em;font-variant-numeric:tabular-nums}
+  .rows .text-in{width:100%;min-width:90px}
+  .rows select.text-in{min-width:90px;width:100%}
+  .rows .del{background:none;border:none;color:var(--faint);font-size:18px;cursor:pointer;min-width:44px;min-height:44px;border-radius:50%}
+  .rows .del:hover{background:#f1f3f4;color:var(--ink)}
+  .add-row{align-self:flex-end;background:none;border:1px dashed var(--line-2);color:var(--accent);font:inherit;font-size:14px;font-weight:500;
+    min-height:44px;padding:0 16px;border-radius:4px;cursor:pointer}
+  .add-row:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .add-row:focus-visible,.rows .del:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .dt{display:flex;gap:24px;flex-wrap:wrap}
+  .dt label{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
+  .dt input{width:180px;min-width:0}
+  .clear-choice{align-self:flex-end;background:none;border:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;min-height:44px;padding:0 8px;border-radius:4px}
+  .clear-choice:hover{background:#f1f3f4}
+  .errmsg{display:flex;align-items:center;gap:8px;color:var(--error);font-size:14px;font-weight:700}
+  .q.err .q-title{color:var(--error)}
+  .nav-error{display:flex;align-items:flex-start;gap:8px;background:var(--error-soft);border:1px solid var(--error);border-radius:8px;
+    padding:12px 16px;color:var(--error);font-size:14px;font-weight:700}
+  .nav-error .warn-icon{flex:none;width:18px;height:18px;margin-top:2px}
+  .errmsg::before{content:"!";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--error);color:#fff;font-size:11px;font-weight:700}
+  .samples{display:grid;grid-template-columns:1fr;gap:14px}
+  .samples figure{margin:0;display:flex;flex-direction:column;gap:4px;align-items:center;font-size:12px;color:var(--muted)}
+  .samples img{width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+  .samples .sample-missing{width:100%;aspect-ratio:4/5;border:1px dashed var(--line-2);border-radius:4px;display:grid;place-items:center;
+    color:var(--faint);font-size:12px;text-align:center;padding:8px}
+  .samples figcaption{font-size:14px;color:var(--ink);font-weight:500}
+  .nav{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;padding-top:4px}
+  .btn{font:inherit;font-size:14px;font-weight:500;border-radius:4px;min-height:44px;padding:0 24px;cursor:pointer;border:1px solid var(--line-2);background:var(--card);color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:var(--accent-dark)}
+  .btn:focus-visible,.clear-choice:focus-visible,.link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .progress{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);order:-1;margin-right:auto}
+  .progress .track{width:120px;height:10px;border-radius:5px;background:#d6dfee;overflow:hidden}
+  .progress .fill{height:100%;background:var(--accent);transition:width .2s}
+  .link{background:none;border:none;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;min-height:44px;padding:0;text-decoration:underline}
+  .clear-all{margin-left:0}
+  .done h2{font-family:"Noto Sans JP",sans-serif;font-size:24px;font-weight:400;margin:0 0 12px}
+  .answer-text{width:100%;min-height:260px;margin-top:16px;border:1px solid var(--line-2);border-radius:4px;padding:12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink);background:#fafbfd;resize:vertical}
+  .send{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .btn.line{background:#06c755;border-color:#06c755;color:#fff}
+  .btn.line:hover{background:#05a948}
+  .send-status{margin:8px 0 0;font-size:13px;color:var(--muted);text-align:right;min-height:1.6em}
+  .after{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;white-space:pre-line;font-size:14px}
+  .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
+  /* iPhone・iPad で入力欄をタップしたとき、画面が勝手に拡大しないよう16px以上にする */
+  input.text-in,select.text-in,textarea.text-in,.answer-text{font-size:16px}
+  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}
+    .card:not(.head):not(.sec){padding:20px 16px}.head .in,.sec .body{padding-left:16px;padding-right:16px}}
+  /* スマホ: 表は1行ずつカードにして縦に並べる(横スクロールなし) */
+  @media (max-width:600px){
+    .rows{overflow:visible}
+    .rows table,.rows tbody{display:block;min-width:0}
+    .rows thead{display:none}
+    .rows tr{display:grid;grid-template-columns:1fr 44px;gap:4px 8px;border:1px solid var(--line);border-radius:8px;padding:8px 8px 12px 12px;margin-bottom:10px}
+    .rows td{display:block;padding:0}
+    .rows td.no{grid-column:1;font-size:13px;color:var(--muted);width:auto}
+    .rows td.no::after{content:"行目"}
+    .rows td.act{grid-column:2;grid-row:1}
+    .rows td[data-label]{grid-column:1 / -1}
+    .rows td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);margin-top:4px}
+    .rows .text-in{min-width:0}
+  }
+  /* iPad・パソコン: 横幅を少し広げて、表がそのまま収まるようにする */
+  @media (min-width:768px){.wrap{max-width:760px}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div id="app"></div>
+  <p class="foot">このフォームは ポッキリ.Night が作成しました</p>
+</div>
+
+<script>
+const SPEC = /*__SPEC_JSON__*/null;
+
+const answers = {};          // id -> string | string[]
+const others = {};           // id -> 「その他」「あり」に添える入力
+let page = -1;               // -1 = 表紙, 0..n-1 = セクション, n = 送信完了
+const history = [];
+let navError = "";         // 「次へ」を押したときの、未記入のお知らせ
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c);
+  return n;
+};
+
+const visible = (it) => !it.show_if || answers[it.show_if.item] === String(it.show_if.equals);
+const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
+
+function optionSamples(it) {
+  // 選択肢ごとの見本画像(ポッキリ.Night の実際の領収書)。画像が無い番号は枠だけ出す
+  return el("div", { class: "samples" }, it.options.map((o, i) => {
+    const src = it.option_images[i];
+    return el("figure", {},
+      src ? el("img", { src, alt: `${it.label} ${o}の見本` })
+          : el("div", { class: "sample-missing", text: "見本画像を準備中" }),
+      el("figcaption", { text: String(o) }));
+  }));
+}
+
+function renderInput(it) {
+  const id = "q_" + it.id;
+  const set = (v) => { answers[it.id] = v; clearError(it.id); };
+  if (it.type === "short" || it.type === "number") {
+    return el("div", { class: "field" },
+      el("input", { class: "text-in", id, type: "text", inputmode: it.type === "number" ? "numeric" : "text",
+        placeholder: it.placeholder || "回答を入力", value: answers[it.id] || "", "aria-label": it.label,
+        oninput: (e) => set(e.target.value) }),
+      it.unit ? el("span", { class: "unit", text: it.unit }) : null);
+  }
+  if (it.type === "paragraph") {
+    return el("textarea", { class: "text-in full", id, placeholder: "回答を入力", "aria-label": it.label,
+      oninput: (e) => set(e.target.value) }, answers[it.id] || "");
+  }
+  if (it.type === "datetime") {
+    const cur = answers[it.id] || {};
+    const upd = (k) => (e) => { answers[it.id] = { ...(answers[it.id] || {}), [k]: e.target.value }; clearError(it.id); };
+    return el("div", { class: "dt" },
+      el("label", {}, "日付", el("input", { class: "text-in", id: id + "_d", type: "date", value: cur.d || "", onchange: upd("d") })),
+      el("label", {}, "時刻", el("input", { class: "text-in", id: id + "_t", type: "time", value: cur.t || "", onchange: upd("t") })));
+  }
+  if (it.type === "table") {
+    // 表の形で、行を足しながら書く(1行目のうすい文字は記入例)
+    if (!Array.isArray(answers[it.id])) answers[it.id] = [[]];   // 最初は1行だけ。増やすときは「行を追加」
+    const rows = answers[it.id];
+    const cellInput = (r, c) => {
+      const t = it.cells[c], v = rows[r][c] ?? "", ex = it.examples?.[0]?.[c];
+      const upd = (e) => { rows[r][c] = e.target.value; clearError(it.id); };
+      const aria = `${it.label} ${r + 1}行目 ${it.columns[c]}`;
+      if (Array.isArray(t)) return el("select", { class: "text-in", "aria-label": aria, onchange: upd },
+        el("option", { value: "", text: "選択" }), t.map((o) => el("option", { value: o, text: o, selected: v === o })));
+      return el("input", { class: "text-in", type: t === "time" ? "time" : "text", inputmode: t === "int" || t === "num" ? "numeric" : "text",
+        value: v, placeholder: r === 0 && ex != null && ex !== "" ? "例:" + ex : "", "aria-label": aria, oninput: upd });
+    };
+    const table = el("table", {},
+      el("thead", {}, el("tr", {}, el("th", {}), it.columns.map((c) => el("th", { text: c })), el("th", {}))),
+      el("tbody", {}, rows.map((_, r) => el("tr", {},
+        el("td", { class: "no", text: String(r + 1) }),
+        it.columns.map((col, c) => el("td", { "data-label": col }, cellInput(r, c))),
+        el("td", { class: "act" }, rows.length > 1 ? el("button", { class: "del", type: "button", text: "×", "aria-label": `${r + 1}行目を削除`,
+          onclick: () => { rows.splice(r, 1); render(); } }) : null)))));
+    return el("div", { class: "opts" }, el("div", { class: "rows" }, table),
+      rows.length < 50 ? el("button", { class: "add-row", type: "button", text: "＋ 行を追加",
+        onclick: () => { rows.push([]); render(); } }) : null);
+  }
+  if (it.type === "time") {
+    // 何時何分を、「時」「分」のプルダウンを横に並べて選ぶ
+    const cur = answers[it.id];
+    const [ch, cm] = cur ? cur.split(":") : ["", ""];
+    const pad = (n) => String(n).padStart(2, "0");
+    const upd = (h, m) => { if (h === "" && m === "") delete answers[it.id]; else set(`${h || "00"}:${m || "00"}`); render(); };
+    const sel = (label, n, value, onChange, suffix) => el("label", {}, label,
+      el("select", { class: "text-in", "aria-label": `${it.label}の${label}`, onchange: (e) => onChange(e.target.value) },
+        el("option", { value: "", text: "選択" }),
+        Array.from({ length: n }, (_, i) => el("option", { value: pad(i), text: `${i}${suffix}`, selected: value === pad(i) }))));
+    const clock = el("div", { class: "clock" },
+      sel("時", 24, ch, (h) => upd(h, cm), "時"),
+      el("span", { class: "clock-sep", text: ":" }),
+      sel("分", 60, cm, (m) => upd(ch, m), "分"));
+    return clock;
+  }
+  if (it.type === "rate") {
+    // 金額か率を、数字と単位(%・円)の組で書く
+    const cur = answers[it.id] || { v: "", u: it.units[0] };
+    const upd = (k) => (e) => { answers[it.id] = { ...cur, ...(answers[it.id] || {}), [k]: e.target.value }; clearError(it.id); if (k === "u") render(); };
+    return el("div", { class: "rate" },
+      el("input", { class: "text-in", id, type: "text", inputmode: "decimal", placeholder: "数字", value: cur.v,
+        "aria-label": it.label, oninput: upd("v") }),
+      el("div", { class: "seg", role: "radiogroup", "aria-label": "単位" }, it.units.map((u, i) =>
+        el("label", { class: "opt" }, el("input", { type: "radio", name: id + "_u", id: `${id}_u${i}`, checked: cur.u === u, onchange: upd("u") , value: u }),
+          el("span", { class: "lbl", text: u })))));
+  }
+  if (it.type === "dropdown") {
+    const opts = it.options.map(String);
+    return el("select", { class: "text-in", id, "aria-label": it.label, onchange: (e) => { set(e.target.value); render(); } },
+      el("option", { value: "", text: "選択" }),
+      opts.map((o) => el("option", { value: o, text: o, selected: answers[it.id] === o })));
+  }
+  if (it.type === "radio" || it.type === "checkbox") {
+    const multi = it.type === "checkbox";
+    const host = otherHost(it);
+    const opts = it.options.map(String);
+    const extraOther = it.other && !host;          // 選択肢の末尾に「その他:」を足す
+    const list = opts.concat(extraOther ? ["その他"] : []);
+    const cur = answers[it.id] || (multi ? [] : "");
+    const wrap = el("div", { class: "opts", role: multi ? "group" : "radiogroup", "aria-label": it.label });
+    list.forEach((o, i) => {
+      const oid = `${id}_${i}`;
+      const checked = multi ? cur.includes(o) : cur === o;
+      const input = el("input", { type: multi ? "checkbox" : "radio", name: id, id: oid, checked,
+        onchange: (e) => {
+          if (multi) {
+            let v = (answers[it.id] || []).filter((x) => x !== o);
+            if (e.target.checked) v = v.concat(o);
+            set(v);
+          } else set(o);
+          render();
+        } });
+      const row = el("label", { class: "opt", for: oid }, input,
+        el("span", { class: "lbl", text: ((o === "その他" || o === "記入") && it.other) ? o + ":" : o }));
+      if (it.other && (o === host || (extraOther && o === "その他")) && checked) {
+        row.append(el("input", { class: "text-in other", id: oid + "_other", type: "text",
+          inputmode: it.other.type === "number" ? "decimal" : "text", value: others[it.id] || "",
+          placeholder: it.other.unit ? `数字(${it.other.unit})` : "入力してください", "aria-label": it.label + " その他",
+          oninput: (e) => { others[it.id] = e.target.value; clearError(it.id); } }));
+        if (it.other.unit) row.append(el("span", { class: "unit", text: it.other.unit }));
+      }
+      wrap.append(row);
+    });
+    if (!multi && cur) wrap.append(el("button", { class: "clear-choice", type: "button", text: "選択を解除",
+      onclick: () => { delete answers[it.id]; render(); } }));
+    return wrap;
+  }
+  return null;
+}
+
+function checkItem(it) {
+  if (!visible(it)) return null;
+  if (it.type === "note") return null;
+  const v = answers[it.id];
+  const empty = v == null || (typeof v === "string" && !v.trim()) || (Array.isArray(v) && !v.length);
+  // すべての質問が必須。空のときは、何をすればよいかを出す
+  if (empty) {
+    if (it.type === "radio" || it.type === "dropdown") return "どれか1つを選んでください";
+    if (it.type === "checkbox") return "1つ以上選んでください";
+    if (it.type === "time") return "時と分を選んでください";
+    return "ここを記入してください";
+  }
+  if (it.type === "datetime" && (!v.d || !v.t)) return "日付と時刻を記入してください";
+  if (it.type === "rate" && !String(v.v ?? "").trim()) return "数字を記入してください";
+  if (it.type === "table" && Array.isArray(v)) {
+    for (const [r, row] of v.entries()) for (const [c, t] of (it.cells || []).entries()) {
+      const x = String(row[c] ?? "").trim().replace(/[,，]/g, "");
+      if (!x) return `${r + 1}行目の「${it.columns[c]}」を記入してください`;
+      if (x && t === "int" && !/^\d+$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字のみで入力してください(カンマ不要)`;
+      if (x && t === "num" && !/^\d+(\.\d+)?$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字で入力してください`;
+    }
+  }
+  if (it.type === "rate" && v && String(v.v).trim()) {
+    const x = String(v.v).trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+    if (!/^\d+(\.\d+)?$/.test(x)) return "数字で入力してください";
+    if (v.u === "%" && +x > 100) return "%は0〜100で入力してください";
+  }
+  const val = it.validation;
+  if (val && !empty && typeof v === "string") {
+    const s = v.trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+    if (val.kind === "regex" && !new RegExp(val.pattern).test(v.trim())) return val.message;
+    if (val.kind === "integer" && (!/^\d+$/.test(s) || (val.min != null && +s < val.min) || (val.max != null && +s > val.max))) return val.message;
+    if (val.kind === "number" && (!/^\d+(\.\d+)?$/.test(s) || (val.min != null && +s < val.min) || (val.max != null && +s > val.max))) return val.message;
+  }
+  const host = otherHost(it);
+  const picked = Array.isArray(v) ? v : [v];
+  if (it.other && picked.includes(host || "その他") && !(others[it.id] || "").trim())
+    return `「${host || "その他"}」の内容を記入してください`;
+  if (it.other && it.other.type === "number" && picked.includes(host || "その他")) {
+    const o = (others[it.id] || "").trim();
+    if (o && (!/^\d+(\.\d+)?$/.test(o) || +o < (it.other.min ?? 0) || +o > (it.other.max ?? Infinity)))
+      return `${it.other.min ?? 0}〜${it.other.max}の数字で入力してください`;
+  }
+  return null;
+}
+
+const errors = {};
+const openHelp = new Set();   // ヘルプを開いている質問(描き直しても開いたままにする)
+function clearError(id) {
+  if (!errors[id]) return;
+  delete errors[id];
+  if (!Object.keys(errors).length) { navError = ""; document.querySelector(".nav-error")?.remove(); }
+  const card = document.getElementById("card_" + id);
+  if (card) { card.classList.remove("err"); card.querySelector(".errmsg")?.remove(); }
+}
+
+function questionCard(it) {
+  const title = el("h3", { class: "q-title" }, it.label, it.type !== "note" ? el("span", { class: "star", text: "*", "aria-label": "必須" }) : null);
+  // ヘルプ: どちらがお店に合うか、具体例で確かめられるようにする
+  let help = null, helpBtn = null;
+  if (it.help) {
+    const pid = "help_" + it.id, open = openHelp.has(it.id);
+    help = el("div", { class: "help", id: pid, hidden: !open },
+      it.help.map((h) => el("div", {}, el("h4", { text: h.title }), el("p", { text: h.text }))));
+    helpBtn = el("button", { class: "help-btn", type: "button", "aria-expanded": String(open), "aria-controls": pid,
+      onclick: () => {
+        const now = !openHelp.has(it.id);
+        if (now) openHelp.add(it.id); else openHelp.delete(it.id);
+        help.hidden = !now; helpBtn.setAttribute("aria-expanded", String(now));
+        helpBtn.lastChild.textContent = now ? "閉じる" : "ヘルプ";
+      } }, el("span", { class: "qm", text: "?", "aria-hidden": "true" }), el("span", { text: open ? "閉じる" : "ヘルプ" }));
+  }
+  const card = el("div", { class: "card q" + (it.type === "note" ? " note" : "") + (errors[it.id] ? " err" : ""), id: "card_" + it.id },
+    helpBtn ? el("div", { class: "q-head" }, title, helpBtn) : title);
+  if (it.type === "note") { card.append(el("div", { class: "q-body", text: it.body || "" })); return card; }
+  if (it.hint) card.append(el("p", { class: "q-hint", text: it.hint }));
+  if (help) card.append(help);
+  if (it.option_images) card.append(optionSamples(it));
+  card.append(renderInput(it));
+  if (errors[it.id]) card.append(el("div", { class: "errmsg", text: errors[it.id] }));
+  return card;
+}
+
+function progress() {
+  const n = SPEC.sections.length;
+  const pct = Math.round(((page + 1) / n) * 100);
+  return el("div", { class: "progress" }, el("div", { class: "track" }, el("div", { class: "fill", style: `width:${pct}%` })),
+    el("span", { text: `${page + 1} / ${n} ページ` }));
+}
+
+function go(next) {
+  navError = "";
+  history.push(page); page = next; render(); window.scrollTo({ top: 0 });
+}
+
+function nextPage() {
+  const sec = SPEC.sections[page];
+  let firstBad = null;
+  for (const it of sec.items) {
+    const msg = checkItem(it);
+    if (msg) { errors[it.id] = msg; firstBad = firstBad || it.id; } else delete errors[it.id];
+  }
+  if (firstBad) {
+    const n = Object.keys(errors).length;
+    navError = `まだ記入していない項目が${n}つあります。赤い枠の項目を記入してから、もう一度「次へ」を押してください`;
+    render(); document.getElementById("card_" + firstBad)?.scrollIntoView({ block: "center" }); return;
+  }
+  navError = "";
+  let target = page + 1;
+  for (const it of sec.items) {
+    const jump = it.skip_to_on && it.skip_to_on[answers[it.id]];
+    if (jump) target = SPEC.sections.findIndex((s) => s.id === jump);
+  }
+  go(target);
+}
+
+// 途中まで書いた回答は、この端末のブラウザにだけ残す(再読み込みしても消えないように)
+// 質問の構成が変わったら、古い書きかけは使わない(キーに構成の指紋を入れる)
+const SPEC_SIG = (() => {
+  const src = JSON.stringify(SPEC.sections.map((sec) => sec.items.map((it) => [it.id, it.type, it.columns || it.options || ""])));
+  let h = 0; for (let i = 0; i < src.length; i++) h = (h * 31 + src.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+})();
+const DRAFT_KEY = "pokkiri-onboarding-draft-" + SPEC_SIG;
+function saveDraft() {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers, others, page })); } catch {}
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+    if (!d) return false;
+    Object.assign(answers, d.answers || {}); Object.assign(others, d.others || {});
+    // 表の空の行は捨てる(1行も残らなければ、空の1行にする)
+    for (const [k, v] of Object.entries(answers)) {
+      if (Array.isArray(v) && v.every(Array.isArray)) {
+        const kept = v.filter((row) => row.some((x) => String(x ?? "").trim()));
+        answers[k] = kept.length ? kept : [[]];
+      }
+    }
+    // 開いたときは、いつも表紙から始める(書いた内容だけ戻す)
+    return true;
+  } catch { return false; }
+}
+document.addEventListener("input", saveDraft);
+document.addEventListener("change", saveDraft);
+
+// LINEで送る文章(質問と回答を1つずつ並べる)
+function answerText() {
+  const now = new Date();
+  const lines = [`【${SPEC.form.title}】`, `回答日:${now.getFullYear()}年${md(now)}`];
+  const v = visitDate();
+  if (v) lines.push(`訪問日:${md(v)}`);
+  SPEC.sections.forEach((s) => s.items.forEach((it) => {
+    const v = it.type !== "note" && visible(it) ? fmt(it) : null;
+    if (v) lines.push("", `■${it.label}`, v);
+  }));
+  return lines.join("\n");
+}
+
+async function copyAnswer(text, status) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const ta = document.querySelector(".answer-text");
+    ta.select();
+    try { document.execCommand("copy"); } catch { status.textContent = "コピーできませんでした。上の文章を長押しして、コピーしてください。"; return false; }
+  }
+  status.textContent = "コピーしました。LINEのトークに貼り付けて送ってください。";
+  return true;
+}
+
+// 回答期限は、訪問日(対面でお話しする日)の2日前。URLの ?visit=YYYY-MM-DD から日付を出す
+const WEEK = "日月火水木金土";
+function visitDate() {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(new URLSearchParams(location.search).get("visit") || "");
+  if (!m) return null;
+  const d = new Date(+m[1], +m[2] - 1, +m[3]);
+  return isNaN(d) ? null : d;
+}
+const md = (d) => `${d.getMonth() + 1}月${d.getDate()}日(${WEEK[d.getDay()]})`;
+// 回答期限の横に出す注意マーク
+function warnIcon() {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true"); svg.setAttribute("class", "warn-icon");
+  svg.innerHTML = '<path d="M12 2 1 21h22L12 2z" fill="currentColor"/><path d="M11 9h2v6h-2zM11 17h2v2h-2z" fill="#fff"/>';
+  return svg;
+}
+function deadlineText() {
+  const v = visitDate();
+  if (!v) return "訪問日(対面でお話しする日)の2日前まで";
+  const d = new Date(v); d.setDate(d.getDate() - 2);
+  return `${md(d)}まで(訪問日 ${md(v)} の2日前)`;
+}
+
+function clearAll() {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("pokkiri-onboarding-draft")) localStorage.removeItem(k);
+    }
+  } catch {}
+  for (const k of Object.keys(answers)) delete answers[k];
+  for (const k of Object.keys(others)) delete others[k];
+  for (const k of Object.keys(errors)) delete errors[k];
+  history.length = 0; page = -1; render();
+}
+
+function fmt(it) {
+  const v = answers[it.id];
+  if (v == null || v === "" || (Array.isArray(v) && !v.length)) return null;
+  if (it.type === "datetime") return [v.d, v.t].filter(Boolean).join(" ");
+  if (it.type === "rate") return String(v.v ?? "").trim() ? `${v.v}${v.u}` : null;
+  if (it.type === "table") {
+    const filled = v.filter((row) => row.some((x) => String(x ?? "").trim()));
+    return filled.length ? filled.map((row) => it.columns.map((_, c) => row[c] || "-").join("/")).join("、") : null;
+  }
+  let s = Array.isArray(v) ? v.join("、") : String(v);
+  if (others[it.id]) s += `(${others[it.id]}${it.other?.unit || ""})`;
+  return it.unit && it.type === "number" ? `${s} ${it.unit}` : s;
+}
+
+function render() {
+  const app = document.getElementById("app");
+  const header = el("div", { class: "card head" }, el("div", { class: "in" },
+    el("h1", { text: SPEC.form.title }),
+    el("p", { class: "desc", text: SPEC.form.intro }),
+    // 回答期限は箇条書きから外し、下に赤の太字で1行だけ出す
+    el("ul", { class: "facts" }, SPEC.form.facts.filter((f) => !f.includes("{deadline}")).map((f) => el("li", { text: f }))),
+    SPEC.form.facts.filter((f) => f.includes("{deadline}")).map((f) =>
+      el("p", { class: "deadline", role: "note" }, warnIcon(), el("span", { text: f.replace("{deadline}", deadlineText()) })))));
+  const out = [];
+  const n = SPEC.sections.length;
+  if (page === -1) {
+    out.push(header, el("div", { class: "nav" },
+      el("button", { class: "link clear-all", type: "button", text: "フォームをクリア", onclick: clearAll }),
+      el("button", { class: "btn primary", type: "button", text: "次へ", onclick: () => go(0) })));
+  } else if (page < n) {
+    const sec = SPEC.sections[page];
+    out.push(el("div", { class: "card sec" },
+      el("div", { class: "body" }, el("h2", { text: sec.title }), el("p", { text: sec.desc }))));
+    sec.items.filter(visible).forEach((it) => out.push(questionCard(it)));
+    if (navError) out.push(el("div", { class: "nav-error", role: "alert" }, warnIcon(), el("span", { text: navError })));
+    out.push(el("div", { class: "nav" },
+      el("button", { class: "btn", type: "button", text: "戻る", onclick: () => { navError = ""; page = history.pop() ?? -1; render(); window.scrollTo({ top: 0 }); } }),
+      el("button", { class: "btn primary", type: "button", text: page === n - 1 ? "回答をまとめる" : "次へ", onclick: nextPage }),
+      progress()));
+  } else {
+    // 回答はどこにも保存しないので、店舗の方にLINEで送ってもらう
+    const text = answerText();
+    const status = el("p", { class: "send-status", role: "status" });
+    out.push(el("div", { class: "card head done" }, el("div", { class: "in" },
+      el("h2", { text: "最後に、回答をLINEで送ってください" }),
+      el("p", { class: "desc", text: "まだ送信は終わっていません。\n下の「LINEで送る」を押して、担当者に送ると完了です。" }),
+      el("textarea", { class: "answer-text", readonly: true, "aria-label": "回答の内容" }, text),
+      el("div", { class: "send" },
+        el("button", { class: "btn", type: "button", text: "文章をコピー", onclick: () => copyAnswer(text, status) }),
+        el("a", { class: "btn line", href: "https://line.me/R/share?text=" + encodeURIComponent(text), target: "_blank", rel: "noopener",
+          style: "display:inline-flex;align-items:center;text-decoration:none", text: "LINEで送る" })),
+      status,
+      el("p", { class: "after", text: SPEC.form.done }))));
+    out.push(el("div", { class: "nav" },
+      el("button", { class: "btn", type: "button", text: "戻って直す", onclick: () => { page = history.pop() ?? n - 1; render(); window.scrollTo({ top: 0 }); } }),
+      el("button", { class: "link", type: "button", text: "最初から入力し直す", onclick: clearAll })));
+  }
+  app.replaceChildren(...out);
+  saveDraft();
+}
+
+// 以前の構成の書きかけは消す
+try {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith("pokkiri-onboarding-draft") && k !== DRAFT_KEY) localStorage.removeItem(k);
+  }
+} catch {}
+if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+
+// 初期値のある質問は、最初から入れておく(書きかけがあれば、そちらを戻す)
+if (!loadDraft()) for (const s of SPEC.sections) for (const it of s.items) if (it.default != null) answers[it.id] = String(it.default);
+
+// #s3 のようなリンクで、そのセクションから開く
+const m = /^#s(\d+)$/.exec(location.hash);
+if (m && +m[1] >= 1 && +m[1] <= SPEC.sections.length) page = +m[1] - 1;
+render();
+</script>

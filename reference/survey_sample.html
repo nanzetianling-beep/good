@@ -1,0 +1,530 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ポッキリ.night 導入アンケート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /*
+    Google フォームの実物と同じ配色・構成に寄せる:
+    白背景・薄紫のページ地(#f0ebf8)・白いカード・紫(#673ab7)のアクセント・
+    丸いラジオボタン・上部の細い色帯だけのヘッダーカード。
+    ダークモードは使わない(見本の性質上、常に白基調で統一する指示のため)。
+  */
+  :root{
+    --page:#f0ebf8;
+    --card:#ffffff;
+    --ink:#202124;
+    --muted:#5f6368;
+    --faint:#80868b;
+    --border:#dadce0;
+    --border-2:#c7c9cc;
+    --accent:#673ab7;
+    --accent-ink:#673ab7;
+    --accent-soft:#f3e8fd;
+    --accent-soft-2:#f8f4fd;
+    --required:#d93025;
+    --ok:#1e8e3e;
+    --shadow:0 1px 2px 0 rgba(60,64,67,.10),0 1px 3px 1px rgba(60,64,67,.08);
+    --shadow-lg:0 4px 12px rgba(60,64,67,.22);
+    --radius:8px;
+    --topbar-h:52px;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--page);
+    color:var(--ink);
+    font-family:"Roboto","Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;
+    padding-inline:16px;
+    padding-block:24px 80px;
+  }
+  h1,h2,h3{font-family:"Noto Sans JP","Roboto",sans-serif;text-wrap:balance;}
+
+  .wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
+
+  /* ── 進捗バー ───────────────────────── */
+  .progressbar{
+    position:sticky;top:env(safe-area-inset-top,0px);
+    z-index:20;margin:0 auto 4px;max-width:760px;
+    background:var(--card);border:1px solid var(--border);border-radius:999px;
+    box-shadow:var(--shadow);padding:8px 14px;
+    display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);
+  }
+  .progressbar .track{flex:1;height:6px;border-radius:999px;background:var(--border);overflow:hidden;}
+  .progressbar .fill{height:100%;background:var(--accent);width:0%;transition:width .25s ease;}
+  .progressbar b{color:var(--accent-ink);font-variant-numeric:tabular-nums;}
+  .toc-btn{
+    border:1px solid var(--border-2);background:var(--card);color:var(--ink);
+    border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;
+    white-space:nowrap;display:flex;align-items:center;gap:5px;
+  }
+  .toc-btn:hover{border-color:var(--accent);color:var(--accent-ink);}
+
+  /* ── ヘッダーカード ───────────────────── */
+  .hero{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    border:1px solid var(--border);overflow:hidden;
+  }
+  .hero .bar{height:10px;background:var(--accent);}
+  .hero .in{padding:26px 26px 22px;}
+  .hero h1{font-size:22px;font-weight:700;margin:0 0 6px;color:var(--ink);}
+  .hero .lead{font-size:13.5px;color:var(--muted);line-height:1.8;margin:0 0 14px;}
+  .hero .lead b{color:var(--ink);}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:14px;}
+  .chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:4px 10px;font-weight:700;}
+  .chip.gray{background:var(--page);color:var(--muted);}
+  .legend{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:var(--muted);}
+  .legend .req{color:var(--required);font-weight:700;}
+
+  /* ── セクション ───────────────────────── */
+  .section{scroll-margin-top:70px;display:flex;flex-direction:column;gap:10px;}
+  .section-head{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px 22px;border-left:6px solid var(--accent);
+  }
+  .section-head .num{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--accent-ink);text-transform:uppercase;}
+  .section-head h2{font-size:18px;font-weight:700;margin:2px 0 6px;}
+  .section-head p{font-size:13px;color:var(--muted);line-height:1.75;margin:0;}
+
+  /* ── 質問カード ───────────────────────── */
+  .q{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px 22px 20px;
+  }
+  .q-title{display:flex;align-items:baseline;gap:6px;font-size:14.5px;font-weight:500;margin-bottom:4px;}
+  .q-title .req{color:var(--required);font-weight:700;}
+  .q-hint{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 12px;}
+  .q-hint.warn{color:#b3762f;}
+
+  input[type=text],input[type=number],input[type=date],select.f{
+    width:100%;border:none;border-bottom:1.5px solid var(--border-2);background:transparent;
+    padding:8px 2px;font-size:14px;color:var(--ink);font-family:inherit;
+  }
+  input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,select.f:focus{
+    outline:none;border-bottom:2px solid var(--accent);padding-bottom:7px;
+  }
+  input::placeholder{color:var(--faint);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 20px;}
+  @media (max-width:520px){.row2,.row3{grid-template-columns:1fr;}}
+  .unit{font-size:12.5px;color:var(--muted);margin-left:8px;white-space:nowrap;}
+  .field-label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:500;}
+  .field{display:flex;align-items:flex-end;gap:2px;}
+
+  .opts{display:flex;flex-direction:column;gap:2px;}
+  .opt{display:flex;align-items:center;gap:12px;padding:9px 4px;cursor:pointer;border-radius:6px;}
+  .opt:hover{background:var(--accent-soft-2);}
+  .opt input{accent-color:var(--accent);width:18px;height:18px;flex:none;}
+  .opt span{font-size:13.5px;}
+  .opt .sub{color:var(--faint);font-size:11.5px;}
+
+  select.f{
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%235f6368'><path d='M5.5 7.5l4.5 4.5 4.5-4.5'/></svg>");
+    background-repeat:no-repeat;background-position:right 2px center;background-size:16px;padding-right:22px;
+  }
+
+  .sample{
+    margin-top:12px;border:1px dashed var(--border-2);border-radius:8px;overflow:hidden;
+  }
+  .sample .lbl{font-size:11px;font-weight:700;color:var(--muted);background:var(--page);padding:6px 10px;border-bottom:1px dashed var(--border-2);}
+  .sample table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .sample th{text-align:left;font-weight:700;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--accent-soft-2);}
+  .sample td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--ink);white-space:nowrap;}
+  .sample tr:last-child td{border-bottom:none;}
+  .sample-wrap{overflow-x:auto;}
+  .addrow{display:flex;align-items:center;gap:6px;padding:8px 10px;color:var(--accent-ink);font-size:12.5px;font-weight:700;border-top:1px dashed var(--border-2);background:var(--accent-soft-2);}
+
+  .pillnote{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--page);border:1px solid var(--border);border-radius:999px;padding:3px 9px;margin-bottom:10px;}
+  .pillnote.cond{color:var(--accent-ink);background:var(--accent-soft);border-color:transparent;}
+
+  .qgroup-note{
+    background:var(--accent-soft-2);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;font-size:12.5px;color:var(--muted);line-height:1.8;
+  }
+  .qgroup-note b{color:var(--ink);}
+
+  /* ── TOCパネル ───────────────────────── */
+  .toc-overlay{position:fixed;inset:0;background:rgba(32,33,36,.32);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  .toc-overlay.open{opacity:1;pointer-events:auto;}
+  .toc-panel{
+    position:fixed;top:0;right:0;bottom:0;width:min(320px,86vw);background:var(--card);
+    z-index:41;box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .25s ease;
+    display:flex;flex-direction:column;padding:18px 6px 18px 18px;
+    padding-top:calc(18px + env(safe-area-inset-top,0px));
+  }
+  .toc-panel.open{transform:translateX(0);}
+  .toc-panel h3{font-size:14px;margin:0 0 10px;padding-right:14px;}
+  .toc-list{overflow-y:auto;padding-right:10px;display:flex;flex-direction:column;gap:2px;}
+  .toc-list a{
+    display:flex;gap:8px;align-items:baseline;padding:8px 8px;border-radius:7px;
+    font-size:13px;color:var(--muted);text-decoration:none;
+  }
+  .toc-list a b{color:var(--faint);font-size:11px;font-variant-numeric:tabular-nums;width:16px;flex:none;}
+  .toc-list a:hover{background:var(--accent-soft-2);color:var(--ink);}
+  .toc-list a.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:700;}
+  .toc-list a.active b{color:var(--accent-ink);}
+  .toc-close{align-self:flex-end;border:none;background:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 10px;}
+
+  .footer{text-align:center;color:var(--faint);font-size:12px;padding-top:18px;line-height:1.8;}
+</style>
+
+<div class="wrap">
+
+  <div class="progressbar">
+    <span>回答の目安</span>
+    <div class="track"><div class="fill" id="pfill"></div></div>
+    <b id="ptext">0%</b>
+    <button class="toc-btn" id="tocOpen">☰ 目次</button>
+  </div>
+
+  <div class="hero">
+    <div class="bar"></div>
+    <div class="in">
+      <h1>ポッキリ.night 導入アンケート（見本）</h1>
+      <p class="lead">
+        新しく導入いただく店舗さまに、<b>お店の情報・料金・バックの決め方・商品・メンバーなど</b>を
+        このアンケート形式で伺い、その回答をもとにスタッフが「店舗設定」画面へ入力します。
+        <br>実際の設定画面（初期設定ガイド／店舗設定）で聞いている項目を、もれなく1枚にまとめた見本です。
+      </p>
+      <div class="legend"><span class="req">*</span> は必須項目です。それ以外は空欄のまま導入し、あとから設定画面で追加・変更できます。</div>
+      <div class="meta">
+        <span class="chip">全13セクション</span>
+        <span class="chip gray">回答目安 30〜45分</span>
+        <span class="chip gray">わからない項目は「あとで」に✓でOK</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="footer">
+    ポッキリ.night 店舗設定・初期設定ガイドの入力項目にもとづく見本です。実際の画面の項目が増減した場合はこちらも更新してください。
+  </div>
+</div>
+
+<div class="toc-overlay" id="tocOverlay"></div>
+<div class="toc-panel" id="tocPanel">
+  <button class="toc-close" id="tocClose" aria-label="閉じる">×</button>
+  <h3>目次（13セクション）</h3>
+  <div class="toc-list" id="tocList"></div>
+</div>
+
+<script>
+/* ===================== データ定義 ===================== */
+const T = { SHORT:"short", NUM:"num", RADIO:"radio", CHECK:"check", SELECT:"select", TABLE:"table", NOTE:"note", TWOCOL:"twocol" };
+
+const SECTIONS = [
+{
+  id:"store", title:"① 店舗情報", desc:"領収書の発行者欄や、交通費の計算に使う基本情報です。",
+  qs:[
+    {t:T.SHORT, l:"店舗名", req:true, ph:"例：クラブ ポッキリ"},
+    {t:T.RADIO, l:"業態", req:true, hint:"料金セットやバックの雛形が、選んだ業態に合わせて仮で入ります。",
+      o:["キャバクラ・ラウンジ","ガールズバー・バー・スナック","ホスト","その他"]},
+    {t:T.TWOCOL, l:"郵便番号 ／ 電話番号", cols:[
+      {label:"郵便番号", ph:"220-0011"}, {label:"電話番号", req:true, ph:"045-000-0000"}]},
+    {t:T.SHORT, l:"住所", ph:"神奈川県横浜市西区高島2-1-1"},
+    {t:T.SHORT, l:"事業者名（法人名）", hint:"店名と同じなら空欄のままでOKです。", ph:"株式会社ポッキリホールディングス"},
+    {t:T.SHORT, l:"最寄り駅", hint:"キャストの最寄り駅からこの駅までの片道運賃を、交通費の計算に使います。", ph:"横浜"},
+    {t:T.TWOCOL, l:"一部（通常）／二部（深夜）の切り替え時刻", hint:"両方空欄なら深夜の区別は使いません（0〜23時）。", cols:[
+      {label:"二部の開始（時）", ph:"22"}, {label:"二部の終了（時）", ph:"5（翌朝）"}]},
+    {t:T.TABLE, l:"許可証・届出", hint:"風営法・古物商などの控え。任意項目で、あとからいくつでも追加できます。",
+      cols:["種類","番号（任意）","有効期限（任意）"],
+      rows:[["風営法（第1号）","第12345号","2028-03-31"],["古物商","","（期限の定めなし）"]]},
+  ]
+},
+{
+  id:"pricing", title:"② 料金セット", desc:"卓に座ってからの基本料金・延長・端数の決め方です。",
+  qs:[
+    {t:T.TABLE, l:"セット（基本の料金）", req:true, hint:"1つ以上の登録が必須です。",
+      cols:["セット名","時間(分)","料金(円)","延長(分)","延長料金(円)"],
+      rows:[["セット1","60","8,000","30","4,000"],["セット2（延長）","30","4,000","30","4,000"]]},
+    {t:T.TABLE, l:"延長メニュー", hint:"ここで作ったものだけが、現場の卓の注文画面に延長ボタンとして出ます。",
+      cols:["名前","時間(分)","料金(円)","並び","現場に出す"],
+      rows:[["延長30分","30","4,000","10","✓"],["延長60分","60","8,000","20","✓"]]},
+    {t:T.NUM, l:"延長アラート（終了の何分前に卓の色を変えるか）", unit:"分前", ph:"10"},
+    {t:T.RADIO, l:"自動延長を使うか", cond:"業態がバー・ガールズバー・スナックのときだけ表示", o:["使わない","使う"]},
+    {t:T.TWOCOL, l:"自動延長の内容", hint:"「使う」を選んだ場合のみ。空欄ならセット先頭の延長メニューで積みます。", cols:[
+      {label:"何分ごと", ph:"30"}, {label:"何円", ph:"1,000"}]},
+    {t:T.TWOCOL, l:"サービス料 ／ ハウスチャージ", cols:[
+      {label:"サービス料（%）", ph:"10"}, {label:"ハウスチャージ（円）", ph:"0"}]},
+    {t:T.CHECK, l:"人数分で課金するもの", o:["セット・延長を人数分課金する","ハウスチャージを人数分にする"]},
+    {t:T.TWOCOL, l:"総額の端数処理", cols:[
+      {label:"丸め単位", select:["なし","100円単位","500円単位","1000円単位"]},
+      {label:"モード", select:["切捨て（端数値引）","切上げ"]}]},
+    {t:T.RADIO, l:"本日の売上目標をフロアに表示するか", o:["表示しない","表示する"]},
+    {t:T.TWOCOL, l:"達成時インセンティブ", hint:"「表示する」を選んだ場合のみ。", cols:[
+      {label:"1人あたり（円）", ph:"3,000"}, {label:"対象人数（黒服）", ph:"3"}]},
+    {t:T.RADIO, l:"深夜割増を使うか", hint:"卓を開いた時刻がこの時刻以降なら、会計に定額を1回だけ乗せます。", o:["使わない","使う"]},
+    {t:T.TWOCOL, l:"深夜割増の内容", hint:"「使う」を選んだ場合のみ。", cols:[
+      {label:"基準時刻", ph:"24時〜"}, {label:"金額（1セットあたり・円）", ph:"1,000"}]},
+  ]
+},
+{
+  id:"nomination", title:"③ 指名・バック設定", desc:"指名の種類と、キャストへのバックの決め方です。",
+  qs:[
+    {t:T.TABLE, l:"指名区分", req:true, hint:"「本指名・場内指名・同伴・ヘルプ」が標準の4区分です。",
+      cols:["名称","指名料(円)","課金単位","バック役割","同伴扱い"],
+      rows:[["本指名","3,000","1接客ごと","メイン（折半対象）","—"],["場内指名","2,000","1接客ごと","メイン（折半対象）","—"],["同伴","3,000","1接客ごと","メイン（折半対象）","同伴扱い"],["ヘルプ","0","1接客ごと","ヘルプ","—"]]},
+    {t:T.RADIO, l:"ヘルプで付いたキャストにも売上を付けるか", o:["付ける（標準）","付けない"]},
+    {t:T.NOTE, l:"バックルール", body:
+      "キャストへの支給（バック）は、次の10パターンから必要なものを組み合わせて作ります。有効なルールはすべて加算されます。"+
+      "<br><br><b>① 指名バック</b>：指名・同伴ごとに、円 または 指名料の％で支給"+
+      "<br><b>② 担当卓売上バック</b>：担当した卓の売上に対する％"+
+      "<br><b>③ 商品バック</b>：ドリンク／ボトル／フードなど特定の商品を出したキャスト1人に支給"+
+      "<br><b>④ ボトル折半</b>：1本のボトルを、その卓に付いたキャストで分けて支給"+
+      "<br><b>⑤ スライド（期間実績で率変動）</b>：月間・半月の実績に応じて率が上がる段階制"+
+      "<br><b>⑥ 時給併用</b>：時給に加えて①〜⑤を上乗せ"+
+      "<br><b>⑦ 保証比較</b>：日給保証と①〜⑥の高い方を支給"+
+      "<br><b>⑧ ポイント時給（ランク制）</b>：指名などで貯めたポイントに応じて時給が変わる"+
+      "<br><b>⑨ 本数ボーナス</b>：月間の指名本数が一定を超えたら固定ボーナス"+
+      "<br><b>⑩ ヘルプバック</b>：他のルールの支給額に係数をかけてヘルプへ配分"+
+      "<br><br>どのパターンを使うか、率や金額は<b>導入時に個別に伺います</b>（下は指名バックの記入例）。"},
+    {t:T.TABLE, l:"（記入例）指名バックの決め方",
+      cols:["ルール名","対象の指名区分","決め方","金額 / 率"],
+      rows:[["本指名バック","本指名","円で決める","1,000円 / 1接客"],["場内指名バック","場内指名","指名料の％","50%"]]},
+    {t:T.SELECT, l:"バック端数の丸め単位", o:["1円","10円","100円"]},
+  ]
+},
+{
+  id:"tax", title:"④ 税・インボイス", desc:"消費税率と、適格請求書（インボイス）の登録番号です。",
+  qs:[
+    {t:T.SHORT, l:"適格請求書 登録番号", hint:"「T」+13桁。未登録なら空欄のままでOKです。", ph:"T1234567890123"},
+    {t:T.TWOCOL, l:"税率", cols:[
+      {label:"標準税率（%）", ph:"10"}, {label:"軽減税率（%）", ph:"8"}]},
+    {t:T.RADIO, l:"表示価格", o:["内税（税込表示）","外税（税抜表示）"]},
+  ]
+},
+{
+  id:"payments", title:"⑤ 決済方法", desc:"店舗で使える支払い方法と、手数料の決め方です。",
+  qs:[
+    {t:T.TABLE, l:"決済方法ごとの上乗せ手数料", hint:"現金・カード・売掛の3方式は固定です（追加削除不可）。カード手数料の顧客転嫁は加盟店規約で禁止されている場合があるため、設定は店舗の判断でお願いします。",
+      cols:["決済方法","上乗せ手数料"], rows:[["現金","0%"],["カード","0%"],["売掛","0%"]]},
+    {t:T.NUM, l:"カード決済手数料（店舗共通）", hint:"個別の決済方法に手数料が入っていないときに、この共通手数料を自動適用します。内税（税込表示）のときのみ対応。", unit:"%", ph:"0"},
+  ]
+},
+{
+  id:"products", title:"⑥ 商品メニュー", desc:"ドリンク・ボトル・フードなど、現場で注文できる商品です。",
+  qs:[
+    {t:T.TABLE, l:"カテゴリー", req:true, hint:"「ドリンク／ボトル／フード／その他」などの種別で分類します。",
+      cols:["カテゴリー名","種別"], rows:[["シャンパン","ボトル"],["ソフトドリンク","ドリンク"],["おつまみ","フード"]]},
+    {t:T.TABLE, l:"商品", req:true,
+      cols:["商品名","価格(円)","原価(任意)","キャストD","ボトルキープ","税区分"],
+      rows:[["ヴーヴクリコ","28,000","18,000","—","対象","標準10%"],["ウーロン茶","800","","キャストドリンク","—","標準10%"],["唐揚げ","1,200","400","—","—","軽減8%"]]},
+    {t:T.NOTE, l:"商品ごとの「種類」（例：ヴーヴクリコ→イエロー/ホワイト）や「時価」設定は、商品を登録したあと個別に伺います。"},
+  ]
+},
+{
+  id:"tables", title:"⑦ 卓とフロアマップ", desc:"お店にある卓（テーブル・カウンター・個室など）です。",
+  qs:[
+    {t:T.TABLE, l:"卓の一覧", req:true, hint:"営業中の卓が1件以上必要です。「停止」にした卓は現場に出ません（あとで戻せます）。",
+      cols:["卓名"], rows:[["VIP1"],["カウンター"],["個室A"],["個室B"]]},
+    {t:T.NOTE, l:"フロアマップ上の配置（どの位置に置くか）は、導入日にPOS画面上でドラッグして決めます。ここでは卓の名前と数だけ伺います。"},
+  ]
+},
+{
+  id:"referral", title:"⑧ 流入経路（集計タグ）", desc:"「新規・リピーター」など、来店のきっかけを集計するための任意項目です。",
+  qs:[
+    {t:T.TABLE, l:"集計タグ", hint:"金額の計算には影響しません。あとから何個でも追加できます。",
+      cols:["タグ名"], rows:[["新規"],["リピーター"],["ビラ"]]},
+  ]
+},
+{
+  id:"expenses", title:"⑨ 経費カテゴリ", desc:"収支明細の「原価」に含める経費の分類です。",
+  qs:[
+    {t:T.TABLE, l:"経費カテゴリ", req:true, hint:"1つ以上「使う」状態が必須です。「原価」にチェックしたものが粗利計算の原価になります。",
+      cols:["カテゴリ名","原価に含める","使う"],
+      rows:[["仕入","✓","✓"],["広告宣伝費","—","✓"],["送迎費","—","✓"],["人件費（時給以外）","—","✓"]]},
+  ]
+},
+{
+  id:"register", title:"⑩ レジ・日報", desc:"レジを開けるときの釣銭準備額と、過不足の許容範囲です。",
+  qs:[
+    {t:T.NUM, l:"いつものレジ金（釣銭準備額）", unit:"円", ph:"50,000"},
+    {t:T.TWOCOL, l:"現金過不足の許す範囲", hint:"この範囲の外に出た精算だけ知らせます。", cols:[
+      {label:"下限（マイナス・円）", ph:"-1,000"}, {label:"上限（プラス・円）", ph:"1,000"}]},
+    {t:T.CHECK, l:"日報の出力形式", o:["PDFで出力できるようにする"]},
+  ]
+},
+{
+  id:"printer", title:"⑪ プリンター・領収書", desc:"レシートプリンターの機種と、伝票・領収書に刷る内容です。",
+  qs:[
+    {t:T.TWOCOL, l:"プリンター本体", cols:[
+      {label:"プリンター名", ph:"レシートプリンター"}, {label:"機器名（任意）", ph:"スター精密 TSP650II"}]},
+    {t:T.SELECT, l:"使用する用紙幅", o:["58mm","80mm"]},
+    {t:T.RADIO, l:"自動印字（CloudPRNT）を使うか", o:["使わない","使う"]},
+    {t:T.SELECT, l:"領収書のデザイン", hint:"複数のひな形から、実際に刷られる見た目を見ながら選びます。", o:["シンプル（罫線のみ）","二重罫","タイトル帯付き"]},
+    {t:T.CHECK, l:"領収書に刷る内容", hint:"店舗名・電話番号は必ず刷ります。", o:["住所","事業者名","インボイス登録番号"]},
+    {t:T.TWOCOL, l:"収入印紙", cols:[
+      {label:"この額以上で必要（円）", ph:"50,000"}, {label:"判定に使う金額", select:["お預かり金額","お会計金額"]}]},
+    {t:T.TWOCOL, l:"伝票番号の採番", cols:[
+      {label:"接頭辞（任意）", ph:"A"}, {label:"開始番号", ph:"1"}]},
+    {t:T.SELECT, l:"採番のリセット単位", o:["リセットしない","営業日ごと","月初にリセット"]},
+    {t:T.CHECK, l:"印刷するもの", o:["概算伝票（延長交渉時）","会計伝票（会計確定時）","精算伝票（明細付き控え）","領収書"]},
+    {t:T.CHECK, l:"キッチン伝票に印刷するカテゴリ", o:["ドリンク","ボトル","フード","その他"]},
+  ]
+},
+{
+  id:"roster", title:"⑫ メンバー台帳", desc:"キャスト・スタッフの登録項目です。",
+  qs:[
+    {t:T.TABLE, l:"キャスト", req:true, hint:"1名以上の登録が必須です。",
+      cols:["源氏名","時給(任意)","ランク(任意)","区分"],
+      rows:[["ココ","2,500","レギュラー","通常"],["りん","","体入","体験入店"]]},
+    {t:T.TABLE, l:"スタッフ", cols:["氏名","職種","時給(任意)"],
+      rows:[["山田","ボーイ","1,200"],["田中","キッチン","1,300"]]},
+    {t:T.NOTE, l:"個人情報（本名・生年月日・電話・住所・給与振込口座・緊急連絡先・身分証明書の提出状況）は、すべて任意項目です。オーナー・店長だけが見られる欄に、あとからメンバーごとに個別入力します。"},
+    {t:T.SELECT, l:"（キャストごとに）源泉区分", o:["報酬源泉（10.21%）","ホステス源泉（日額控除方式）","給与源泉（甲欄簡易）"]},
+    {t:T.TWOCOL, l:"（キャストごとに）交通費", cols:[
+      {label:"最寄り駅", ph:"横浜"}, {label:"送りエリア", ph:"みなとみらい"}]},
+  ]
+},
+{
+  id:"payroll", title:"⑬ 給与運用設定", desc:"締め日・支払日・源泉率・交通費・遅刻控除など、給与計算のルールです。",
+  qs:[
+    {t:T.TWOCOL, l:"締め日 ／ 支払日", cols:[
+      {label:"締め日", ph:"末日（0で指定）"}, {label:"支払日", ph:"15日"}]},
+    {t:T.TWOCOL, l:"時給の丸め", cols:[
+      {label:"丸め単位（分）", select:["1分","5分","10分","15分","30分"]},
+      {label:"丸めモード", select:["切り捨て","切り上げ"]}]},
+    {t:T.TWOCOL, l:"福利厚生費", cols:[
+      {label:"金額（円）", ph:"0"}, {label:"単位", select:["期間ごと","出勤日ごと"]}]},
+    {t:T.TABLE, l:"源泉率", cols:["区分","率 / 控除額"],
+      rows:[["報酬源泉","10.21%"],["ホステス源泉","10.21%（日額控除 5,000円）"],["給与源泉","0%"]]},
+    {t:T.TWOCOL, l:"交通費の対象条件", cols:[
+      {label:"対象になる最低勤務時間", ph:"0時間"}, {label:"フル日とみなす勤務時間", ph:"0時間"}]},
+    {t:T.TABLE, l:"送りエリア別の金額", cols:["エリア名","送り代(円)"], rows:[["みなとみらい","1,500"],["関内","1,000"]]},
+    {t:T.TABLE, l:"繁忙時間帯の時給（期間限定）", hint:"任意。特定の時間帯だけ時給を上げたい場合に設定します。",
+      cols:["開始","終了","倍率 / 加算額"], rows:[["22:00","24:00","×1.2"]]},
+    {t:T.NUM, l:"給率の警告しきい値", hint:"担当売上に対するバック率がこれを超えたら画面上で知らせます。", unit:"%", ph:"100"},
+    {t:T.RADIO, l:"遅刻控除を使うか", o:["使わない","使う"]},
+    {t:T.TWOCOL, l:"遅刻控除の内容", hint:"「使う」を選んだ場合のみ。", cols:[
+      {label:"1分あたりの控除（円）", ph:"0"}, {label:"1分あたりの減点（pt）", ph:"0"}]},
+    {t:T.TWOCOL, l:"遅刻の猶予・上限", cols:[
+      {label:"猶予（分）", ph:"0"}, {label:"1日の控除上限（円・任意）", ph:"上限なし"}]},
+    {t:T.NUM, l:"日払いの上限", hint:"任意。空欄なら上限を設けません。", unit:"円", ph:"上限なし"},
+  ]
+},
+];
+
+/* ===================== レンダリング ===================== */
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+let uid = 0;
+
+function renderQ(q){
+  if (q.t === T.qgroup || q.t === T.row4) return ""; // 予約フィールド（未使用）
+  const id = "f" + (uid++);
+  let body = "";
+
+  if (q.t === T.SHORT || q.t === T.NUM){
+    body = `<div class="field"><input type="${q.t===T.NUM?"text":"text"}" id="${id}" placeholder="${esc(q.ph||"")}" inputmode="${q.t===T.NUM?"decimal":"text"}" ${q.req?'data-req="1"':""}>${q.unit?`<span class="unit">${esc(q.unit)}</span>`:""}</div>`;
+  } else if (q.t === T.TWOCOL){
+    body = `<div class="row2">` + q.cols.map(c => {
+      const cid = "f" + (uid++);
+      if (c.select){
+        return `<div><span class="field-label">${esc(c.label)}</span><select class="f" id="${cid}" ${c.req?'data-req="1"':""}>` +
+          c.select.map(o=>`<option>${esc(o)}</option>`).join("") + `</select></div>`;
+      }
+      return `<div><span class="field-label">${esc(c.label)}${c.req?' <span class="req">*</span>':""}</span><input type="text" id="${cid}" placeholder="${esc(c.ph||"")}" ${c.req?'data-req="1"':""}></div>`;
+    }).join("") + `</div>`;
+  } else if (q.t === T.RADIO){
+    body = `<div class="opts">` + q.o.map((o,i)=>{
+      const rid = "r"+(uid++);
+      return `<label class="opt" for="${rid}"><input type="radio" id="${rid}" name="${id}" ${q.req?'data-req="1" data-group="'+id+'"':""}><span>${esc(o)}</span></label>`;
+    }).join("") + `</div>`;
+  } else if (q.t === T.CHECK){
+    body = `<div class="opts">` + q.o.map((o)=>{
+      const cid = "c"+(uid++);
+      return `<label class="opt" for="${cid}"><input type="checkbox" id="${cid}"><span>${esc(o)}</span></label>`;
+    }).join("") + `</div>`;
+  } else if (q.t === T.SELECT){
+    body = `<select class="f" id="${id}" ${q.req?'data-req="1"':""}><option value="">選択してください</option>` +
+      q.o.map(o=>`<option>${esc(o)}</option>`).join("") + `</select>`;
+  } else if (q.t === T.TABLE){
+    body = `<div class="sample">
+      <div class="lbl">回答例（この形式で必要な数だけ追加してください）</div>
+      <div class="sample-wrap"><table><thead><tr>${q.cols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead>
+      <tbody>${q.rows.map(r=>`<tr>${r.map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+      <div class="addrow">＋ 行を追加</div>
+    </div>`;
+  } else if (q.t === T.NOTE){
+    body = `<div class="qgroup-note">${q.body || esc(q.l)}</div>`;
+    return `<div class="q">${q.hint?`<p class="q-hint">${esc(q.hint)}</p>`:""}${body}</div>`;
+  }
+
+  return `<div class="q">
+    <div class="q-title">${esc(q.l)}${q.req?' <span class="req">*</span>':""}</div>
+    ${q.cond?`<span class="pillnote cond">条件付き：${esc(q.cond)}</span><br>`:""}
+    ${q.hint?`<p class="q-hint">${esc(q.hint)}</p>`:""}
+    ${body}
+  </div>`;
+}
+
+function renderSection(s, i){
+  const num = String(i+1).padStart(2,"0");
+  return `<section class="section" id="${s.id}">
+    <div class="section-head">
+      <div class="num">SECTION ${num} / 13</div>
+      <h2>${esc(s.title)}</h2>
+      <p>${esc(s.desc)}</p>
+    </div>
+    ${s.qs.map(renderQ).join("")}
+  </section>`;
+}
+
+document.getElementById("sections").innerHTML = SECTIONS.map(renderSection).join("");
+
+/* 目次 */
+const tocList = document.getElementById("tocList");
+tocList.innerHTML = SECTIONS.map((s,i)=>`<a href="#${s.id}" data-id="${s.id}"><b>${String(i+1).padStart(2,"0")}</b>${esc(s.title.replace(/^[^\s]+\s/,""))}</a>`).join("");
+
+const tocOpen = document.getElementById("tocOpen");
+const tocClose = document.getElementById("tocClose");
+const tocOverlay = document.getElementById("tocOverlay");
+const tocPanel = document.getElementById("tocPanel");
+function openToc(){ tocOverlay.classList.add("open"); tocPanel.classList.add("open"); }
+function closeToc(){ tocOverlay.classList.remove("open"); tocPanel.classList.remove("open"); }
+tocOpen.addEventListener("click", openToc);
+tocClose.addEventListener("click", closeToc);
+tocOverlay.addEventListener("click", closeToc);
+tocList.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setTimeout(closeToc, 150)));
+
+/* 現在地ハイライト */
+try {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        tocList.querySelectorAll("a").forEach(a => a.classList.toggle("active", a.dataset.id === e.target.id));
+      }
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll(".section").forEach(s => obs.observe(s));
+} catch(e) {}
+
+/* 進捗バー（必須項目の入力率） */
+function updateProgress(){
+  try {
+    const reqEls = Array.from(document.querySelectorAll('[data-req="1"]'));
+    const groups = new Map();
+    let total = 0, done = 0;
+    reqEls.forEach(el => {
+      const g = el.dataset.group;
+      if (g){
+        if (!groups.has(g)) groups.set(g, false);
+        if (el.checked) groups.set(g, true);
+      } else {
+        total++;
+        if ((el.tagName === "SELECT" && el.value) || (el.tagName === "INPUT" && el.value.trim())) done++;
+      }
+    });
+    groups.forEach(v => { total++; if (v) done++; });
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("pfill").style.width = pct + "%";
+    document.getElementById("ptext").textContent = pct + "%";
+  } catch(e){}
+}
+document.addEventListener("input", updateProgress);
+document.addEventListener("change", updateProgress);
+updateProgress();
+</script>
+
+</body></html>

@@ -1,0 +1,288 @@
+<title>ポッキリ.Night 記入テンプレート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* LINEのトークとExcelの見た目に寄せる(常に明るい配色) */
+  :root{
+    --page:#e9eef6; --card:#ffffff; --ink:#202124; --muted:#5f6368; --line:#dadce0;
+    --accent:#1f3a6b; --accent-soft:#e8eef8;
+    --talk:#8ca6c9; --bubble:#ffffff; --time:#e8eef7;
+    --xl-head:#f3f3f3; --xl-grid:#d4d4d4; --xl-title:#1f3a6b; --xl-th:#e8eef8; --xl-ex:#9aa0a6; --xl-green:#107c41;
+    --ok:#1e8e3e;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--page);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:14px;line-height:1.65;padding-inline:16px;padding-block:24px 64px}
+  .wrap{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+  header.card{background:var(--card);border:1px solid var(--line);border-top:10px solid var(--accent);border-radius:8px;padding:20px 24px}
+  h1{font-size:24px;font-weight:700;margin:0 0 6px;text-wrap:balance}
+  .lead{margin:0;color:var(--muted);max-width:62ch}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tab{font:inherit;font-size:15px;font-weight:700;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tab:focus-visible,.btn:focus-visible,.sheet-tab:focus-visible,.toggle input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .panel{display:flex;flex-direction:column;gap:12px}
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+  .bar p{margin:0;color:var(--muted);flex:1;min-width:220px}
+  .toggle{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+  .toggle input{width:20px;height:20px;accent-color:var(--accent)}
+  .btn{font:inherit;font-size:14px;font-weight:700;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer;white-space:nowrap}
+  .btn.primary{background:var(--xl-green);border-color:var(--xl-green);color:#fff}
+  .btn.done{border-color:var(--ok);color:var(--ok)}
+
+  /* LINE トーク */
+  .talk{background:var(--talk);border-radius:12px;padding:20px 16px 28px;display:flex;flex-direction:column;gap:18px}
+  .talk-head{color:#fff;text-align:center;font-weight:700;font-size:15px}
+  .day{align-self:center;background:rgba(0,0,0,.18);color:#fff;font-size:12px;border-radius:999px;padding:2px 12px}
+  .msg{display:grid;grid-template-columns:40px minmax(0,1fr);gap:8px;align-items:start}
+  .avatar{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px}
+  .who{color:#fff;font-size:12px;margin-bottom:3px}
+  .row{display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap}
+  .bubble{position:relative;background:var(--bubble);border-radius:18px;padding:10px 14px;white-space:pre-wrap;font-size:15px;line-height:1.6;max-width:100%;overflow-wrap:anywhere}
+  .bubble::before{content:"";position:absolute;left:-6px;top:10px;border:7px solid transparent;border-right-color:var(--bubble);border-left:0}
+  .meta{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+  .time{font-size:11px;color:var(--time)}
+  .copy{font:inherit;font-size:12px;font-weight:700;min-height:32px;padding:0 12px;border-radius:999px;border:none;background:rgba(255,255,255,.9);color:var(--accent);cursor:pointer}
+  .copy.ok{color:var(--ok)}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px;margin-left:6px}
+
+  /* Excel */
+  .xl{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .xl-top{display:flex;align-items:center;gap:10px;background:var(--xl-green);color:#fff;padding:8px 14px;font-size:13px;font-weight:500}
+  .xl-top b{font-weight:700}
+  .xl.gs .xl-top{background:#188038}
+  .xl.gs .sheet-tab[aria-selected="true"]{color:#188038;border-bottom-color:#188038}
+  .sheet-wrap{overflow-x:auto;max-height:560px;overflow-y:auto}
+  table.grid{border-collapse:collapse;font-size:13px;min-width:100%;font-variant-numeric:tabular-nums}
+  .grid th,.grid td{border:1px solid var(--xl-grid);padding:4px 8px;height:26px;white-space:nowrap;text-align:left}
+  .grid thead th{background:var(--xl-head);color:var(--muted);font-weight:400;text-align:center;position:sticky;top:0;z-index:1}
+  .grid td.rn{background:var(--xl-head);color:var(--muted);text-align:center;width:36px;position:sticky;left:0}
+  .grid td.title{color:var(--xl-title);font-weight:700;font-size:15px;border-color:transparent}
+  .grid td.note{color:var(--muted);border-color:transparent}
+  .grid td.note.warn{color:#b3261e}
+  .grid td.block{font-weight:700;border-color:transparent}
+  .grid td.th{background:var(--xl-th);font-weight:700;text-align:center}
+  .grid td.ex{color:var(--xl-ex);font-style:italic}
+  .grid td.dd::after{content:"▾";float:right;color:var(--muted);margin-left:8px}
+  .grid td.blank{border-color:transparent}
+  .grid td.span{white-space:normal}
+  .sheet-tabs{display:flex;gap:2px;background:var(--xl-head);border-top:1px solid var(--xl-grid);padding:0 8px;overflow-x:auto}
+  .sheet-tab{font:inherit;font-size:13px;min-height:44px;padding:0 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+  .sheet-tab[aria-selected="true"]{background:var(--card);color:var(--xl-green);font-weight:700;border-bottom-color:var(--xl-green)}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:13px}
+  .legend span::before{content:"";display:inline-block;width:12px;height:12px;border:1px solid var(--xl-grid);margin-right:6px;vertical-align:-1px}
+  .legend .l-ex::before{background:#fff;border-color:var(--xl-ex)} .legend .l-th::before{background:var(--xl-th)}
+  .legend .l-dd::before{content:"▾";border:none;width:auto;height:auto}
+  .status{color:var(--muted);font-size:13px;margin:0}
+  a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+  .btn.sheets{background:#188038;border-color:#188038;color:#fff}
+  .btn[disabled]{opacity:.5;cursor:default}
+  .note{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+  .note code{background:var(--accent-soft);color:var(--ink);padding:1px 5px;border-radius:4px}
+  footer{color:var(--muted);font-size:12px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="card">
+    <h1>ポッキリ.Night 記入テンプレート</h1>
+    <p class="lead">アンケートの回答後に、店舗へ送るひな形です。店舗は、LINE・Excel・Googleスプレッドシートの中から、書きやすいものを選べます。</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="テンプレートの種類">
+    <button class="tab" role="tab" id="tab-line" aria-selected="true" aria-controls="panel-line">LINEで送る文章</button>
+    <button class="tab" role="tab" id="tab-excel" aria-selected="false" aria-controls="panel-excel">Excel</button>
+    <button class="tab" role="tab" id="tab-sheets" aria-selected="false" aria-controls="panel-sheets">スプレッドシート</button>
+  </div>
+
+  <section class="panel" id="panel-line" role="tabpanel" aria-labelledby="tab-line">
+    <div class="bar">
+      <p>上から順に1通ずつ送ります。「コピー」でLINEに貼り付けられます。</p>
+      <label class="toggle"><input type="checkbox" id="opt-theme" checked> <span id="opt-label"></span></label>
+    </div>
+    <div class="talk" id="talk"></div>
+  </section>
+
+  <section class="panel" id="panel-excel" role="tabpanel" aria-labelledby="tab-excel" hidden>
+    <div class="bar">
+      <p><span class="kinds-text"></span>を、1つのファイルにまとめました。種類ごとにシートが分かれています。</p>
+      <button class="btn primary" id="dl" type="button" hidden>Excelをダウンロード</button>
+    </div>
+    <p class="status" id="dl-status" role="status"></p>
+    <div class="xl-slot" data-for="excel"></div>
+  </section>
+
+  <section class="panel" id="panel-sheets" role="tabpanel" aria-labelledby="tab-sheets" hidden>
+    <div class="bar">
+      <p><span class="kinds-text"></span>を、1つのGoogleスプレッドシートにまとめました。種類ごとにシートが分かれています。</p>
+      <a class="btn sheets" id="open-sheets" target="_blank" rel="noopener" hidden>スプレッドシートを開く</a>
+    </div>
+    <p class="status" id="sheets-status" role="status"></p>
+    <div class="xl-slot" data-for="sheets"></div>
+    <p class="note">店舗に渡すときは、共有を「リンクを知っている全員(閲覧者)」にします。
+      そのうえで、URL末尾の <code>/edit</code> を <code>/copy</code> に変えて送ると、店舗は自分用のコピーに記入できます。</p>
+  </section>
+
+  <div class="xl" id="xl-block">
+    <div class="xl-top"><b id="xl-badge">X</b> <span id="xl-name"></span></div>
+    <div class="sheet-wrap"><table class="grid" id="grid"></table></div>
+    <div class="sheet-tabs" role="tablist" aria-label="シート" id="sheet-tabs"></div>
+  </div>
+  <div class="legend" id="xl-legend"><span class="l-th">見出し</span><span class="l-ex">記入例(灰色・斜体)</span><span class="l-dd">プルダウン</span></div>
+
+  <footer>spec/items.yaml から生成しています。文面を直すときは、項目定義か生成スクリプトを直してください。</footer>
+</div>
+
+<script>
+const DATA = /*__DATA_JSON__*/null;
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c);
+  return n;
+};
+
+/* ── タブ ── */
+const tabs = [["tab-line", "panel-line"], ["tab-excel", "panel-excel"], ["tab-sheets", "panel-sheets"]];
+// シートの見た目(プレビュー)は1つを使い回し、開いたタブの中へ移す
+function placePreview(kind) {
+  const slot = document.querySelector(`.xl-slot[data-for="${kind}"]`);
+  const block = document.getElementById("xl-block"), legend = document.getElementById("xl-legend");
+  if (!slot) { block.hidden = legend.hidden = true; return; }
+  block.hidden = legend.hidden = false;
+  slot.replaceChildren(block, legend);
+  block.classList.toggle("gs", kind === "sheets");
+  document.getElementById("xl-badge").textContent = kind === "sheets" ? "▦" : "X";
+  document.getElementById("xl-name").textContent = kind === "sheets" ? "ポッキリ.Night 記入シート(Googleスプレッドシート)" : DATA.xlsx.filename;
+}
+tabs.forEach(([t, p]) => document.getElementById(t).addEventListener("click", () => {
+  tabs.forEach(([t2, p2]) => {
+    document.getElementById(t2).setAttribute("aria-selected", String(t2 === t));
+    document.getElementById(p2).hidden = p2 !== p;
+  });
+  placePreview(p === "panel-excel" ? "excel" : p === "panel-sheets" ? "sheets" : null);
+}));
+
+/* ── LINE ── */
+async function copyText(text, btn) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const ta = el("textarea", { style: "position:fixed;left:-9999px" }); ta.value = text;
+    document.body.append(ta); ta.select();
+    try { document.execCommand("copy"); } catch {}
+    ta.remove();
+  }
+  btn.textContent = "コピーしました"; btn.classList.add("ok");
+  setTimeout(() => { btn.textContent = "コピー"; btn.classList.remove("ok"); }, 1600);
+}
+
+const optional = DATA.messages.find((m) => m.optional);
+if (optional) document.getElementById("opt-label").textContent = `「${optional.title}」も送る`;
+else document.querySelector(".toggle").hidden = true;
+
+function renderTalk() {
+  const withOpt = document.getElementById("opt-theme").checked;
+  const talk = document.getElementById("talk");
+  const msgs = DATA.messages.filter((m) => withOpt || !m.optional);
+  talk.replaceChildren(
+    el("div", { class: "talk-head", text: "ポッキリ.Night 導入サポート" }),
+    el("div", { class: "day", text: "アンケート回答の翌日" }),
+    ...msgs.map((m, i) => {
+      const btn = el("button", { class: "copy", type: "button", text: "コピー", "aria-label": `${m.title}をコピー` });
+      btn.addEventListener("click", () => copyText(m.body, btn));
+      return el("div", { class: "msg" },
+        el("div", { class: "avatar", "aria-hidden": "true", text: "ポ" }),
+        el("div", {},
+          el("div", { class: "who" }, `${i + 1}通目 ・ ${m.title}`, m.optional ? el("span", { class: "tag", text: "該当する店舗のみ" }) : null),
+          el("div", { class: "row" }, el("div", { class: "bubble", text: m.body }),
+            el("div", { class: "meta" }, btn, el("span", { class: "time", text: `10:${String(i * 2).padStart(2, "0")}` })))));
+    }));
+}
+document.getElementById("opt-theme").addEventListener("change", renderTalk);
+renderTalk();
+
+/* ── Excel ── */
+let sheetIdx = 0;
+const COLS = "ABCDEFGHIJ";
+function renderSheet() {
+  const sh = DATA.sheets[sheetIdx];
+  const ncol = Math.max(3, ...sh.rows.map((r) => r.cells.length));
+  const grid = document.getElementById("grid");
+  const head = el("thead", {}, el("tr", {}, el("th", {}), [...COLS.slice(0, ncol)].map((c) => el("th", { text: c }))));
+  const body = el("tbody");
+  sh.rows.forEach((r, i) => {
+    const tr = el("tr", {}, el("td", { class: "rn", text: String(i + 1) }));
+    if (["title", "note", "block", "blank"].includes(r.kind)) {
+      // 見出しや注意書きは、Excelと同じく右のセルへはみ出して表示する
+      const cls = r.kind === "note" ? "note" + (r.warn ? " warn" : "") : r.kind;
+      tr.append(el("td", { class: cls + " span", colspan: String(ncol), text: r.cells[0] == null ? "" : String(r.cells[0]) }));
+      body.append(tr);
+      return;
+    }
+    for (let c = 0; c < ncol; c++) {
+      const v = r.cells[c];
+      let cls = "blank";
+      if (r.kind === "title" && c === 0) cls = "title";
+      else if (r.kind === "store") cls = c === 0 ? "block" : c === 1 ? "" : "blank";
+      else if (r.kind === "note" && c === 0) cls = "note" + (r.warn ? " warn" : "");
+      else if (r.kind === "block" && c === 0) cls = "block";
+      else if (r.kind === "head" && c < r.cells.length) cls = "th";
+      else if (r.kind === "example" && c < r.cells.length) cls = "ex";
+      else if (r.kind === "input" && c < r.width) cls = r.dropdown && r.dropdown[c] ? "dd" : "";
+      const td = el("td", { class: cls, text: v == null ? "" : String(v) });
+      if (r.kind === "input" && r.dropdown && r.dropdown[c]) td.title = "選択肢:" + r.dropdown[c].join(" / ");
+      if (r.kind === "input" && r.numeric && r.numeric[c]) td.title = "数字のみ";
+      tr.append(td);
+    }
+    body.append(tr);
+  });
+  grid.replaceChildren(head, body);
+  document.querySelectorAll(".sheet-tab").forEach((b, i) => b.setAttribute("aria-selected", String(i === sheetIdx)));
+}
+document.getElementById("sheet-tabs").replaceChildren(...DATA.sheets.map((s, i) =>
+  el("button", { class: "sheet-tab", role: "tab", type: "button", text: s.name, onclick: () => { sheetIdx = i; renderSheet(); } })));
+renderSheet();
+
+/* #excel / #sheets で、そのタブから開く */
+const startTab = { "#excel": "tab-excel", "#sheets": "tab-sheets" }[location.hash];
+if (startTab) queueMicrotask(() => document.getElementById(startTab).click());
+
+/* ── 種類の一覧とスプレッドシートのボタン ── */
+document.querySelectorAll(".kinds-text").forEach((e) => { e.textContent = DATA.sheets.length + "種類(" + DATA.sheets.map((x) => x.name).join("・") + ")"; });
+placePreview(null);
+if (DATA.spreadsheetUrl) {
+  const a = document.getElementById("open-sheets"); a.href = DATA.spreadsheetUrl; a.hidden = false;
+} else document.getElementById("sheets-status").textContent = "スプレッドシートは準備中です。";
+
+/* ── ダウンロード(使える環境だけボタンを出す) ── */
+let downloads = null;
+async function save(filename, b64, status) {
+  const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  try {
+    await downloads.save({ filename, data: bin });
+    status.textContent = `${filename} をダウンロードしました。`;
+  } catch (e) {
+    status.textContent = e && e.code === "declined" ? "ダウンロードを取りやめました。"
+      : e && e.code === "rate_limited" ? "少し待ってから、もう一度押してください。"
+      : "ダウンロードできませんでした。リポジトリの templates/excel/ にあるファイルを使ってください。";
+  }
+}
+(async () => {
+  const dlBtn = document.getElementById("dl");
+  const status = document.getElementById("dl-status");
+  downloads = window.claude?.use ? await window.claude.use("downloads").catch(() => null) : null;
+  if (!downloads) {
+    const msg = "この画面ではダウンロードできません。リポジトリの templates/excel/ にあるファイルを使ってください。";
+    status.textContent = msg; return;
+  }
+  dlBtn.hidden = false;
+  dlBtn.addEventListener("click", () => save(DATA.xlsx.filename, DATA.xlsx.base64, status));
+})();
+</script>
