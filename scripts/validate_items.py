@@ -72,9 +72,11 @@ def check(spec: dict) -> list[str]:
                 errors.append(f"{it['id']}: show_if の参照先 {cond['item']} がありません")
             elif cond["equals"] not in parent.get("options", []):
                 errors.append(f"{it['id']}: show_if の値 {cond['equals']} が {parent['id']} の選択肢にありません")
-        # アンケートは全項目の記入が必須。選択式に「未定」は付けず、必ずどれかを選んでもらう
-        if it["route"] == "form" and it.get("unknown_option"):
-            errors.append(f"{it['id']}: アンケートの選択肢に「未定」は付けません")
+        # アンケートは全項目の記入が必須。まだ決まっていない場合に選べるよう、選択式には「未定」を付ける
+        if it["route"] == "form" and it["type"] in ("radio", "checkbox", "dropdown", "time"):
+            # 「未定」を付けないと明記した質問(unknown_option: false)は除く
+            if "unknown_option" not in it:
+                errors.append(f"{it['id']}: 選択式なのに unknown_option がありません")
 
     covered = {(it["source"]["sample"], it["source"]["question"]) for it in items if "sample" in it["source"]}
     excluded = {(ex["sample"], ex["question"]) for ex in spec.get("excluded", [])}

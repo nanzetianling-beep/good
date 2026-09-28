@@ -79,6 +79,7 @@
   .clock select.text-in{min-width:110px;width:auto}
   .clock-sep{font-size:18px;color:var(--muted);padding-bottom:10px}
   .opt .lbl{font-size:14px}
+  .opt.unknown .lbl{color:var(--muted)}
   .opt .other{flex:1;min-width:120px;width:auto}
   select.text-in{width:auto;min-width:200px;border:1px solid var(--line-2);border-radius:4px;padding:8px 12px}
   select.text-in:focus{border:2px solid var(--accent);padding:7px 11px}
@@ -125,9 +126,8 @@
   .done h2{font-family:"Noto Sans JP",sans-serif;font-size:24px;font-weight:400;margin:0 0 12px}
   .answer-text{width:100%;min-height:260px;margin-top:16px;border:1px solid var(--line-2);border-radius:4px;padding:12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink);background:#fafbfd;resize:vertical}
   .send{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
-  .btn.line{background:#06c755;border-color:#06c755;color:#fff}
-  .btn.line:hover{background:#05a948}
   .send-status{margin:8px 0 0;font-size:13px;color:var(--muted);text-align:right;min-height:1.6em}
+  .changeable{margin:16px 0 0;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:4px;padding:12px 16px;white-space:pre-line;font-size:14px;color:var(--ink)}
   .after{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;white-space:pre-line;font-size:14px}
   .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
   /* iPhone・iPad で入力欄をタップしたとき、画面が勝手に拡大しないよう16px以上にする */
@@ -160,6 +160,7 @@
 
 <script>
 const SPEC = /*__SPEC_JSON__*/null;
+const UNKNOWN = "未定";
 
 const answers = {};          // id -> string | string[]
 const others = {};           // id -> 「その他」「あり」に添える入力
@@ -180,7 +181,10 @@ const el = (tag, attrs = {}, ...kids) => {
   return n;
 };
 
-const visible = (it) => !it.show_if || answers[it.show_if.item] === String(it.show_if.equals);
+const ITEMS = Object.fromEntries(SPEC.sections.flatMap((s) => s.items.map((it) => [it.id, it])));
+// 元の質問が出ていて、答えが合うときだけ出す(元の質問が隠れたら、その先も隠す)
+const visible = (it) => !it.show_if ||
+  ((!ITEMS[it.show_if.item] || visible(ITEMS[it.show_if.item])) && answers[it.show_if.item] === String(it.show_if.equals));
 const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
 
 function optionSamples(it) {
@@ -242,7 +246,7 @@ function renderInput(it) {
   if (it.type === "time") {
     // 何時何分を、「時」「分」のプルダウンを横に並べて選ぶ
     const cur = answers[it.id];
-    const [ch, cm] = cur ? cur.split(":") : ["", ""];
+    const [ch, cm] = cur && cur !== UNKNOWN ? cur.split(":") : ["", ""];
     const pad = (n) => String(n).padStart(2, "0");
     const upd = (h, m) => { if (h === "" && m === "") delete answers[it.id]; else set(`${h || "00"}:${m || "00"}`); render(); };
     const sel = (label, n, value, onChange, suffix) => el("label", {}, label,
@@ -253,7 +257,11 @@ function renderInput(it) {
       sel("時", 24, ch, (h) => upd(h, cm), "時"),
       el("span", { class: "clock-sep", text: ":" }),
       sel("分", 60, cm, (m) => upd(ch, m), "分"));
-    return clock;
+    const unk = it.unknown_option ? el("label", { class: "opt unknown" },
+      el("input", { type: "checkbox", id: id + "_unk", checked: cur === UNKNOWN,
+        onchange: (e) => { if (e.target.checked) set(UNKNOWN); else delete answers[it.id]; render(); } }),
+      el("span", { class: "lbl", text: UNKNOWN })) : null;
+    return el("div", {}, clock, unk);
   }
   if (it.type === "rate") {
     // 金額か率を、数字と単位(%・円)の組で書く
@@ -267,7 +275,7 @@ function renderInput(it) {
           el("span", { class: "lbl", text: u })))));
   }
   if (it.type === "dropdown") {
-    const opts = it.options.map(String);
+    const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);
     return el("select", { class: "text-in", id, "aria-label": it.label, onchange: (e) => { set(e.target.value); render(); } },
       el("option", { value: "", text: "選択" }),
       opts.map((o) => el("option", { value: o, text: o, selected: answers[it.id] === o })));
@@ -277,7 +285,7 @@ function renderInput(it) {
     const host = otherHost(it);
     const opts = it.options.map(String);
     const extraOther = it.other && !host;          // 選択肢の末尾に「その他:」を足す
-    const list = opts.concat(extraOther ? ["その他"] : []);
+    const list = opts.concat(extraOther ? ["その他"] : [], it.unknown_option ? [UNKNOWN] : []);
     const cur = answers[it.id] || (multi ? [] : "");
     const wrap = el("div", { class: "opts", role: multi ? "group" : "radiogroup", "aria-label": it.label });
     list.forEach((o, i) => {
@@ -287,12 +295,13 @@ function renderInput(it) {
         onchange: (e) => {
           if (multi) {
             let v = (answers[it.id] || []).filter((x) => x !== o);
-            if (e.target.checked) v = v.concat(o);
+            // 「未定」は、ほかの選択肢と一緒に選べない
+            if (e.target.checked) v = o === UNKNOWN ? [UNKNOWN] : v.filter((x) => x !== UNKNOWN).concat(o);
             set(v);
           } else set(o);
           render();
         } });
-      const row = el("label", { class: "opt", for: oid }, input,
+      const row = el("label", { class: "opt" + (o === UNKNOWN ? " unknown" : ""), for: oid }, input,
         el("span", { class: "lbl", text: ((o === "その他" || o === "記入") && it.other) ? o + ":" : o }));
       if (it.other && (o === host || (extraOther && o === "その他")) && checked) {
         row.append(el("input", { class: "text-in other", id: oid + "_other", type: "text",
@@ -456,7 +465,7 @@ function loadDraft() {
 document.addEventListener("input", saveDraft);
 document.addEventListener("change", saveDraft);
 
-// LINEで送る文章(質問と回答を1つずつ並べる)
+// 担当者に送る文章(質問と回答を1つずつ並べる)
 function answerText() {
   const now = new Date();
   const lines = [`【${SPEC.form.title}】`, `回答日:${now.getFullYear()}年${md(now)}`];
@@ -557,18 +566,17 @@ function render() {
       el("button", { class: "btn primary", type: "button", text: page === n - 1 ? "回答をまとめる" : "次へ", onclick: nextPage }),
       progress()));
   } else {
-    // 回答はどこにも保存しないので、店舗の方にLINEで送ってもらう
+    // 回答はどこにも保存しないので、店舗の方に文章をコピーしてLINEで送ってもらう
     const text = answerText();
     const status = el("p", { class: "send-status", role: "status" });
     out.push(el("div", { class: "card head done" }, el("div", { class: "in" },
       el("h2", { text: "最後に、回答をLINEで送ってください" }),
-      el("p", { class: "desc", text: "まだ送信は終わっていません。\n下の「LINEで送る」を押して、担当者に送ると完了です。" }),
+      el("p", { class: "desc", text: "まだ送信は終わっていません。\n下の「文章をコピー」を押して、\nLINEのトークに貼り付けて送ると完了です。" }),
       el("textarea", { class: "answer-text", readonly: true, "aria-label": "回答の内容" }, text),
       el("div", { class: "send" },
-        el("button", { class: "btn", type: "button", text: "文章をコピー", onclick: () => copyAnswer(text, status) }),
-        el("a", { class: "btn line", href: "https://line.me/R/share?text=" + encodeURIComponent(text), target: "_blank", rel: "noopener",
-          style: "display:inline-flex;align-items:center;text-decoration:none", text: "LINEで送る" })),
+        el("button", { class: "btn primary", type: "button", text: "文章をコピー", onclick: () => copyAnswer(text, status) })),
       status,
+      SPEC.form.changeable ? el("p", { class: "changeable", role: "note" }, el("span", { text: SPEC.form.changeable })) : null,
       el("p", { class: "after", text: SPEC.form.done }))));
     out.push(el("div", { class: "nav" },
       el("button", { class: "btn", type: "button", text: "戻って直す", onclick: () => { page = history.pop() ?? n - 1; render(); window.scrollTo({ top: 0 }); } }),

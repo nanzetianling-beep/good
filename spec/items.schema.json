@@ -185,6 +185,10 @@
         },
         "done": {
           "type": "string"
+        },
+        "changeable": {
+          "type": "string",
+          "description": "最後のページで、回答の下に出す案内(あとから設定で変更できること)"
         }
       }
     }
