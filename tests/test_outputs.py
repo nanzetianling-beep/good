@@ -52,17 +52,27 @@ def test_form_choices_offer_unknown(spec):
 def test_form_removed_questions(spec):
     # レジ・伝票番号の採番・福利厚生費は聞かない。時給の丸めは「勤務時間の丸め」
     labels = [it["label"] for s in build_form.form_spec(spec)["sections"] for it in s["items"]]
-    for word in ["レジ金", "過不足", "採番", "伝票番号", "福利厚生", "時給の丸め"]:
+    for word in ["レジ金", "過不足", "採番", "伝票番号", "福利厚生", "丸め", "領収書に刷る内容"]:
         assert not any(word in label for label in labels), word
-    assert "勤務時間の丸め(単位)" in labels and "勤務時間の丸め(方法)" in labels
+    for label in ["勤務時間(単位)", "勤務時間(方法)", "バック端数", "バック端数(単位)"]:
+        assert label in labels, label
 
 
 def test_form_asks_yes_no_first(spec):
-    # 指名区分・指名バック・カード決済手数料は、「あり」を選んでから出す
+    # 有無を先に選び、「あり」のときだけ記入欄を出す
     by_id = {it["id"]: it for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
-    assert by_id["nomination_types"]["show_if"] == {"item": "nomination_use", "equals": "あり"}
-    assert by_id["nomination_back_mode"]["show_if"] == {"item": "nomination_use", "equals": "あり"}
-    assert by_id["card_fee"]["show_if"] == {"item": "card_fee_use", "equals": "あり"}
+    gates = {
+        "price_sets": "price_sets_use", "set_back_mode": "price_sets_use",
+        "extension_menu": "extension_use", "extension_back_use": "extension_use",
+        "extension_back_mode": "extension_back_use", "food_back_mode": "food_back_use",
+        "nomination_types": "nomination_use", "nomination_back_mode": "nomination_use",
+        "card_fee": "card_fee_use", "commute_min_hours": "commute_use",
+        "commute_full_day_hours": "commute_use", "pay_ratio_alert": "pay_ratio_alert_use",
+        "send_areas": "send_areas_use",
+    }
+    for child, parent in gates.items():
+        assert by_id[child]["show_if"] == {"item": parent, "equals": "あり"}, child
+        assert by_id[parent]["options"] == ["なし", "あり"], parent
     assert "料金から原価を引いた額" in by_id["bottle_back_base"]["options"]
 
 
@@ -72,6 +82,7 @@ def test_form_sends_by_copy_only(spec):
     assert "文章をコピー" in html
     assert "line.me" not in html
     assert '"LINEで送る"' not in html
+    assert "管理画面・フロア画面(iPad)" in spec["form"]["changeable"]
 
 
 def test_form_validation_rules_present(spec):
@@ -258,6 +269,7 @@ def test_tables_and_send_rules_are_in_form(spec):
     for i in ["tables", "send_areas", "busy_hours", "nomination_types", "price_sets", "extension_menu"]:
         assert by_id[i]["type"] == "table" and by_id[i]["columns"] and by_id[i]["cells"]
     assert by_id["send_areas"]["show_if"] == {"item": "send_areas_use", "equals": "あり"}
+    assert by_id["send_areas"]["columns"][0] == "源氏名"   # 送り代はキャストごとに書く
     names = [n for n, _ in build_templates.line_messages(spec)]
     assert not any("卓" in n or "送り" in n or "指名" in n for n in names)
 

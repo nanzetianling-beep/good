@@ -58,7 +58,7 @@ FORBIDDEN = ["時給", "本名", "生年月日", "口座", "緊急連絡先", "�
 def test_no_sensitive_items_in_form_or_template(spec, word):
     # 店舗全体のルール(交通費の条件・主に使う源泉区分・繁忙時間帯の時給)は対象外
     allowed = {
-        "commute_min_hours", "main_withholding_type", "busy_hours", "busy_hours_use",
+        "commute_use", "commute_min_hours", "main_withholding_type", "busy_hours", "busy_hours_use",
     }
     offenders = [
         it["id"]

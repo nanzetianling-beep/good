@@ -127,6 +127,7 @@
   .answer-text{width:100%;min-height:260px;margin-top:16px;border:1px solid var(--line-2);border-radius:4px;padding:12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink);background:#fafbfd;resize:vertical}
   .send{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
   .send-status{margin:8px 0 0;font-size:13px;color:var(--muted);text-align:right;min-height:1.6em}
+  .changeable{margin:16px 0 0;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:4px;padding:12px 16px;white-space:pre-line;font-size:14px;color:var(--ink)}
   .after{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;white-space:pre-line;font-size:14px}
   .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
   /* iPhone・iPad で入力欄をタップしたとき、画面が勝手に拡大しないよう16px以上にする */
@@ -575,6 +576,7 @@ function render() {
       el("div", { class: "send" },
         el("button", { class: "btn primary", type: "button", text: "文章をコピー", onclick: () => copyAnswer(text, status) })),
       status,
+      SPEC.form.changeable ? el("p", { class: "changeable", role: "note" }, el("span", { text: SPEC.form.changeable })) : null,
       el("p", { class: "after", text: SPEC.form.done }))));
     out.push(el("div", { class: "nav" },
       el("button", { class: "btn", type: "button", text: "戻って直す", onclick: () => { page = history.pop() ?? n - 1; render(); window.scrollTo({ top: 0 }); } }),

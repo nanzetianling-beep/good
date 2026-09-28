@@ -34,6 +34,10 @@ form:
     - 期限までに内容を記入してください
     - すべての項目の記入が必要です
     - まだ決まっていない項目は「未定」を選んでください
+  # 最後のページで、回答の下に出す案内
+  changeable: |-
+    ここで答えた内容は、あとから
+    管理画面・フロア画面(iPad)の設定で変更できます。
   done: |-
     送っていただいたら、回答は完了です。
     ありがとうございました。
@@ -125,6 +129,7 @@ excluded:
   - {sample: printer, question: 伝票番号の採番, reason: 不要と判断(2026-09-28 アンケートから削除)}
   - {sample: printer, question: 採番のリセット単位, reason: 不要と判断(2026-09-28 アンケートから削除)}
   - {sample: payroll, question: 福利厚生費, reason: 不要と判断(2026-09-28 アンケートから削除)}
+  - {sample: printer, question: 領収書に刷る内容, reason: 不要と判断(2026-09-28 アンケートから削除)}
 
 items:
 
@@ -220,11 +225,34 @@ items:
 
   # ── 既存見本 ② 料金セット ─────────────────────────────
 
+  - id: price_sets_use
+    route: form
+    section: S3
+    label: 料金セットの有無
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    hint: 時間と料金が決まったセットがあるかどうかです
+    source: {doc: 2026-09-28 追加要望 有無を選んでから記入}
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          時間と料金が決まったセットがあるお店です。
+          例)60分8,000円のセットがある
+
+          「あり」にすると、セットの表と
+          セットバックの質問が出ます。
+      - title: "「なし」が合うお店"
+        text: |-
+          決まったセットがないお店です。
+          例)飲んだ分だけ会計する
+
   - id: price_sets
     route: form
     section: S3
     label: 料金セット
     type: table
+    show_if: {item: price_sets_use, equals: あり}
     columns: [セット名, 時間(分), 料金(円)]
     cells: [text, int, int]
     examples:
@@ -255,6 +283,7 @@ items:
     label: セットバック(全キャスト)
     type: radio
     unknown_option: true
+    show_if: {item: price_sets_use, equals: あり}
     options: [店舗一律, キャストごとに違う]
     hint: |-
       セット料金に対して、付いたキャストに付くバックです。
@@ -305,11 +334,34 @@ items:
     body: キャストごとのバックは、訪問時にPOSへ一緒に登録します。
     source: {doc: 追加要望 S3 セットバック}
 
+  - id: extension_use
+    route: form
+    section: S3
+    label: 延長メニューの有無
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    hint: セットの時間が終わったあと、延長できるかどうかです
+    source: {doc: 2026-09-28 追加要望 有無を選んでから記入}
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          セットのあと、延長ができるお店です。
+          例)延長30分4,000円がある
+
+          「あり」にすると、延長メニューの表と
+          延長バックの質問が出ます。
+      - title: "「なし」が合うお店"
+        text: |-
+          延長をしていないお店です。
+          例)セットの時間が来たら会計する
+
   - id: extension_menu
     route: form
     section: S3
     label: 延長メニュー
     type: table
+    show_if: {item: extension_use, equals: あり}
     columns: [名前, 時間(分), 料金(円)]
     cells: [text, int, int]
     examples:
@@ -329,8 +381,25 @@ items:
           例)延長60分/60分/8000円
           例)VIP延長/30分/7000円
 
-          延長をしていないお店は、
-          「延長なし/0/0」と書いてください。
+  - id: extension_back_use
+    route: form
+    section: S3
+    label: 延長バックの有無
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    show_if: {item: extension_use, equals: あり}
+    hint: 延長が入ったとき、キャストにバックを付けるかどうかです
+    source: {doc: 2026-09-28 追加要望 有無を選んでから記入}
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          延長が入ると、キャストにバックが付くお店です。
+          例)延長1回につき、500円のバック
+      - title: "「なし」が合うお店"
+        text: |-
+          延長にバックを付けていないお店です。
+          例)延長しても、キャストのバックは変わらない
 
   - id: extension_back_mode
     route: form
@@ -338,6 +407,7 @@ items:
     label: 延長バック(全キャスト)
     type: radio
     unknown_option: true
+    show_if: {item: extension_back_use, equals: あり}
     options: [店舗一律, キャストごとに違う]
     hint: |-
       延長が1回入るごとに、キャストに付くバックです。
@@ -350,8 +420,6 @@ items:
           例)延長4,000円の10%なら、全員400円
 
           次の質問で、金額か%を入力します。
-          バックを付けていないお店も、こちらを選び
-          次の質問で「0」と入力してください。
       - title: "「キャストごとに違う」が合うお店"
         text: |-
           ランクや人によって、バックが違うお店です。
@@ -1018,12 +1086,32 @@ items:
           バックを全額つけるお店です。
           例)2人付いても、2,000円は入れてもらった1人に
 
+  - id: food_back_use
+    route: form
+    section: S4
+    label: フードバックの有無
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    hint: フードが入ったとき、キャストにバックを付けるかどうかです
+    source: {doc: 2026-09-28 追加要望 有無を選んでから記入}
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          フードが入ると、キャストにバックが付くお店です。
+          例)フード1品につき、100円のバック
+      - title: "「なし」が合うお店"
+        text: |-
+          フードにバックを付けていないお店です。
+          例)フードがない、またはバックは付けない
+
   - id: food_back_mode
     route: form
     section: S4
     label: フードバック(全キャスト)
     type: radio
     unknown_option: true
+    show_if: {item: food_back_use, equals: あり}
     options: [店舗一律, キャストごとに違う]
     hint: |-
       フードが1品入るごとに、キャストに付くバックです。
@@ -1036,8 +1124,6 @@ items:
           例)フード1,500円の10%なら、全員150円
 
           次の質問で、金額か%を入力します。
-          バックを付けていないお店も、こちらを選び
-          次の質問で「0」と入力してください。
       - title: "「キャストごとに違う」が合うお店"
         text: |-
           ランクや人によって、バックが違うお店です。
@@ -1101,7 +1187,7 @@ items:
   - id: back_rounding
     route: form
     section: S4
-    label: バック端数の丸め
+    label: バック端数
     type: radio
     unknown_option: true
     options: [使わない, 使う]
@@ -1120,7 +1206,7 @@ items:
   - id: back_rounding_unit
     route: form
     section: S4
-    label: バック端数の丸め単位
+    label: バック端数(単位)
     type: radio
     unknown_option: true
     options: [10円, 100円, 記入]
@@ -1514,27 +1600,6 @@ items:
 
           あとから変えたい場合は、訪問時に相談できます。
 
-  - id: receipt_fields
-    route: form
-    section: S8
-    label: 領収書に刷る内容
-    type: checkbox
-    unknown_option: true
-    options: [事業者名, インボイス登録番号]
-    hint: 店舗名・電話番号・住所は必ず印字します
-    source: {sample: printer, question: 領収書に刷る内容}
-    help:
-      - title: "それぞれの意味"
-        text: |-
-          事業者名:会社名や、個人事業の屋号です。
-          例)株式会社ポッキリ
-
-          インボイス登録番号:「T」から始まる番号です。
-          例)T1234567890123
-
-          インボイス対応の領収書にするなら、
-          両方にチェックしてください。
-
   - id: kitchen_slip
     route: form
     section: S8
@@ -1673,7 +1738,7 @@ items:
   - id: work_time_rounding_unit
     route: form
     section: S10
-    label: 勤務時間の丸め(単位)
+    label: 勤務時間(単位)
     type: dropdown
     unknown_option: true
     options: [1分, 5分, 10分, 15分, 30分]
@@ -1694,7 +1759,7 @@ items:
   - id: work_time_rounding_mode
     route: form
     section: S10
-    label: 勤務時間の丸め(方法)
+    label: 勤務時間(方法)
     type: dropdown
     unknown_option: true
     options: [切り捨て, 切り上げ]
@@ -1745,11 +1810,34 @@ items:
       - [給与源泉, 0%]
     source: {sample: payroll, question: 源泉率}
 
+  - id: commute_use
+    route: form
+    section: S10
+    label: 交通費の支給
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    hint: キャスト・スタッフに交通費を出しているかどうかです
+    source: {doc: 2026-09-28 追加要望 有無を選んでから記入}
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          勤務した日に、交通費を出しているお店です。
+          例)3時間以上働いた日は、交通費を出す
+
+          「あり」にすると、対象になる勤務時間の
+          質問が出ます。1人ずつの金額は訪問時に伺います。
+      - title: "「なし」が合うお店"
+        text: |-
+          交通費を出していないお店です。
+          例)交通費は、給与に含めている
+
   - id: commute_min_hours
     route: form
     section: S10
     label: 交通費の対象になる最低勤務時間
     type: number
+    show_if: {item: commute_use, equals: あり}
     unit: 時間
     validation: {kind: number, min: 0, max: 24, message: 0〜24の数字で入力してください}
     source: {sample: payroll, question: 交通費の対象条件}
@@ -1768,6 +1856,7 @@ items:
     section: S10
     label: フル日とみなす勤務時間
     type: number
+    show_if: {item: commute_use, equals: あり}
     unit: 時間
     validation: {kind: number, min: 0, max: 24, message: 0〜24の数字で入力してください}
     source: {sample: payroll, question: 交通費の対象条件}
@@ -1881,11 +1970,33 @@ items:
           例)「10000」なら、1日10,000円まで
           例)「0」なら、上限なし
 
+  - id: pay_ratio_alert_use
+    route: form
+    section: S10
+    label: 給率の警告
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    hint: バック率が高すぎるとき、画面でお知らせするかどうかです
+    source: {doc: 2026-09-28 追加要望 有無を選んでから記入}
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          バック率が高くなりすぎたら、知りたいお店です。
+          例)売上に対してバックが50%を超えたら知らせる
+
+          「あり」にすると、しきい値の質問が出ます。
+      - title: "「なし」が合うお店"
+        text: |-
+          お知らせが要らないお店です。
+          例)バック率は、自分で確認している
+
   - id: pay_ratio_alert
     route: form
     section: S10
     label: 給率の警告しきい値
     type: number
+    show_if: {item: pay_ratio_alert_use, equals: あり}
     unit: "%"
     hint: 担当売上に対するバック率がこれを超えたら、画面でお知らせします
     validation: {kind: number, min: 0, max: 100, message: 0〜100の数字で入力してください}
@@ -1898,8 +2009,6 @@ items:
           例)「50」なら、売上10万円に対して
           バックが5万円を超えたときにお知らせします。
 
-          お知らせが不要なら「0」を入力してください。
-
   - id: send_areas_use
     route: form
     section: S10
@@ -1907,14 +2016,17 @@ items:
     type: radio
     unknown_option: true
     options: [なし, あり]
-    hint: キャストの送りに、エリアごとの送り代を決めている場合は「あり」です
+    hint: キャストの送りで、送り代を差し引いている場合は「あり」です
     source: {doc: 2026-09-25 記入テンプレートからアンケートへ移動}
     help:
       - title: "「あり」が合うお店"
         text: |-
-          キャストの送りで、エリアごとに
-          送り代を決めているお店です。
-          例)新宿区は500円、杉並区は1,000円
+          キャストの送りで、送り代を
+          給与から差し引いているお店です。
+          例)ココさんは500円、りんさんは1,000円
+
+          「あり」にすると、キャストごとに書く
+          表が出ます。
       - title: "「なし」が合うお店"
         text: |-
           送り代を取っていないお店です。
@@ -1923,25 +2035,28 @@ items:
   - id: send_areas
     route: form
     section: S10
-    label: 送りエリアごとの送り代
+    label: キャストごとの送り代
     type: table
-    columns: [エリア名, 送り代(円)]
-    cells: [text, int]
+    columns: [源氏名, 送り先のエリア, 送り代(円)]
+    cells: [text, text, int]
     examples:
-      - [みなとみらい, 1500]
-      - [関内, 1000]
+      - [ココ, みなとみらい, 1500]
+      - [りん, 関内, 1000]
     show_if: {item: send_areas_use, equals: あり}
     source: {sample: payroll, question: 送りエリア別の金額}
     hint: |-
-      エリアごとの送り代を、1行に1つ書いてください
+      送りを使うキャストを、1行に1人ずつ書いてください
     help:
       - title: "書き方"
         text: |-
           送り代は、キャストの給与から差し引く金額です。
+          源氏名と、送り先のエリア、金額を書きます。
 
-          例)新宿区/500
-          例)杉並区/1000
-          例)埼玉方面/2000
+          例)ココ/みなとみらい/1500
+          例)りん/関内/1000
+          例)ゆな/埼玉方面/2000
+
+          住所などの個人情報は書かないでください。
 
   - id: busy_hours_use
     route: form
