@@ -19,3 +19,8 @@ POS「ポッキリ.Night」の導入時に店舗情報を集めるキット。�
 - `scripts/build_templates.py` … ② LINEテキスト・Excel・確認ページ(`templates/line/`・`templates/excel/`・`templates/preview/`)
 - `scripts/build_slides.py` … ③ スライド(`templates/slides/lecture.yaml` → `slides/lecture.md`・`slides/checklist.md`)。`--exclude 9` で章を除外
 - `tests/` … pytest
+
+## POS への反映
+
+- 回答は、店舗が「文章をコピー」して LINE で送り、運営コンソールで貼り付けて取り込む。外部からの送信経路は作らない
+- POS 本体は `pokkiriofficial/nightwork-pos`。POS 側でやること・回答の書式・質問の一覧は `docs/pos_handoff.md`
