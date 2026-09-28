@@ -52,7 +52,7 @@ def test_form_choices_offer_unknown(spec):
 def test_form_removed_questions(spec):
     # レジ・伝票番号の採番・福利厚生費は聞かない。時給の丸めは「勤務時間の丸め」
     labels = [it["label"] for s in build_form.form_spec(spec)["sections"] for it in s["items"]]
-    for word in ["レジ金", "過不足", "採番", "伝票番号", "福利厚生", "丸め", "領収書に刷る内容"]:
+    for word in ["レジ金", "過不足", "採番", "伝票番号", "福利厚生", "丸め", "領収書に刷る内容", "税率"]:
         assert not any(word in label for label in labels), word
     for label in ["勤務時間(単位)", "勤務時間(方法)", "バック端数", "バック端数(単位)"]:
         assert label in labels, label

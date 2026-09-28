@@ -1293,14 +1293,6 @@ items:
           国税庁のインボイス公表サイトで、
           店名や会社名からも調べられます。
 
-  - id: tax_rate_notice
-    route: form
-    section: S5
-    label: 税率
-    type: note
-    body: 税率は10%(軽減8%)で設定します
-    source: {sample: tax, question: 税率}
-
   - id: tax_rate_standard
     route: fixed
     label: 標準税率
