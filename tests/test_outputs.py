@@ -287,3 +287,12 @@ def test_every_question_has_hint_and_help(spec):
             for h in it["help"]:
                 for line in h["text"].split("\n"):
                     assert len(line) <= 35, (it["id"], line)
+
+
+def test_line_menu_asks_bottle_cost(spec):
+    # ボトルバックを原価を引いた額で計算するお店のため、LINEの文章でボトルの原価を聞く(Excelには足さない)
+    body = dict(build_templates.line_messages(spec))["03_商品メニュー"]
+    assert "■ボトルキープできる商品と原価" in body
+    assert "・例)鏡月/3000" in body
+    wb = build_templates.build_workbook(spec, standalone=True)
+    assert not any("原価" in str(c.value) for ws in wb for row in ws.iter_rows() for c in row if c.value)
