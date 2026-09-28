@@ -15,6 +15,9 @@ import build_slides  # noqa: E402
 import build_templates  # noqa: E402
 from validate_items import load_spec  # noqa: E402
 
+UNKNOWN = "未定"
+# 「未定」を付けない選択式(領収書のデザインは見本から必ず選ぶ)
+NO_UNKNOWN = {"receipt_design"}
 # 個人ごとの個人情報・給与・ログイン情報(6章)
 SENSITIVE = ["本名", "生年月日", "口座", "緊急連絡先", "身分証", "パスワード", "ログインID"]
 
@@ -27,21 +30,48 @@ def spec():
 # ── ① 導入アンケート ─────────────────────────────
 
 
-def test_form_has_10_sections_with_questions(spec):
+def test_form_has_9_sections_with_questions(spec):
     fs = build_form.form_spec(spec)
-    assert len(fs["sections"]) == 10
+    assert len(fs["sections"]) == 9
     assert all(sec["items"] for sec in fs["sections"])
+    assert "レジ" not in [sec["title"] for sec in fs["sections"]]
 
 
-def test_form_has_no_unknown_choice(spec):
-    # 全項目が必須なので、「未定」は付けず必ずどれかを選んでもらう
+def test_form_choices_offer_unknown(spec):
+    # 全項目が必須。まだ決まっていない選択式は「未定」を選べる
     form = build_form.form_spec(spec)
     for sec in form["sections"]:
         for it in sec["items"]:
-            assert not it.get("unknown_option"), it["id"]
-            assert "未定" not in [str(o) for o in it.get("options", [])], it["id"]
+            if it["type"] in ("radio", "checkbox", "dropdown", "time"):
+                assert it.get("unknown_option") or it["id"] in NO_UNKNOWN, it["id"]
+            assert UNKNOWN not in [str(o) for o in it.get("options", [])], it["id"]
             assert "任意" not in it["label"], it["id"]
-    assert not any("未定" in f for f in form["form"]["facts"])
+    assert any(UNKNOWN in f for f in form["form"]["facts"])
+
+
+def test_form_removed_questions(spec):
+    # レジ・伝票番号の採番・福利厚生費は聞かない。時給の丸めは「勤務時間の丸め」
+    labels = [it["label"] for s in build_form.form_spec(spec)["sections"] for it in s["items"]]
+    for word in ["レジ金", "過不足", "採番", "伝票番号", "福利厚生", "時給の丸め"]:
+        assert not any(word in label for label in labels), word
+    assert "勤務時間の丸め(単位)" in labels and "勤務時間の丸め(方法)" in labels
+
+
+def test_form_asks_yes_no_first(spec):
+    # 指名区分・指名バック・カード決済手数料は、「あり」を選んでから出す
+    by_id = {it["id"]: it for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
+    assert by_id["nomination_types"]["show_if"] == {"item": "nomination_use", "equals": "あり"}
+    assert by_id["nomination_back_mode"]["show_if"] == {"item": "nomination_use", "equals": "あり"}
+    assert by_id["card_fee"]["show_if"] == {"item": "card_fee_use", "equals": "あり"}
+    assert "料金から原価を引いた額" in by_id["bottle_back_base"]["options"]
+
+
+def test_form_sends_by_copy_only(spec):
+    # 回答は「文章をコピー」してLINEに貼ってもらう。「LINEで送る」ボタンは置かない
+    html = build_form.build(spec)
+    assert "文章をコピー" in html
+    assert "line.me" not in html
+    assert '"LINEで送る"' not in html
 
 
 def test_form_validation_rules_present(spec):
