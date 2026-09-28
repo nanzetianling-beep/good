@@ -71,6 +71,9 @@ def test_form_asks_yes_no_first(spec):
         "commute_full_day_hours": "commute_use", "pay_ratio_alert": "pay_ratio_alert_use",
         "send_areas": "send_areas_use",
     }
+    # プリンターが「ある」ときだけ、機器名を書いてもらう
+    assert by_id["printer_device"]["type"] == "short"
+    assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}
     for child, parent in gates.items():
         assert by_id[child]["show_if"] == {"item": parent, "equals": "あり"}, child
         assert by_id[parent]["options"] == ["なし", "あり"], parent
