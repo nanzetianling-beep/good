@@ -743,8 +743,8 @@ items:
           指名の仕組みがあるお店です。
           例)指名料3,000円をいただいている
 
-          「あり」にすると、指名区分と
-          指名バックの質問が出ます。
+          「あり」にすると、指名区分・指名バック・
+          売上折半の質問が出ます。
       - title: "「なし」が合うお店"
         text: |-
           指名の仕組みがないお店です。
@@ -850,6 +850,7 @@ items:
     label: 複数キャストでの売上折半(指名された方のみ)
     type: radio
     unknown_option: true
+    show_if: {item: nomination_use, equals: あり}
     options: [使わない, 使う]
     source: {doc: 3章 S4}
     hint: |-
