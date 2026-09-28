@@ -1548,12 +1548,25 @@ items:
           例)領収書は手書きで渡している
 
   - id: printer_device
-    route: onsite
-    chapter: 8
-    label: プリンター名・機器名
-    type: note
-    onsite_note: 現物で確認する
+    route: form
+    section: S8
+    label: プリンターの機器名
+    type: short
+    placeholder: 例:TM-m30Ⅲ-H
+    show_if: {item: receipt_printer, equals: ある}
     source: {sample: printer, question: プリンター本体}
+    hint: |-
+      お持ちのレシートプリンターの、機種名を書いてください
+    help:
+      - title: "機器名の見つけ方"
+        text: |-
+          プリンター本体の、上か前に書いてあります。
+          見つからないときは、底のシールを見てください。
+
+          例)EPSON TM-m30Ⅲ-H
+          例)Star MCP31LB
+
+          わからない場合は「わからない」で大丈夫です。
 
   - id: paper_width
     route: form
