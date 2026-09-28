@@ -66,6 +66,7 @@ def test_form_asks_yes_no_first(spec):
         "extension_menu": "extension_use", "extension_back_use": "extension_use",
         "extension_back_mode": "extension_back_use", "food_back_mode": "food_back_use",
         "nomination_types": "nomination_use", "nomination_back_mode": "nomination_use",
+        "sales_split": "nomination_use",
         "card_fee": "card_fee_use", "commute_min_hours": "commute_use",
         "commute_full_day_hours": "commute_use", "pay_ratio_alert": "pay_ratio_alert_use",
         "send_areas": "send_areas_use",
