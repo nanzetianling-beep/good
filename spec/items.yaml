@@ -572,7 +572,7 @@ items:
   - id: house_charge_about
     route: form
     section: S3
-    label: ハウスチャージとは
+    label: ハウスチャージ
     type: note
     body: |-
       セット料金とは別に、席料としていただく料金です。
