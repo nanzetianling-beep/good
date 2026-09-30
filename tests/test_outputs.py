@@ -73,6 +73,9 @@ def test_form_asks_yes_no_first(spec):
     }
     # ハウスチャージは全卓に付き、個室料とは別
     assert "すべての卓" in by_id["house_charge"]["hint"] and "個室料とは別" in by_id["house_charge"]["hint"]
+    # ハウスチャージの前に「ハウスチャージとは」の説明を出す
+    s3 = [it["id"] for it in build_form.form_spec(spec)["sections"][1]["items"]]
+    assert s3.index("house_charge_about") == s3.index("house_charge") - 1
     # プリンターが「ある」ときだけ、機器名を書いてもらう
     assert by_id["printer_device"]["type"] == "short"
     assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}
