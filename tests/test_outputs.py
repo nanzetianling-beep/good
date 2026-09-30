@@ -76,6 +76,10 @@ def test_form_asks_yes_no_first(spec):
     # ハウスチャージの説明は、ヘルプを押したときに出す(いつも出る説明の欄は置かない)
     assert "house_charge_about" not in by_id
     assert by_id["house_charge"]["help"][0]["title"] == "ハウスチャージ"
+    # 個室料・VIP席料、ボトルキープの期限、セットがない店の会計方式(2026-09-30)
+    assert by_id["room_charges"]["show_if"] == {"item": "room_charge_use", "equals": "あり"}
+    assert "期限なし" in by_id["bottle_keep_period"]["options"]
+    assert by_id["payment_timing"]["show_if"] == {"item": "price_sets_use", "equals": "なし"}
     # プリンターが「ある」ときだけ、機器名を書いてもらう
     assert by_id["printer_device"]["type"] == "short"
     assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}
