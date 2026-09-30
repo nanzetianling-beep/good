@@ -57,7 +57,7 @@ sections:
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
   - {id: S6, title: 決済方法, desc: カード払いと売掛の手数料について伺います。}
   - {id: S8, title: プリンター・伝票, desc: レシートプリンターと、領収書・キッチン伝票の設定です。}
-  - {id: S9, title: 来店のきっかけ, desc: 新規やリピーターなど、来店のきっかけを集計します。}
+  - {id: S9, title: 来店のきっかけ・ボトルキープ, desc: 来店のきっかけの集計と、ボトルキープの期限を伺います。}
   - {id: S10, title: 給与のルール, desc: お店全体の給与・送り代のルールです。キャストごとの時給は訪問時に伺います。}
 
 # ② 記入テンプレート(LINE・Excel)
@@ -623,46 +623,6 @@ items:
           例)2000円なら「2000」
 
           カンマは付けずに、数字だけ入力してください。
-
-  - id: bottle_keep_period
-    route: form
-    section: S3
-    label: ボトルキープの期限
-    type: dropdown
-    unknown_option: true
-    options: [ボトルキープなし, 期限なし, 1か月, 2か月, 3か月, 6か月, 1年]
-    hint: |-
-      キープしたボトルを、いつまで預かるかです
-    source: {doc: 2026-09-30 追加要望 ボトルキープの期限}
-    help:
-      - title: "選び方"
-        text: |-
-          最後に来店した日から数えた期限です。
-          例)「3か月」なら、3か月来店がないと期限切れ
-
-          期限を決めていないお店は「期限なし」です。
-          キープをしていないお店は「ボトルキープなし」です。
-
-  - id: bottle_keep_alert
-    route: form
-    section: S3
-    label: ボトルキープの期限のお知らせ
-    type: dropdown
-    unknown_option: true
-    options: [お知らせしない, 3日前, 7日前, 14日前, 30日前]
-    show_if: {item: bottle_keep_period, in: [1か月, 2か月, 3か月, 6か月, 1年]}
-    hint: |-
-      期限が近づいたとき、何日前に知らせるかです
-    source: {doc: 2026-09-30 追加要望 ボトルキープの期限のお知らせ}
-    help:
-      - title: "選び方"
-        text: |-
-          期限が近いボトルを、管理画面の顧客管理で
-          お知らせします。
-          例)「7日前」なら、期限の7日前から表示
-
-          お客様への連絡のきっかけに使えます。
-          お知らせが要らないお店は「お知らせしない」です。
 
   - id: late_night_surcharge
     route: form
@@ -1607,6 +1567,46 @@ items:
           例)お店の前を通って → 「看板」
 
           集計に使いたいものに、すべてチェックします。
+
+  - id: bottle_keep_period
+    route: form
+    section: S9
+    label: ボトルキープの期限
+    type: dropdown
+    unknown_option: true
+    options: [ボトルキープなし, 期限なし, 1か月, 2か月, 3か月, 6か月, 1年]
+    hint: |-
+      キープしたボトルを、いつまで預かるかです
+    source: {doc: 2026-09-30 追加要望 ボトルキープの期限}
+    help:
+      - title: "選び方"
+        text: |-
+          最後に来店した日から数えた期限です。
+          例)「3か月」なら、3か月来店がないと期限切れ
+
+          期限を決めていないお店は「期限なし」です。
+          キープをしていないお店は「ボトルキープなし」です。
+
+  - id: bottle_keep_alert
+    route: form
+    section: S9
+    label: ボトルキープの期限のお知らせ
+    type: dropdown
+    unknown_option: true
+    options: [お知らせしない, 3日前, 7日前, 14日前, 30日前]
+    show_if: {item: bottle_keep_period, in: [1か月, 2か月, 3か月, 6か月, 1年]}
+    hint: |-
+      期限が近づいたとき、何日前に知らせるかです
+    source: {doc: 2026-09-30 追加要望 ボトルキープの期限のお知らせ}
+    help:
+      - title: "選び方"
+        text: |-
+          期限が近いボトルを、管理画面の顧客管理で
+          お知らせします。
+          例)「7日前」なら、期限の7日前から表示
+
+          お客様への連絡のきっかけに使えます。
+          お知らせが要らないお店は「お知らせしない」です。
 
   # ── 既存見本 ⑪ プリンター・領収書 ─────────────────────────
   - id: receipt_printer
