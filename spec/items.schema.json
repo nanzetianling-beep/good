@@ -395,6 +395,17 @@
             "type": "string"
           }
         },
+        "column_show_if": {
+          "type": "object",
+          "description": "表の列ごとの表示条件(キーは列の番号。0から数える)",
+          "patternProperties": {"^[0-9]+$": {"$ref": "#/$defs/condition"}},
+          "additionalProperties": false
+        },
+        "optional_columns": {
+          "type": "array",
+          "description": "空欄のままでよい列の番号(0から数える)",
+          "items": {"type": "integer", "minimum": 0}
+        },
         "examples": {
           "type": "array",
           "items": {

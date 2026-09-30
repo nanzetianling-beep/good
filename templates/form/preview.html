@@ -187,6 +187,12 @@ const ITEMS = Object.fromEntries(SPEC.sections.flatMap((s) => s.items.map((it) =
 const matches = (c) => (c.in ? c.in.map(String) : [String(c.equals)]).includes(answers[c.item]);
 const visible = (it) => !it.show_if ||
   ((!ITEMS[it.show_if.item] || visible(ITEMS[it.show_if.item])) && matches(it.show_if));
+// 表の列のうち、今出している列の番号(column_show_if の条件に合わない列は出さない)
+const shownCols = (it) => it.columns.map((_, c) => c).filter((c) => {
+  const cond = it.column_show_if && it.column_show_if[c];
+  return !cond || ((!ITEMS[cond.item] || visible(ITEMS[cond.item])) && matches(cond));
+});
+const optionalCol = (it, c) => (it.optional_columns || []).includes(c);
 const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
 
 function optionSamples(it) {
@@ -234,11 +240,13 @@ function renderInput(it) {
       return el("input", { class: "text-in", type: t === "time" ? "time" : "text", inputmode: t === "int" || t === "num" ? "numeric" : "text",
         value: v, placeholder: r === 0 && ex != null && ex !== "" ? "例:" + ex : "", "aria-label": aria, oninput: upd });
     };
+    const cols = shownCols(it);
+    const head = (c) => it.columns[c] + (optionalCol(it, c) ? "(任意)" : "");
     const table = el("table", {},
-      el("thead", {}, el("tr", {}, el("th", {}), it.columns.map((c) => el("th", { text: c })), el("th", {}))),
+      el("thead", {}, el("tr", {}, el("th", {}), cols.map((c) => el("th", { text: head(c) })), el("th", {}))),
       el("tbody", {}, rows.map((_, r) => el("tr", {},
         el("td", { class: "no", text: String(r + 1) }),
-        it.columns.map((col, c) => el("td", { "data-label": col }, cellInput(r, c))),
+        cols.map((c) => el("td", { "data-label": head(c) }, cellInput(r, c))),
         el("td", { class: "act" }, rows.length > 1 ? el("button", { class: "del", type: "button", text: "×", "aria-label": `${r + 1}行目を削除`,
           onclick: () => { rows.splice(r, 1); render(); } }) : null)))));
     return el("div", { class: "opts" }, el("div", { class: "rows" }, table),
@@ -336,8 +344,11 @@ function checkItem(it) {
   if (it.type === "datetime" && (!v.d || !v.t)) return "日付と時刻を記入してください";
   if (it.type === "rate" && !String(v.v ?? "").trim()) return "数字を記入してください";
   if (it.type === "table" && Array.isArray(v)) {
+    const cols = shownCols(it);
     for (const [r, row] of v.entries()) for (const [c, t] of (it.cells || []).entries()) {
+      if (!cols.includes(c)) continue;
       const x = String(row[c] ?? "").trim().replace(/[,，]/g, "");
+      if (!x && optionalCol(it, c)) continue;
       if (!x) return `${r + 1}行目の「${it.columns[c]}」を記入してください`;
       if (x && t === "int" && !/^\d+$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字のみで入力してください(カンマ不要)`;
       if (x && t === "num" && !/^\d+(\.\d+)?$/.test(x)) return `${r + 1}行目の「${it.columns[c]}」は、数字で入力してください`;
@@ -535,7 +546,8 @@ function fmt(it) {
   if (it.type === "rate") return String(v.v ?? "").trim() ? `${v.v}${v.u}` : null;
   if (it.type === "table") {
     const filled = v.filter((row) => row.some((x) => String(x ?? "").trim()));
-    return filled.length ? filled.map((row) => it.columns.map((_, c) => row[c] || "-").join("/")).join("、") : null;
+    const cols = shownCols(it);
+    return filled.length ? filled.map((row) => cols.map((c) => row[c] || "-").join("/")).join("、") : null;
   }
   let s = Array.isArray(v) ? v.join("、") : String(v);
   if (others[it.id]) s += `(${others[it.id]}${it.other?.unit || ""})`;

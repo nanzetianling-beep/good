@@ -77,8 +77,13 @@ def test_form_asks_yes_no_first(spec):
     assert "house_charge_about" not in by_id
     assert by_id["house_charge"]["help"][0]["title"] == "ハウスチャージ"
     # 個室料・VIP席料は卓の一覧の列、ボトルキープの期限とお知らせ(2026-09-30)
-    assert "個室料・VIP席料(円)" in by_id["tables"]["columns"]
-    for gone in ["room_charge_use", "room_charges", "payment_timing"]:
+    # 個室料は「個室料の有無=あり」のときだけ卓の一覧に列を出し、空欄でもよい
+    t = by_id["tables"]
+    c = t["columns"].index("個室料(円)")
+    assert t["column_show_if"][str(c)] == {"item": "room_charge_use", "equals": "あり"}
+    assert c in t["optional_columns"]
+    assert not any("VIP席料" in col for col in t["columns"])
+    for gone in ["room_charges", "payment_timing"]:
         assert gone not in by_id, gone
     assert "期限なし" in by_id["bottle_keep_period"]["options"]
     cond = by_id["bottle_keep_alert"]["show_if"]
