@@ -76,10 +76,13 @@ def test_form_asks_yes_no_first(spec):
     # ハウスチャージの説明は、ヘルプを押したときに出す(いつも出る説明の欄は置かない)
     assert "house_charge_about" not in by_id
     assert by_id["house_charge"]["help"][0]["title"] == "ハウスチャージ"
-    # 個室料・VIP席料、ボトルキープの期限、セットがない店の会計方式(2026-09-30)
-    assert by_id["room_charges"]["show_if"] == {"item": "room_charge_use", "equals": "あり"}
+    # 個室料・VIP席料は卓の一覧の列、ボトルキープの期限とお知らせ(2026-09-30)
+    assert "個室料・VIP席料(円)" in by_id["tables"]["columns"]
+    for gone in ["room_charge_use", "room_charges", "payment_timing"]:
+        assert gone not in by_id, gone
     assert "期限なし" in by_id["bottle_keep_period"]["options"]
-    assert by_id["payment_timing"]["show_if"] == {"item": "price_sets_use", "equals": "なし"}
+    cond = by_id["bottle_keep_alert"]["show_if"]
+    assert cond["item"] == "bottle_keep_period" and "期限なし" not in cond["in"] and "3か月" in cond["in"]
     # プリンターが「ある」ときだけ、機器名を書いてもらう
     assert by_id["printer_device"]["type"] == "short"
     assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}

@@ -624,54 +624,6 @@ items:
 
           カンマは付けずに、数字だけ入力してください。
 
-  - id: room_charge_use
-    route: form
-    section: S3
-    label: 個室料・VIP席料の有無
-    type: radio
-    unknown_option: true
-    options: [なし, あり]
-    hint: |-
-      個室やVIP席を使った卓だけにかかる料金です。
-      ハウスチャージとは別のものです
-    source: {doc: 2026-09-30 追加要望 個室料・VIP席料}
-    help:
-      - title: "「あり」が合うお店"
-        text: |-
-          個室やVIP席を使うと、料金が上がるお店です。
-          例)VIPルームを使った卓は、5,000円を追加
-
-          次の質問で、席ごとの料金を入力します。
-      - title: "「なし」が合うお店"
-        text: |-
-          個室やVIP席がない、または料金が同じお店です。
-          例)どの席でも、セット料金だけ
-
-  - id: room_charges
-    route: form
-    section: S3
-    label: 個室料・VIP席料
-    type: table
-    show_if: {item: room_charge_use, equals: あり}
-    columns: [席の名前, 料金(円)]
-    cells: [text, int]
-    examples:
-      - [VIPルーム, 5000]
-      - [個室A, 3000]
-    hint: |-
-      料金がかかる席を、1行に1つずつ書いてください
-    source: {doc: 2026-09-30 追加要望 個室料・VIP席料}
-    help:
-      - title: "書き方"
-        text: |-
-          席の名前と、1回の利用でかかる料金を書きます。
-
-          例)VIPルーム/5000
-          例)個室A/3000
-
-          料金は、その卓の会計に1回だけ付きます。
-          ハウスチャージとは別に付きます。
-
   - id: bottle_keep_period
     route: form
     section: S3
@@ -691,26 +643,26 @@ items:
           期限を決めていないお店は「期限なし」です。
           キープをしていないお店は「ボトルキープなし」です。
 
-  - id: payment_timing
+  - id: bottle_keep_alert
     route: form
     section: S3
-    label: 会計のタイミング
-    type: radio
+    label: ボトルキープの期限のお知らせ
+    type: dropdown
     unknown_option: true
-    options: [帰るときにまとめて会計, 注文ごとに支払い(キャッシュオン)]
-    show_if: {item: price_sets_use, equals: なし}
+    options: [お知らせしない, 3日前, 7日前, 14日前, 30日前]
+    show_if: {item: bottle_keep_period, in: [1か月, 2か月, 3か月, 6か月, 1年]}
     hint: |-
-      料金セットがないお店の、お会計のしかたです
-    source: {doc: 2026-09-30 追加要望 セットがない店の会計方式}
+      期限が近づいたとき、何日前に知らせるかです
+    source: {doc: 2026-09-30 追加要望 ボトルキープの期限のお知らせ}
     help:
-      - title: "「帰るときにまとめて会計」が合うお店"
+      - title: "選び方"
         text: |-
-          注文した分を伝票に付けて、最後に払うお店です。
-          例)3杯飲んで、帰るときに3杯分を払う
-      - title: "「注文ごとに支払い」が合うお店"
-        text: |-
-          1杯ごとに、その場で払うお店です。
-          例)ドリンクを渡すときに、800円をいただく
+          期限が近いボトルを、管理画面の顧客管理で
+          お知らせします。
+          例)「7日前」なら、期限の7日前から表示
+
+          お客様への連絡のきっかけに使えます。
+          お知らせが要らないお店は「お知らせしない」です。
 
   - id: late_night_surcharge
     route: form
@@ -1569,14 +1521,15 @@ items:
     section: S11
     label: 卓の一覧
     type: table
-    columns: [卓名, 席数]
-    cells: [text, int]
+    columns: [卓名, 席数, 個室料・VIP席料(円)]
+    cells: [text, int, int]
     examples:
-      - [VIP1, 6]
-      - [カウンター, 8]
+      - [VIP1, 6, 5000]
+      - [カウンター, 8, 0]
     hint: |-
       お店にある卓を、1行に1つ書いてください。
       配置は、訪問時にPOSの画面で一緒に決めます。
+      個室料・VIP席料がない卓は「0」です。
     source: {sample: tables, question: 卓の一覧}
     help:
       - title: "書き方"
@@ -1584,11 +1537,19 @@ items:
           卓名は、お店で呼んでいる名前で大丈夫です。
           席数は、座れるお客様の人数の目安です。
 
-          例)A卓/4
-          例)VIP1/6
-          例)カウンター1/1
+          例)A卓/4/0
+          例)VIP1/6/5000
+          例)カウンター1/1/0
 
           卓の数だけ、「行を追加」で行を増やします。
+      - title: "個室料・VIP席料"
+        text: |-
+          個室やVIP席を使った卓だけにかかる料金です。
+          その卓の会計に、1回だけ付きます。
+          ハウスチャージとは別のものです。
+
+          例)VIP1を使った卓は、5,000円を追加
+          料金がかからない卓は「0」と書いてください。
 
   - id: floor_map
     route: onsite
