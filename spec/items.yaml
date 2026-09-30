@@ -576,12 +576,15 @@ items:
     type: radio
     unknown_option: true
     options: [なし, あり]
-    hint: セット料金とは別にかかる、席料などの料金です
+    hint: |-
+      セット料金とは別に、すべての卓にかかる料金です。
+      個室料とは別のものです
     source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
     help:
       - title: "「あり」が合うお店"
         text: |-
           セット料金とは別に、席料などを取るお店です。
+          「あり」にすると、すべての卓に付きます。
           例)セット8000円+ハウスチャージ1000円
 
           次の質問で金額を入力します。
@@ -589,6 +592,12 @@ items:
         text: |-
           セット料金だけで、席料などを取らないお店です。
           例)60分8000円で、ほかに追加の料金はない
+      - title: "個室料との違い"
+        text: |-
+          個室料は、個室を使った卓だけにかかる料金です。
+          ハウスチャージとは別のものなので、
+          ここには入れないでください。
+          例)ハウスチャージ1000円+個室料5000円
 
   - id: house_charge_amount
     route: form
@@ -600,7 +609,7 @@ items:
     show_if: {item: house_charge, equals: あり}
     source: {sample: pricing, question: サービス料 ／ ハウスチャージ}
     hint: |-
-      ハウスチャージ1回あたりの金額です
+      1卓の会計に付く、ハウスチャージの金額です
     help:
       - title: "入力のしかた"
         text: |-

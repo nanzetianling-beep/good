@@ -71,6 +71,8 @@ def test_form_asks_yes_no_first(spec):
         "commute_full_day_hours": "commute_use", "pay_ratio_alert": "pay_ratio_alert_use",
         "send_areas": "send_areas_use",
     }
+    # ハウスチャージは全卓に付き、個室料とは別
+    assert "すべての卓" in by_id["house_charge"]["hint"] and "個室料とは別" in by_id["house_charge"]["hint"]
     # プリンターが「ある」ときだけ、機器名を書いてもらう
     assert by_id["printer_device"]["type"] == "short"
     assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}
