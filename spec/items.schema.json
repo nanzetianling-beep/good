@@ -637,8 +637,11 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "item",
-        "equals"
+        "item"
+      ],
+      "oneOf": [
+        {"required": ["equals"]},
+        {"required": ["in"]}
       ],
       "properties": {
         "item": {
@@ -646,6 +649,12 @@
         },
         "equals": {
           "$ref": "#/$defs/scalar"
+        },
+        "in": {
+          "type": "array",
+          "description": "どれかの答えのときに出す",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/scalar"}
         }
       }
     }

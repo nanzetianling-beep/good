@@ -70,8 +70,10 @@ def check(spec: dict) -> list[str]:
             parent = by_id.get(cond["item"])
             if parent is None:
                 errors.append(f"{it['id']}: show_if の参照先 {cond['item']} がありません")
-            elif cond["equals"] not in parent.get("options", []):
-                errors.append(f"{it['id']}: show_if の値 {cond['equals']} が {parent['id']} の選択肢にありません")
+            else:
+                for v in cond.get("in", [cond.get("equals")]):
+                    if v not in parent.get("options", []):
+                        errors.append(f"{it['id']}: show_if の値 {v} が {parent['id']} の選択肢にありません")
         # アンケートは全項目の記入が必須。まだ決まっていない場合に選べるよう、選択式には「未定」を付ける
         if it["route"] == "form" and it["type"] in ("radio", "checkbox", "dropdown", "time"):
             # 「未定」を付けないと明記した質問(unknown_option: false)は除く

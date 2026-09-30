@@ -183,8 +183,10 @@ const el = (tag, attrs = {}, ...kids) => {
 
 const ITEMS = Object.fromEntries(SPEC.sections.flatMap((s) => s.items.map((it) => [it.id, it])));
 // 元の質問が出ていて、答えが合うときだけ出す(元の質問が隠れたら、その先も隠す)
+// show_if.equals なら1つの答え、show_if.in ならどれかの答えのときに出す
+const matches = (c) => (c.in ? c.in.map(String) : [String(c.equals)]).includes(answers[c.item]);
 const visible = (it) => !it.show_if ||
-  ((!ITEMS[it.show_if.item] || visible(ITEMS[it.show_if.item])) && answers[it.show_if.item] === String(it.show_if.equals));
+  ((!ITEMS[it.show_if.item] || visible(ITEMS[it.show_if.item])) && matches(it.show_if));
 const otherHost = (it) => it.other && (["その他", "あり", "記入"].find((o) => it.options.includes(o)) || null);
 
 function optionSamples(it) {
