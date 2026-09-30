@@ -266,6 +266,11 @@
             "$ref": "#/$defs/scalar"
           }
         },
+        "option_inputs": {
+          "type": "object",
+          "description": "選んだ選択肢の横に出す入力欄(キーは選択肢)",
+          "additionalProperties": {"$ref": "#/$defs/item/properties/other"}
+        },
         "other": {
           "type": "object",
           "additionalProperties": false,

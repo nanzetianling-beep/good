@@ -88,6 +88,10 @@ def test_form_asks_yes_no_first(spec):
     assert "期限なし" in by_id["bottle_keep_period"]["options"]
     cond = by_id["bottle_keep_alert"]["show_if"]
     assert cond["item"] == "bottle_keep_period" and "期限なし" not in cond["in"] and "3か月" in cond["in"]
+    # サービス料は「なし/率で指定(%)/金額で指定(円)/未定」
+    sc = by_id["service_charge"]
+    assert sc["options"] == ["なし", "率で指定", "金額で指定"] and sc["unknown_option"]
+    assert sc["option_inputs"]["率で指定"]["unit"] == "%" and sc["option_inputs"]["金額で指定"]["unit"] == "円"
     # プリンターが「ある」ときだけ、機器名を書いてもらう
     assert by_id["printer_device"]["type"] == "short"
     assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}

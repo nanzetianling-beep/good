@@ -75,6 +75,9 @@ def check(spec: dict) -> list[str]:
                 for v in ccond.get("in", [ccond.get("equals")]):
                     if v not in cparent.get("options", []):
                         errors.append(f"{it['id']}: column_show_if の値 {v} が {cparent['id']} の選択肢にありません")
+        for opt in it.get("option_inputs") or {}:
+            if opt not in [str(o) for o in it.get("options", [])]:
+                errors.append(f"{it['id']}: option_inputs の {opt} が選択肢にありません")
         cond = it.get("show_if")
         if cond:
             parent = by_id.get(cond["item"])

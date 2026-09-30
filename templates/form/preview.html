@@ -308,11 +308,20 @@ function renderInput(it) {
             // 「未定」は、ほかの選択肢と一緒に選べない
             if (e.target.checked) v = o === UNKNOWN ? [UNKNOWN] : v.filter((x) => x !== UNKNOWN).concat(o);
             set(v);
-          } else set(o);
+          } else { if (it.option_inputs && answers[it.id] !== o) delete others[it.id]; set(o); }
           render();
         } });
       const row = el("label", { class: "opt" + (o === UNKNOWN ? " unknown" : ""), for: oid }, input,
         el("span", { class: "lbl", text: ((o === "その他" || o === "記入") && it.other) ? o + ":" : o }));
+      // 選択肢ごとの入力欄(option_inputs)。選んだ選択肢の横にだけ出す
+      const oin = it.option_inputs && it.option_inputs[o];
+      if (oin && checked) {
+        row.append(el("input", { class: "text-in other", id: oid + "_in", type: "text",
+          inputmode: oin.type === "number" ? "decimal" : "text", value: others[it.id] || "",
+          placeholder: oin.unit ? `数字(${oin.unit})` : "入力してください", "aria-label": `${it.label} ${o}`,
+          oninput: (e) => { others[it.id] = e.target.value; clearError(it.id); } }));
+        if (oin.unit) row.append(el("span", { class: "unit", text: oin.unit }));
+      }
       if (it.other && (o === host || (extraOther && o === "その他")) && checked) {
         row.append(el("input", { class: "text-in other", id: oid + "_other", type: "text",
           inputmode: it.other.type === "number" ? "decimal" : "text", value: others[it.id] || "",
@@ -365,6 +374,13 @@ function checkItem(it) {
     if (val.kind === "regex" && !new RegExp(val.pattern).test(v.trim())) return val.message;
     if (val.kind === "integer" && (!/^\d+$/.test(s) || (val.min != null && +s < val.min) || (val.max != null && +s > val.max))) return val.message;
     if (val.kind === "number" && (!/^\d+(\.\d+)?$/.test(s) || (val.min != null && +s < val.min) || (val.max != null && +s > val.max))) return val.message;
+  }
+  const oin = it.option_inputs && it.option_inputs[v];
+  if (oin) {
+    const o = (others[it.id] || "").trim().replace(/[,，]/g, "").replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+    if (!o) return `「${v}」の数字を記入してください`;
+    if (oin.type === "number" && (!/^\d+(\.\d+)?$/.test(o) || +o < (oin.min ?? 0) || (oin.max != null && +o > oin.max)))
+      return oin.max != null ? `${oin.min ?? 0}〜${oin.max}の数字で入力してください` : "数字で入力してください";
   }
   const host = otherHost(it);
   const picked = Array.isArray(v) ? v : [v];
@@ -550,7 +566,8 @@ function fmt(it) {
     return filled.length ? filled.map((row) => cols.map((c) => row[c] || "-").join("/")).join("、") : null;
   }
   let s = Array.isArray(v) ? v.join("、") : String(v);
-  if (others[it.id]) s += `(${others[it.id]}${it.other?.unit || ""})`;
+  const oin = it.option_inputs && it.option_inputs[v];
+  if (others[it.id] && (oin || it.other)) s += `(${others[it.id]}${(oin || it.other).unit || ""})`;
   return it.unit && it.type === "number" ? `${s} ${it.unit}` : s;
 }
 
