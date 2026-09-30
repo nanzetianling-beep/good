@@ -65,6 +65,16 @@ def check(spec: dict) -> list[str]:
             for ex in line["examples"]:
                 if len(ex) != len(line["format"]):
                     errors.append(f"{it['id']}: LINEの記入例の数が format と違います: {ex}")
+        for key, ccond in (it.get("column_show_if") or {}).items():
+            if int(key) >= len(it.get("columns", [])):
+                errors.append(f"{it['id']}: column_show_if の列 {key} がありません")
+            cparent = by_id.get(ccond["item"])
+            if cparent is None:
+                errors.append(f"{it['id']}: column_show_if の参照先 {ccond['item']} がありません")
+            else:
+                for v in ccond.get("in", [ccond.get("equals")]):
+                    if v not in cparent.get("options", []):
+                        errors.append(f"{it['id']}: column_show_if の値 {v} が {cparent['id']} の選択肢にありません")
         cond = it.get("show_if")
         if cond:
             parent = by_id.get(cond["item"])
