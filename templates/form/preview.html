@@ -1,4 +1,4 @@
-<title>ポッキリ.Night 導入アンケート</title>
+<title>ポッキリ.Night初期セットアップフォーム（導入店舗限定）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
@@ -20,11 +20,19 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px}
   .head{padding:0;overflow:hidden;border-top:10px solid var(--accent)}
   .head .in{padding:22px 24px 18px}
-  .head h1{font-family:"Noto Sans JP",sans-serif;font-size:28px;font-weight:400;line-height:1.35;margin:0 0 12px;text-wrap:balance}
+  .head h1{font-family:"Noto Sans JP",sans-serif;font-size:28px;font-weight:400;line-height:1.35;margin:0 0 12px;text-wrap:balance;text-align:center}
+  .head h1 .sub{display:block;font-size:17px;color:var(--muted);margin-top:4px}
+  .head h1 .nb{display:inline-block}
+  .head:not(.done) .in > .desc{text-align:center;text-wrap:balance}
+  @media (max-width:400px){.head:not(.done) .in > .desc{font-size:12px}}
   .desc{white-space:pre-line;margin:0;font-size:14px}
   .facts{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
+  .head:not(.done) .facts > *{width:fit-content;max-width:100%;margin-inline:auto;text-align:center;text-wrap:balance}
   .facts li::before{content:"・";color:var(--accent)}
   .deadline{display:flex;align-items:flex-start;gap:6px;margin:14px 0 0;color:var(--error);font-weight:700;font-size:15px}
+  .head:not(.done) .deadline{display:block;text-align:center}
+  .head:not(.done) .deadline .warn-icon{display:inline-block;vertical-align:-3px;margin:0 6px 0 0}
+  .deadline .nb{display:inline-block}
   .deadline .warn-icon{flex:none;width:18px;height:18px;margin-top:2px}
   .req-note{border-top:1px solid var(--line);padding:12px 24px;color:var(--error);font-size:14px}
   .sec{padding:0;overflow:hidden}
@@ -141,7 +149,7 @@
   .foot{text-align:center;color:var(--faint);font-size:12px;padding-top:8px}
   /* iPhone・iPad で入力欄をタップしたとき、画面が勝手に拡大しないよう16px以上にする */
   input.text-in,select.text-in,textarea.text-in,.answer-text{font-size:16px}
-  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:24px}.progress{width:100%}
+  @media (max-width:520px){.text-in{width:100%;min-width:0}.field .text-in{flex:1 1 auto}.head h1{font-size:min(24px,5.8vw)}.progress{width:100%}
     .card:not(.head):not(.sec){padding:20px 16px}.head .in,.sec .body{padding-left:16px;padding-right:16px}}
   /* スマホ: 表は1行ずつカードにして縦に並べる(横スクロールなし) */
   @media (max-width:600px){
@@ -621,12 +629,22 @@ function fmt(it) {
 function render() {
   const app = document.getElementById("app");
   const header = el("div", { class: "card head" }, el("div", { class: "in" },
-    el("h1", { text: SPEC.form.title }),
+    // タイトルの「（…）」は、下の行に小さく出す。表紙のタイトルとあいさつは中央に寄せる
+    // 「ポッキリ.Night」と、その後ろは、それぞれの途中で改行しない
+    el("h1", {}, ...(() => {
+      const t = SPEC.form.title, i = t.indexOf("（"), main = i < 0 ? t : t.slice(0, i);
+      const j = main.indexOf("Night") >= 0 ? main.indexOf("Night") + 5 : 0;
+      const parts = [main.slice(0, j), main.slice(j)].filter(Boolean).map((x) => el("span", { class: "nb", text: x }));
+      return i < 0 ? parts : [...parts, el("span", { class: "sub", text: t.slice(i) })]; })()),
     el("p", { class: "desc", text: SPEC.form.intro }),
     // 回答期限は箇条書きから外し、下に赤の太字で1行だけ出す
     el("ul", { class: "facts" }, SPEC.form.facts.filter((f) => !f.includes("{deadline}")).map((f) => el("li", { text: f }))),
     SPEC.form.facts.filter((f) => f.includes("{deadline}")).map((f) =>
-      el("p", { class: "deadline", role: "note" }, warnIcon(), el("span", { text: f.replace("{deadline}", deadlineText()) })))));
+      el("p", { class: "deadline", role: "note" }, warnIcon(), el("span", {}, ...(() => {
+        // 「(訪問日 …)」「の2日前まで」などの途中では改行しない
+        const t = f.replace("{deadline}", deadlineText());
+        return t.split(/(?=\(訪問日 )|(?=訪問日\(対面)|(?=の2日前まで)/).map((x) => el("span", { class: "nb", text: x }));
+      })())))));
   const out = [];
   const n = SPEC.sections.length;
   if (page === -1) {
