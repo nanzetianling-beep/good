@@ -106,16 +106,13 @@ def test_form_asks_yes_no_first(spec):
     assert "料金から原価を引いた額" in by_id["bottle_back_base"]["options"]
 
 
-def test_form_sends_by_copy_and_line(spec):
-    # 回答は「文章をコピー」してLINEに貼ってもらう。「LINEで送る」はコピーしてからLINEを開く
+def test_form_sends_by_copy_only(spec):
+    # 回答は「文章をコピー」してLINEに貼ってもらう。アンケートはLINEの中で開くため「LINEで送る」ボタンは置かない
     html = build_form.build(spec)
     assert "文章をコピー" in html
-    assert '"LINEで送る"' in html
-    # スマホは共有画面に文章を入れて開く。パソコンはLINEアプリを開く
-    assert "https://line.me/R/share?text=" in html
-    assert "line://nv/chat" in html
-    # 押した瞬間に移るよう、ボタンではなくリンクにする
-    assert 'el("a", { class: "btn line"' in html
+    assert "line.me" not in html
+    assert "line://" not in html
+    assert '"LINEで送る"' not in html
     assert "管理画面・フロア画面(iPad)" in spec["form"]["changeable"]
 
 
