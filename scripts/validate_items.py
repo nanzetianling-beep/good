@@ -88,7 +88,7 @@ def check(spec: dict) -> list[str]:
                     if v not in parent.get("options", []):
                         errors.append(f"{it['id']}: show_if の値 {v} が {parent['id']} の選択肢にありません")
         # アンケートは全項目の記入が必須。まだ決まっていない場合に選べるよう、選択式には「未定」を付ける
-        if it["route"] == "form" and it["type"] in ("radio", "checkbox", "dropdown", "time"):
+        if it["route"] == "form" and it["type"] in ("radio", "checkbox", "dropdown", "time", "dial"):
             # 「未定」を付けないと明記した質問(unknown_option: false)は除く
             if "unknown_option" not in it:
                 errors.append(f"{it['id']}: 選択式なのに unknown_option がありません")
