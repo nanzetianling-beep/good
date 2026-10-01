@@ -253,7 +253,8 @@
             "note",
             "table",
             "time",
-            "rate"
+            "rate",
+            "dial"
           ]
         },
         "required": {

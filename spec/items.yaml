@@ -57,7 +57,7 @@ sections:
   - {id: S5, title: 税・インボイス, desc: 領収書と会計の税の扱いに使います。}
   - {id: S6, title: 決済方法, desc: カード払いと売掛の手数料について伺います。}
   - {id: S8, title: プリンター・伝票, desc: レシートプリンターと、領収書・キッチン伝票の設定です。}
-  - {id: S9, title: 来店のきっかけ・ボトルキープ, desc: 来店のきっかけの集計と、ボトルキープの期限を伺います。}
+  - {id: S9, title: お客様の流入経路・ボトルキープ, desc: お客様の流入経路の集計と、ボトルキープの期限を伺います。}
   - {id: S10, title: 給与のルール, desc: お店全体の給与・送り代のルールです。キャストごとの時給は訪問時に伺います。}
 
 # ② 記入テンプレート(LINE・Excel)
@@ -1554,19 +1554,21 @@ items:
   - id: referral_tags
     route: form
     section: S9
-    label: 来店きっかけの集計タグ
+    label: お客様の流入経路
     type: checkbox
     unknown_option: true
     options: [新規, リピーター, 紹介, SNS, ビラ, 看板]
     other: {type: short}
-    hint: 金額の計算には影響しません。あとから追加できます
+    hint: |-
+      お客様がどこから来たかを記録する項目です。
+      金額の計算には影響しません。あとから追加できます
     source: {sample: referral, question: 集計タグ}
 
     help:
       - title: "使い方"
         text: |-
-          お客様が来たきっかけを、
-          会計のときに選んで記録するためのタグです。
+          お客様がどこから来たか(流入経路)を、
+          会計のときに選んで記録するための項目です。
 
           例)SNSを見て来た → 「SNS」
           例)常連さんの紹介 → 「紹介」
@@ -1989,28 +1991,52 @@ items:
       - title: "「使う」が合うお店"
         text: |-
           遅刻した分を、給与から差し引くお店です。
-          例)1分50円で10分遅刻なら、500円を差し引く
+          例)15分ごとに500円なら、30分遅刻で1,000円
       - title: "「使わない」が合うお店"
         text: |-
           遅刻しても、給与から差し引かないお店です。
           例)遅刻は注意だけで、金額は変えない
 
-  - id: late_deduction_per_minute
+  - id: late_deduction_unit
     route: form
     section: S10
-    label: 遅刻控除(1分あたり)
+    label: 遅刻控除の時間の区切り
+    type: dial
+    unknown_option: true
+    options: [1分, 5分, 10分, 15分, 30分, 60分]
+    show_if: {item: late_deduction, equals: 使う}
+    source: {sample: payroll, question: 遅刻控除の内容}
+    hint: |-
+      何分ごとに差し引くかです。
+      ダイヤルを回して選んでください
+    help:
+      - title: "選び方"
+        text: |-
+          遅刻した時間を、この区切りで数えます。
+          例)「15分」なら、15分ごとに次の金額を差し引く
+          → 15分遅刻で1回分、30分遅刻で2回分
+
+          1分ごとより、15分や30分ごとのほうが
+          計算がかんたんです。
+
+  - id: late_deduction_amount
+    route: form
+    section: S10
+    label: 遅刻控除の金額(区切りごと)
     type: number
     unit: 円
     validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
     show_if: {item: late_deduction, equals: 使う}
     source: {sample: payroll, question: 遅刻控除の内容}
     hint: |-
-      遅刻1分あたりに差し引く金額です
+      上で選んだ時間ごとに、差し引く金額です
     help:
       - title: "入力のしかた"
         text: |-
-          例)1分50円なら「50」
-          → 10分遅刻で500円、30分遅刻で1,500円
+          例)15分ごとに500円なら「500」
+          → 15分遅刻で500円、30分遅刻で1,000円
+
+          カンマは付けずに、数字だけ入力してください。
 
   - id: late_penalty_points
     route: onsite
@@ -2024,9 +2050,9 @@ items:
     route: form
     section: S10
     label: 遅刻の猶予
-    type: number
-    unit: 分
-    validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
+    type: dial
+    unknown_option: true
+    options: [なし, 5分, 10分, 15分, 30分]
     show_if: {item: late_deduction, equals: 使う}
     source: {sample: payroll, question: 遅刻の猶予・上限}
     hint: |-
@@ -2034,8 +2060,10 @@ items:
     help:
       - title: "入力のしかた"
         text: |-
-          例)「5」なら、5分までの遅刻は差し引きません。
-          例)「0」なら、1分の遅刻から差し引きます。
+          例)「5分」なら、5分までの遅刻は差し引きません。
+          例)「なし」なら、1分の遅刻から差し引きます。
+
+          ダイヤルを回して選んでください。
 
   - id: late_daily_cap
     route: form

@@ -79,6 +79,15 @@
   .clock select.text-in{min-width:110px;width:auto}
   .clock-sep{font-size:18px;color:var(--muted);padding-bottom:10px}
   .opt .lbl{font-size:14px}
+  /* ダイヤル: 上下にくるくる回して選ぶ(真ん中の帯に来たものが選ばれる) */
+  .dial{position:relative;width:200px;max-width:100%;height:156px;border-radius:12px;background:#eef0f3;overflow:hidden}
+  .dial-band{position:absolute;left:0;right:0;top:52px;height:52px;background:#dfe5ee;pointer-events:none}
+  .dial-list{position:relative;height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;padding:52px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch;outline:none}
+  .dial-list::-webkit-scrollbar{display:none}
+  .dial-list:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+  .dial-item{height:52px;scroll-snap-align:center;display:grid;place-items:center;font-size:24px;font-weight:700;color:#b3b7bd;cursor:pointer;user-select:none}
+  .dial-item.sel{color:var(--ink)}
+  .dial-note{font-size:13px;color:var(--muted);margin-top:6px}
   .opt.unknown .lbl{color:var(--muted)}
   .opt .other{flex:1;min-width:120px;width:auto}
   select.text-in{width:auto;min-width:200px;border:1px solid var(--line-2);border-radius:4px;padding:8px 12px}
@@ -284,6 +293,43 @@ function renderInput(it) {
         el("label", { class: "opt" }, el("input", { type: "radio", name: id + "_u", id: `${id}_u${i}`, checked: cur.u === u, onchange: upd("u") , value: u }),
           el("span", { class: "lbl", text: u })))));
   }
+  if (it.type === "dial") {
+    // ダイヤル式。回して真ん中に来たものを選ぶ。押しても選べる。矢印キーでも動かせる
+    const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);
+    const H = 52;
+    const list = el("div", { class: "dial-list", role: "listbox", tabindex: "0", "aria-label": it.label, id });
+    const mark = (i) => list.querySelectorAll(".dial-item").forEach((n, k) => {
+      n.classList.toggle("sel", k === i); n.setAttribute("aria-selected", String(k === i)); });
+    const choose = (i) => {
+      i = Math.max(0, Math.min(opts.length - 1, i));
+      if (answers[it.id] !== opts[i]) { answers[it.id] = opts[i]; clearError(it.id); saveDraft(); }
+      mark(i);
+    };
+    opts.forEach((o, i) => list.append(el("div", { class: "dial-item", role: "option", "aria-selected": "false", text: o,
+      onclick: () => list.scrollTo({ top: i * H, behavior: "smooth" }) })));
+    let timer = null, ready = false;
+    list.addEventListener("scroll", () => {
+      if (!ready) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => choose(Math.round(list.scrollTop / H)), 120);
+    });
+    list.addEventListener("keydown", (e) => {
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+      e.preventDefault();
+      const cur = Math.max(0, opts.indexOf(answers[it.id]));
+      const next = answers[it.id] == null ? 0 : cur + (e.key === "ArrowDown" ? 1 : -1);
+      list.scrollTo({ top: Math.max(0, Math.min(opts.length - 1, next)) * H, behavior: "smooth" });
+    });
+    // 描いたあとで、選んである位置まで回しておく
+    requestAnimationFrame(() => {
+      const i = opts.indexOf(answers[it.id]);
+      list.scrollTop = Math.max(0, i) * H;
+      if (i >= 0) mark(i);
+      setTimeout(() => { ready = true; }, 50);
+    });
+    return el("div", {}, el("div", { class: "dial" }, el("div", { class: "dial-band" }), list),
+      el("p", { class: "dial-note", text: "上下に回して、真ん中に合わせてください" }));
+  }
   if (it.type === "dropdown") {
     const opts = it.options.map(String).concat(it.unknown_option ? [UNKNOWN] : []);
     return el("select", { class: "text-in", id, "aria-label": it.label, onchange: (e) => { set(e.target.value); render(); } },
@@ -346,6 +392,7 @@ function checkItem(it) {
   // すべての質問が必須。空のときは、何をすればよいかを出す
   if (empty) {
     if (it.type === "radio" || it.type === "dropdown") return "どれか1つを選んでください";
+    if (it.type === "dial") return "回して、どれか1つを選んでください";
     if (it.type === "checkbox") return "1つ以上選んでください";
     if (it.type === "time") return "時と分を選んでください";
     return "ここを記入してください";

@@ -42,7 +42,7 @@ def test_form_choices_offer_unknown(spec):
     form = build_form.form_spec(spec)
     for sec in form["sections"]:
         for it in sec["items"]:
-            if it["type"] in ("radio", "checkbox", "dropdown", "time"):
+            if it["type"] in ("radio", "checkbox", "dropdown", "time", "dial"):
                 assert it.get("unknown_option") or it["id"] in NO_UNKNOWN, it["id"]
             assert UNKNOWN not in [str(o) for o in it.get("options", [])], it["id"]
             assert "任意" not in it["label"], it["id"]
@@ -92,6 +92,11 @@ def test_form_asks_yes_no_first(spec):
     sc = by_id["service_charge"]
     assert sc["options"] == ["なし", "率で指定", "金額で指定"] and sc["unknown_option"]
     assert sc["option_inputs"]["率で指定"]["unit"] == "%" and sc["option_inputs"]["金額で指定"]["unit"] == "円"
+    # 遅刻控除は「何分ごとに・いくら」。時間はダイヤルで選ぶ
+    assert by_id["late_deduction_unit"]["type"] == "dial" and "15分" in by_id["late_deduction_unit"]["options"]
+    assert by_id["late_grace_minutes"]["type"] == "dial"
+    assert "late_deduction_per_minute" not in by_id
+    assert by_id["referral_tags"]["label"] == "お客様の流入経路"
     # プリンターが「ある」ときだけ、機器名を書いてもらう
     assert by_id["printer_device"]["type"] == "short"
     assert by_id["printer_device"]["show_if"] == {"item": "receipt_printer", "equals": "ある"}
