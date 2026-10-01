@@ -39,8 +39,12 @@
   @media (max-width:400px){.head:not(.done) .in > .desc{font-size:12px}}
   .desc{white-space:pre-line;margin:0;font-size:14px}
   .facts{margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
+  .head:not(.done) .facts > *{width:fit-content;max-width:100%;margin-inline:auto;text-align:center;text-wrap:balance}
   .facts li::before{content:"・";color:var(--accent)}
   .deadline{display:flex;align-items:flex-start;gap:6px;margin:14px 0 0;color:var(--error);font-weight:700;font-size:15px}
+  .head:not(.done) .deadline{display:block;text-align:center}
+  .head:not(.done) .deadline .warn-icon{display:inline-block;vertical-align:-3px;margin:0 6px 0 0}
+  .deadline .nb{display:inline-block}
   .deadline .warn-icon{flex:none;width:18px;height:18px;margin-top:2px}
   .req-note{border-top:1px solid var(--line);padding:12px 24px;color:var(--error);font-size:14px}
   .sec{padding:0;overflow:hidden}
@@ -648,7 +652,11 @@ function render() {
     // 回答期限は箇条書きから外し、下に赤の太字で1行だけ出す
     el("ul", { class: "facts" }, SPEC.form.facts.filter((f) => !f.includes("{deadline}")).map((f) => el("li", { text: f }))),
     SPEC.form.facts.filter((f) => f.includes("{deadline}")).map((f) =>
-      el("p", { class: "deadline", role: "note" }, warnIcon(), el("span", { text: f.replace("{deadline}", deadlineText()) })))));
+      el("p", { class: "deadline", role: "note" }, warnIcon(), el("span", {}, ...(() => {
+        // 「(訪問日 …)」「の2日前まで」などの途中では改行しない
+        const t = f.replace("{deadline}", deadlineText());
+        return t.split(/(?=\(訪問日 )|(?=訪問日\(対面)|(?=の2日前まで)/).map((x) => el("span", { class: "nb", text: x }));
+      })())))));
   const out = [];
   const n = SPEC.sections.length;
   if (page === -1) {
