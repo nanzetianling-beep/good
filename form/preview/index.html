@@ -577,10 +577,22 @@ async function copyAnswer(text, status) {
 }
 
 // 文章をコピーしてから、LINEのトーク一覧を開く(送り先は店舗の方が選んで貼り付ける)
+// スマホは https のリンクでLINEアプリが開く。パソコンは同じリンクだとLINEのホームページになるため、
+// パソコン版LINEアプリを line:// で開く。アプリが開かなかったときは、案内の文を出す
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
 async function copyAndOpenLine(text, status) {
   if (!(await copyAnswer(text, status))) return;
   status.textContent = "コピーしました。LINEが開いたら、トークに貼り付けて送ってください。";
-  location.href = "https://line.me/R/nv/chat";
+  if (IS_MOBILE) { location.href = "https://line.me/R/nv/chat"; return; }
+  let left = false;
+  const onBlur = () => { left = true; };
+  window.addEventListener("blur", onBlur, { once: true });
+  location.href = "line://nv/chat";
+  setTimeout(() => {
+    window.removeEventListener("blur", onBlur);
+    if (!left && !document.hidden)
+      status.textContent = "コピーしました。LINEのアプリが開かないときは、パソコンのLINEを開いて、トークに貼り付けて送ってください。";
+  }, 1500);
 }
 
 // 回答期限は、訪問日(対面でお話しする日)の2日前。URLの ?visit=YYYY-MM-DD から日付を出す

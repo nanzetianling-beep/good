@@ -112,6 +112,7 @@ def test_form_sends_by_copy_and_line(spec):
     assert "文章をコピー" in html
     assert '"LINEで送る"' in html
     assert "https://line.me/R/nv/chat" in html
+    assert "line://nv/chat" in html  # パソコンはLINEアプリを開く
     assert "line.me/R/share" not in html
     assert "管理画面・フロア画面(iPad)" in spec["form"]["changeable"]
 
