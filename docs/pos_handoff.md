@@ -148,7 +148,7 @@ POS 側でやることをここに残す。質問の正は `spec/items.yaml`。�
 
 | id | 質問名(■の後ろ) | 形 | 選択肢・列 | 出す条件 |
 |---|---|---|---|---|
-| `receipt_printer` | レシートプリンター (EPSON/TM-m30Ⅲ-H・Star/MCP31LB) | radio | ある / これから用意 / 使わない / 未定 |  |
+| `receipt_printer` | レシートプリンター | radio | ある / これから用意 / 使わない / 未定 |  |
 | `printer_device` | プリンターの機器名 | short |  | レシートプリンター = ある |
 | `paper_width` | 用紙幅 | radio | 58mm / 80mm / 未定 |  |
 | `receipt_design` | 領収書のデザイン | radio | 1 / 2 / 3 |  |

@@ -106,13 +106,20 @@ def test_form_asks_yes_no_first(spec):
     assert "料金から原価を引いた額" in by_id["bottle_back_base"]["options"]
 
 
-def test_form_sends_by_copy_only(spec):
-    # 回答は「文章をコピー」してLINEに貼ってもらう。「LINEで送る」ボタンは置かない
+def test_form_sends_by_copy_and_line(spec):
+    # 回答は「文章をコピー」してLINEに貼ってもらう。「LINEで送る」はコピーしてからLINEを開く
     html = build_form.build(spec)
     assert "文章をコピー" in html
-    assert "line.me" not in html
-    assert '"LINEで送る"' not in html
+    assert '"LINEで送る"' in html
+    assert "https://line.me/R/nv/chat" in html
+    assert "line.me/R/share" not in html
     assert "管理画面・フロア画面(iPad)" in spec["form"]["changeable"]
+
+
+def test_answer_heading_is_one_line(spec):
+    # 回答の文章は「■質問名」を1行にする(ラベルの2行目の補足は入れない)
+    html = build_form.build(spec)
+    assert '`■${it.label.split("\\n")[0]}`' in html
 
 
 def test_form_validation_rules_present(spec):
