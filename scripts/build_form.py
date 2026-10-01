@@ -64,7 +64,7 @@ def build_site(spec: dict, out: Path) -> None:
     html = ('<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             '<meta name="format-detection" content="telephone=no">\n'
-            '<meta name="apple-mobile-web-app-title" content="導入アンケート">\n'
+            '<meta name="apple-mobile-web-app-title" content="初期セットアップフォーム">\n'
             '<meta name="theme-color" content="#1f3a6b">\n'
             '<meta name="robots" content="noindex">\n'
             f"{title}\n</head>\n<body>\n{body}\n</body>\n</html>\n")
