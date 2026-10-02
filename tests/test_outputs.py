@@ -116,6 +116,15 @@ def test_form_sends_by_copy_only(spec):
     assert "管理画面・フロア画面(iPad)" in spec["form"]["changeable"]
 
 
+def test_receipt_serial_question(spec):
+    # 領収書の通し番号は、有無だけを聞く(プリンター・伝票の章、領収書のデザインの次)
+    by_id = {it["id"]: (s["title"], it) for s in build_form.form_spec(spec)["sections"] for it in s["items"]}
+    title, it = by_id["receipt_serial"]
+    assert title == "プリンター・伝票"
+    assert it["label"] == "領収書の通し番号の有無"
+    assert it["options"] == ["なし", "あり"] and it["unknown_option"]
+
+
 def test_answer_heading_is_one_line(spec):
     # 回答の文章は「■質問名」を1行にする(ラベルの2行目の補足は入れない)
     html = build_form.build(spec)
