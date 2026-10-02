@@ -1,6 +1,11 @@
 # ポッキリ.Night 初期設定キット
 
 > **呼び方の決まり:** ユーザーが「ポッキリドットナイト」「ポッキリ.Night」「POSシステム」と言ったら、基本は POS 本体 `pokkiriofficial/nightwork-pos`(本番 https://nightwork-pos.vercel.app)の話として扱う。このリポジトリ(初期設定キット・導入アンケート)の話だと分かるときだけ、こちらを指す。POS 本体がセッションに無ければ、先に追加してから作業する。最新の引き継ぎは POS 本体の `docs/` にある。
+>
+> **ポッキリ.Night まわりのツール(互いに連携している前提で扱う):**
+> - POS 本体 … `pokkiriofficial/nightwork-pos`
+> - 導入アンケート(初期設定フォーム)… このリポジトリ。https://pokkiri-night-survey.vercel.app
+> - 運営コンソール … ポッキリ.Night 専用の顧客管理。POS 本体の `/platform` にある。アンケートの回答はここに貼り付けて取り込む
 
 POS「ポッキリ.Night」の導入時に店舗情報を集めるキット。要件は `docs/requirements.md`、既存見本は `reference/survey_sample.html`。
 
