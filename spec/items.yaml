@@ -1706,6 +1706,26 @@ items:
 
           あとから変えたい場合は、訪問時に相談できます。
 
+  - id: receipt_serial
+    route: form
+    section: S8
+    label: 領収書の通し番号の有無
+    type: radio
+    unknown_option: true
+    options: [なし, あり]
+    source: {doc: 2026-10-02 追加要望 領収書の通し番号}
+    hint: |-
+      領収書に、1枚ごとに増える番号を刷るかどうかです
+    help:
+      - title: "「あり」が合うお店"
+        text: |-
+          発行した領収書を、番号で控えておきたいお店です。
+          例)No.000123 のように、右上に番号が入る
+      - title: "「なし」が合うお店"
+        text: |-
+          領収書に番号がなくても困らないお店です。
+          あとから管理画面で変えられます。
+
   - id: kitchen_slip
     route: form
     section: S8
