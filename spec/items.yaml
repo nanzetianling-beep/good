@@ -673,7 +673,7 @@ items:
   - id: late_night_surcharge_amount
     route: form
     section: S3
-    label: 深夜割増の金額(1セットあたり)
+    label: 深夜割増の金額(1会計あたり)
     type: number
     unit: 円
     validation: {kind: integer, min: 0, message: 数字のみで入力してください(カンマ不要)}
